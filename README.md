@@ -10,6 +10,14 @@
     <th>Training Latency</br>(ms.)</th>
   </tr>EfficientNet
   <tr>
+    <th colspan="2">ResNeSt</th>
+    <th></th>
+    <th></th>
+    <th></th>
+    <th></th>
+    <th></th>
+  </tr>
+  <tr>
     <th colspan="2">EfficientNet</th>
     <th></th>
     <th></th>
