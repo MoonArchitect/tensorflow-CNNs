@@ -8,6 +8,30 @@
     <th>Param count</th>
     <th>MFLOPs</br>(fwd. path)</th>
     <th>Training Latency</br>(ms.)</th>
+  </tr>EfficientNet
+  <tr>
+    <th colspan="2">EfficientNet</th>
+    <th></th>
+    <th></th>
+    <th></th>
+    <th></th>
+    <th></th>
+  </tr>
+  <tr>
+    <th colspan="2">InceptionV4</th>
+    <th></th>
+    <th></th>
+    <th></th>
+    <th></th>
+    <th></th>
+  </tr>
+  <tr>
+    <th colspan="2">InceptionV3</th>
+    <th></th>
+    <th></th>
+    <th></th>
+    <th></th>
+    <th></th>
   </tr>
   <tr>
     <th colspan="2">Xception</th>
