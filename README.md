@@ -10,6 +10,30 @@
     <th>Training Latency</br>(ms.)</th>
   </tr>
   <tr>
+    <th colspan="2">Xception</th>
+    <th></th>
+    <th></th>
+    <th></th>
+    <th></th>
+    <th></th>
+  </tr>
+  <tr>
+    <th colspan="2">IBN-Net</th>
+    <th></th>
+    <th></th>
+    <th></th>
+    <th></th>
+    <th></th>
+  </tr>
+  <tr>
+    <th colspan="2">DPN</th>
+    <th></th>
+    <th></th>
+    <th></th>
+    <th></th>
+    <th></th>
+  </tr>
+  <tr>
     <th colspan="2">ResNet</th>
     <th></th>
     <th></th>
