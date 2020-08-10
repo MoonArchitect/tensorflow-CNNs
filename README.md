@@ -8,7 +8,7 @@
     <th>Param count</th>
     <th>MFLOPs</br>(fwd. path)</th>
     <th>Training Latency</br>(ms.)</th>
-  </tr>EfficientNet
+  </tr>
   <tr>
     <th colspan="2">ResNeSt</th>
     <th></th>
