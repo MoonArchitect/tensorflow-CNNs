@@ -84,8 +84,8 @@
   </tr>
   <tr>
     <th>ResNet35b</th>
-    <th>-</th>
-    <th>-</th>
+    <th>92.83%</th>
+    <th>7.17%</th>
     <th>-</th>
     <th>-</th>
     <th>-</th>
