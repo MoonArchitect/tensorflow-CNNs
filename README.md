@@ -76,8 +76,8 @@
   <tr>
     <th rowspan="8"></th>
     <th>ResNet34</th>
-    <th>-</th>
-    <th>-</th>
+    <th>92.64%</th>
+    <th>7.36%</th>
     <th>-</th>
     <th>-</th>
     <th>-</th>
