@@ -92,8 +92,8 @@
   </tr>
   <tr>
     <th>ResNet50b</th>
-    <th>-</th>
-    <th>-</th>
+    <th>93.18%</th>
+    <th>6.82%</th>
     <th>-</th>
     <th>-</th>
     <th>-</th>
