@@ -116,8 +116,8 @@
   </tr>
   <tr>
     <th>ResNet50 + SD</th>
-    <th>-</th>
-    <th>-</th>
+    <th>94.05%</th>
+    <th>5.95%</th>
     <th>-</th>
     <th>-</th>
     <th>-</th>
