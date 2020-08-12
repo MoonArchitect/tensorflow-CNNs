@@ -100,8 +100,8 @@
   </tr>
   <tr>
     <th>ResNet101b</th>
-    <th>-</th>
-    <th>-</th>
+    <th>93.79%</th>
+    <th>6.21%</th>
     <th>-</th>
     <th>-</th>
     <th>-</th>
