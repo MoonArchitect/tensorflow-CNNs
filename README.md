@@ -150,8 +150,8 @@
   <tr>
     <th rowspan="6"></th>
     <th>ResNetXt50C32</th>
-    <th>-</th>
-    <th>-</th>
+    <th>94.07%</th>
+    <th>5.93%</th>
     <th>-</th>
     <th>-</th>
     <th>-</th>
