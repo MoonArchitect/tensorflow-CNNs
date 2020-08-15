@@ -209,7 +209,7 @@
     <th rowspan="6"></th>
     <th>SeNet50</th>
     <th>93.40%</th>
-    <th>-</th>
+    <th>6.60%</th>
     <th>-</th>
     <th>-</th>
     <th>-</th>
