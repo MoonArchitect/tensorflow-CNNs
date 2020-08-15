@@ -205,7 +205,7 @@
     <th></th>
     <th></th>
   </tr>
-  <tr>
+  <tr> 
     <th rowspan="6"></th>
     <th>SeNet50</th>
     <th>-</th>
