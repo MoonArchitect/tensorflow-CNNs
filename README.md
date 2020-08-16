@@ -58,14 +58,6 @@
     <th></th>
   </tr>
   <tr>
-    <th colspan="2">DPN</th>
-    <th></th>
-    <th></th>
-    <th></th>
-    <th></th>
-    <th></th>
-  </tr>
-  <tr>
     <th colspan="2">ResNet</th>
     <th></th>
     <th></th>
@@ -124,8 +116,8 @@
   </tr>
   <tr>
     <th>ResNet101 + SD</th>
-    <th>-</th>
-    <th>-</th>
+    <th>94.40%</th>
+    <th>5.60%</th>
     <th>-</th>
     <th>-</th>
     <th>-</th>
