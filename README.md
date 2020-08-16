@@ -124,8 +124,8 @@
   </tr>
   <tr>
     <th>ResNet152 + SD</th>
-    <th>-</th>
-    <th>-</th>
+    <th>95.06%</th>
+    <th>4.94%</th>
     <th>-</th>
     <th>-</th>
     <th>-</th>
