@@ -150,8 +150,8 @@
   </tr>
   <tr>
     <th>ResNetXt101C32</th>
-    <th>-</th>
-    <th>-</th>
+    <th>94.25%</th>
+    <th>5.75%</th>
     <th>-</th>
     <th>-</th>
     <th>-</th>
