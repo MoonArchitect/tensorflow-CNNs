@@ -66,7 +66,7 @@
     <th> </th>
   </tr>
   <tr>
-    <th rowspan="8"></th>
+    <th rowspan="9"></th>
     <th>ResNet34</th>
     <th>92.64%</th>
     <th>7.36%</th>
@@ -76,6 +76,14 @@
   </tr>
   <tr>
     <th>ResNet35b</th>
+    <th>92.83%</th>
+    <th>7.17%</th>
+    <th>-</th>
+    <th>-</th>
+    <th>-</th>
+  </tr>
+  <tr>
+    <th>ResNet35b_Swish</th>
     <th>92.83%</th>
     <th>7.17%</th>
     <th>-</th>
