@@ -59,11 +59,11 @@
   </tr>
   <tr>
     <th colspan="2">ResNet</th>
-    <th></th>
-    <th></th>
-    <th></th>
-    <th></th>
-    <th></th>
+    <th> </th>
+    <th> </th>
+    <th> </th>
+    <th> </th>
+    <th> </th>
   </tr>
   <tr>
     <th rowspan="8"></th>
