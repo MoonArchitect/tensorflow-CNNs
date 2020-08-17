@@ -83,9 +83,9 @@
     <th>-</th>
   </tr>
   <tr>
-    <th>ResNet35b_Swish</th>
-    <th>92.83%</th>
-    <th>7.17%</th>
+    <th>ResNet35b_Mish</th>
+    <th>93.50%</th>
+    <th>6.50%</th>
     <th>-</th>
     <th>-</th>
     <th>-</th>
