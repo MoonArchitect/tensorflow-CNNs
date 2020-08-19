@@ -350,4 +350,8 @@
 
 *Reported values
 
+* SD = Stochastic Depth. From [this paper](https://arxiv.org/abs/1603.09382)
+* THD = Hyperbolic-Tangent Learning Rate Decay schedule. From [this paper](https://arxiv.org/abs/1806.01593)
+* Mish = 
+
 <!--- colspan="2" rowspan="2" ---> 
