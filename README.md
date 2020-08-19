@@ -100,7 +100,7 @@
     <th>-</th>
   </tr>
   <tr>
-    <th></th>
+    <th rowspan="4"></th>
     <th>+Mish</th>
     <th>-</th>
     <th>-</th>
@@ -109,7 +109,6 @@
     <th>-</th>
   </tr>
   <tr>
-    <th></th>
     <th>+THD</th>
     <th>-</th>
     <th>-</th>
@@ -118,7 +117,6 @@
     <th>-</th>
   </tr>
   <tr>
-    <th></th>
     <th>+SD</th>
     <th>94.05%</th>
     <th>5.95%</th>
@@ -127,7 +125,6 @@
     <th>-</th>
   </tr>
   <tr>
-    <th></th>
     <th>+THD +SD +Mish</th>
     <th>-</th>
     <th>-</th>
