@@ -58,7 +58,7 @@
     <th></th>
   </tr>
   <tr>
-    <th colspan="2">ResNet</th>
+    <th colspan="2">ResNetV2</th>
     <th> </th>
     <th> </th>
     <th> </th>
