@@ -109,7 +109,7 @@
     <th>-</th>
   </tr>
   <tr>
-    <th>+THD</th>
+    <th>+HTD</th>
     <th>-</th>
     <th>-</th>
     <th>-</th>
@@ -133,7 +133,7 @@
     <th>-</th>
   </tr>
   <tr>
-    <th>+SD +THD +Mish</th>
+    <th>+SD +HTD +Mish</th>
     <th>-</th>
     <th>-</th>
     <th>-</th>
@@ -149,7 +149,7 @@
     <th>-</th>
   </tr>
   <tr>
-    <th>+SD +THD +Cutout16px</th>
+    <th>+SD +HTD +Cutout16px</th>
     <th>-</th>
     <th>-</th>
     <th>-</th>
@@ -157,7 +157,7 @@
     <th>-</th>
   </tr>
   <tr>
-    <th>+SD +THD +Mixup16px</th>
+    <th>+SD +HTD +Mixup16px</th>
     <th>-</th>
     <th>-</th>
     <th>-</th>
@@ -383,7 +383,7 @@
 * \* -> Reported values
 
 * SD = Stochastic Depth. From [this paper](https://arxiv.org/abs/1603.09382)
-* THD = Hyperbolic-Tangent Learning Rate Decay schedule. From [this paper](https://arxiv.org/abs/1806.01593)
+* HTD = Hyperbolic-Tangent Learning Rate Decay schedule. From [this paper](https://arxiv.org/abs/1806.01593)
 * Mish = Self regularized non-monotonic activation function, f(x) = x*tanh(softplus(x)). From [this paper](https://arxiv.org/abs/1908.08681)
 
 <!--- colspan="2" rowspan="2" ---> 
