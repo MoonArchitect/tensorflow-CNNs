@@ -272,8 +272,8 @@
   </tr>
   <tr>
     <th colspan="2">SeNet101</th>
-    <th>-</th>
-    <th>-</th>
+    <th>94.30%|94.79%</th>
+    <th>5.70%|5.21%*</th>
     <th>-</th>
     <th>-</th>
     <th>-</th>
@@ -364,11 +364,10 @@
   </tr>
 </table>
 
-*Reported values
+* \* -> Reported values
 
-* .SD = Stochastic Depth. From  <a href="https://arxiv.org/abs/1603.09382" target="_blank">this paper</a>
 * SD = Stochastic Depth. From [this paper](https://arxiv.org/abs/1603.09382)
 * THD = Hyperbolic-Tangent Learning Rate Decay schedule. From [this paper](https://arxiv.org/abs/1806.01593)
-* Mish = 
+* Mish = Self regularized non-monotonic activation function, f(x) = x*tanh(softplus(x)). From [this paper](https://arxiv.org/abs/1908.08681)
 
 <!--- colspan="2" rowspan="2" ---> 
