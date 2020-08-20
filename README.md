@@ -203,8 +203,8 @@
   <tr>
     <th></th>
     <th>+SD</th>
-    <th>-</th>
-    <th>-</th>
+    <th>94.49%</th>
+    <th>5.51%</th>
     <th>-</th>
     <th>-</th>
     <th>-</th>
