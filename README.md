@@ -272,7 +272,7 @@
   </tr>
   <tr>
     <th colspan="2">SeNet101</th>
-    <th>94.30%|94.79%</th>
+    <th>94.30%|94.79%*</th>
     <th>5.70%|5.21%*</th>
     <th>-</th>
     <th>-</th>
@@ -281,8 +281,8 @@
   <tr>
     <th></th>
     <th>+SD</th>
-    <th>-</th>
-    <th>-</th>
+    <th>94.65%</th>
+    <th>5.35%</th>
     <th>-</th>
     <th>-</th>
     <th>-</th>
