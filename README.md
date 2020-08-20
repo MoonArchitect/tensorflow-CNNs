@@ -220,8 +220,8 @@
   <tr>
     <th></th>
     <th>+SD</th>
-    <th>-</th>
-    <th>-</th>
+    <th>94.88%</th>
+    <th>5.12%</th>
     <th>-</th>
     <th>-</th>
     <th>-</th>
