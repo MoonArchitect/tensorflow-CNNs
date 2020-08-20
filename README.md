@@ -264,8 +264,8 @@
   <tr>
     <th></th>
     <th>+SD</th>
-    <th>-</th>
-    <th>-</th>
+    <th>94.25%</th>
+    <th>5.75%</th>
     <th>-</th>
     <th>-</th>
     <th>-</th>
