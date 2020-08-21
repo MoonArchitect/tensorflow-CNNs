@@ -110,8 +110,8 @@
   </tr>
   <tr>
     <th>+HTD</th>
-    <th>-</th>
-    <th>-</th>
+    <th>93.65%</th>
+    <th>6.35%</th>
     <th>-</th>
     <th>-</th>
     <th>-</th>
