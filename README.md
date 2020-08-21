@@ -102,8 +102,8 @@
   <tr>
     <th rowspan="8"></th>
     <th>+Mish</th>
-    <th>-</th>
-    <th>-</th>
+    <th>93.94%</th>
+    <th>6.06%</th>
     <th>-</th>
     <th>-</th>
     <th>-</th>
