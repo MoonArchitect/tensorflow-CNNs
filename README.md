@@ -66,7 +66,7 @@
     <th> </th>
   </tr>
   <tr>
-    <th rowspan="17"></th>
+    <th rowspan="18"></th>
     <th colspan="2">ResNet34</th>
     <th>92.64%</th>
     <th>7.36%</th>
@@ -100,7 +100,7 @@
     <th>-</th>
   </tr>
   <tr>
-    <th rowspan="8"></th>
+    <th rowspan="9"></th>
     <th>+Mish</th>
     <th>93.94%</th>
     <th>6.06%</th>
