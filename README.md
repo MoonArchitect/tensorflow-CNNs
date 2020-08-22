@@ -66,7 +66,7 @@
     <th> </th>
   </tr>
   <tr>
-    <th rowspan="18"></th>
+    <th rowspan="19"></th>
     <th colspan="2">ResNet34</th>
     <th>92.64%</th>
     <th>7.36%</th>
@@ -181,10 +181,18 @@
     <th>-</th>
   </tr>
   <tr>
-    <th></th>
+    <th rowspan="2"></th>
     <th>+SD</th>
     <th>94.40%</th>
     <th>5.60%</th>
+    <th>-</th>
+    <th>-</th>
+    <th>-</th>
+  </tr>
+  <tr>
+    <th>+SD +Mish +HTD +Cutout16px</th>
+    <th>95.41%</th>
+    <th>4.59%</th>
     <th>-</th>
     <th>-</th>
     <th>-</th>
