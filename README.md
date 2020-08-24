@@ -191,8 +191,8 @@
   </tr>
   <tr>
     <th>+SD +Mish +HTD +Cutout16px</th>
-    <th>95.41%</th>
-    <th>4.59%</th>
+    <th>95.55%</th>
+    <th>4.45%</th>
     <th>-</th>
     <th>-</th>
     <th>-</th>
@@ -216,8 +216,8 @@
   </tr>
   <tr>
     <th colspan="2">WideResNet18+Cutout+HTD</th>
-    <th>-</th>
-    <th>-</th>
+    <th>94.91%</th>
+    <th>5.09%</th>
     <th>-</th>
     <th>-</th>
     <th>-</th>
