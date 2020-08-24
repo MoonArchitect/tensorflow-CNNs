@@ -126,8 +126,8 @@
   </tr>
   <tr>
     <th>+SD +Mish</th>
-    <th>-</th>
-    <th>-</th>
+    <th>94.42%</th>
+    <th>5.58%</th>
     <th>-</th>
     <th>-</th>
     <th>-</th>
