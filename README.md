@@ -157,7 +157,15 @@
     <th>-</th>
   </tr>
   <tr>
-    <th>+SD +HTD +Mixup16px</th>
+    <th>+SD +HTD +Mixup</th>
+    <th>-</th>
+    <th>-</th>
+    <th>-</th>
+    <th>-</th>
+    <th>-</th>
+  </tr>
+  <tr>
+    <th>+SD +HTD +Cutmix</th>
     <th>-</th>
     <th>-</th>
     <th>-</th>
@@ -166,8 +174,8 @@
   </tr>
   <tr>
     <th>+SD +Mish +HTD +Cutout16px</th>
-    <th>-</th>
-    <th>-</th>
+    <th>95.37%</th>
+    <th>4.63%</th>
     <th>-</th>
     <th>-</th>
     <th>-</th>
