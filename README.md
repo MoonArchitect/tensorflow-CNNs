@@ -66,7 +66,7 @@
     <th> </th>
   </tr>
   <tr>
-    <th rowspan="20"></th>
+    <th rowspan="21"></th>
     <th colspan="2">ResNet34</th>
     <th>92.64%</th>
     <th>7.36%</th>
@@ -100,7 +100,7 @@
     <th>-</th>
   </tr>
   <tr>
-    <th rowspan="10"></th>
+    <th rowspan="11"></th>
     <th>+Mish</th>
     <th>93.94%</th>
     <th>6.06%</th>
@@ -149,7 +149,7 @@
     <th>-</th>
   </tr>
   <tr>
-    <th>+SD +HTD +Cutout16px</th>
+    <th>+SD +HTD +Cutout16</th>
     <th>-</th>
     <th>-</th>
     <th>-</th>
@@ -157,7 +157,15 @@
     <th>-</th>
   </tr>
   <tr>
-    <th>+SD +HTD +Mixup</th>
+    <th>+SD +HTD +Mixup0.2</th>
+    <th>-</th>
+    <th>-</th>
+    <th>-</th>
+    <th>-</th>
+    <th>-</th>
+  </tr>
+  <tr>
+    <th>+SD +HTD +Mixup1</th>
     <th>-</th>
     <th>-</th>
     <th>-</th>
@@ -173,7 +181,7 @@
     <th>-</th>
   </tr>
   <tr>
-    <th>+SD +Mish +HTD +Cutout16px</th>
+    <th>+SD +Mish +HTD +Cutout16</th>
     <th>95.37%</th>
     <th>4.63%</th>
     <th>-</th>
@@ -198,7 +206,7 @@
     <th>-</th>
   </tr>
   <tr>
-    <th>+SD +Mish +HTD +Cutout16px</th>
+    <th>+SD +Mish +HTD +Cutout16</th>
     <th>95.55%</th>
     <th>4.45%</th>
     <th>-</th>
