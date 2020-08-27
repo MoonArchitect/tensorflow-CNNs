@@ -142,8 +142,8 @@
   </tr>
   <tr>
     <th>+SD +Cosine +Mish</th>
-    <th>-</th>
-    <th>-</th>
+    <th>94.69%</th>
+    <th>5.31%</th>
     <th>-</th>
     <th>-</th>
     <th>-</th>
