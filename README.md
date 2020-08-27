@@ -150,7 +150,7 @@
   </tr>
   <tr>
     <th>+SD +HTD +Cutout16</th>
-    <th>-</th>
+    <th>94.96%</th>
     <th>-</th>
     <th>-</th>
     <th>-</th>
