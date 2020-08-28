@@ -10,13 +10,7 @@ from ..Layers import PreActConv, get_activation_layer, get_channels
 """
 
 ############## Building Blocks ##############
-def BasicUnit(filters,
-              kernel_size=(3,3),
-              strides=(1,1),
-              groups=1,
-              activation='RELu',
-              data_format='channels_last',
-              **kwargs):
+class BasicUnit(nn.layers.Layer):
     """
     Basic Unit from ResNetV2
     Arguments:
@@ -39,37 +33,50 @@ def BasicUnit(filters,
     ------------
     input->[PreActConv3x3]->[PreActConv3x3] + input
     """
-    def fwd(input):
-        x = PreActConv(filters=filters,
-                       kernel_size=kernel_size,
-                       strides=strides,
-                       padding='same',
-                       data_format=data_format,
-                       groups=groups,
-                       activation=activation,
-                       use_bias=False,
-                       kernel_regularizer=tf.keras.regularizers.l2(0.0001),
-                       **kwargs)(input)
-        x = PreActConv(filters=filters,
-                       kernel_size=kernel_size,
-                       strides=(1,1),
-                       padding='same',
-                       data_format=data_format,
-                       groups=groups,
-                       activation=activation,
-                       use_bias=False,
-                       kernel_regularizer=tf.keras.regularizers.l2(0.0001),
-                       **kwargs)(x)
-        return x
-    return fwd
+    def __init__(self,
+                 filters,
+                 kernel_size=(3,3),
+                 strides=(1,1),
+                 groups=1,
+                 activation='RELu',
+                 data_format='channels_last',
+                 **kwargs):
+        super(BasicUnit, self).__init__(**kwargs)
+        self.layer = nn.Sequential()
+        self.layer.add(
+            PreActConv(
+                filters=filters,
+                kernel_size=kernel_size,
+                strides=strides,
+                padding='same',
+                data_format=data_format,
+                groups=groups,
+                activation=activation,
+                use_bias=False,
+                kernel_regularizer=tf.keras.regularizers.l2(0.0001),
+                **kwargs
+            )
+        )
+        self.layer.add(
+            PreActConv(
+                filters=filters,
+                kernel_size=kernel_size,
+                strides=(1,1),
+                padding='same',
+                data_format=data_format,
+                groups=groups,
+                activation=activation,
+                use_bias=False,
+                kernel_regularizer=tf.keras.regularizers.l2(0.0001),
+                **kwargs
+            )
+        )
 
-def BottleneckUnit(filters,
-                   kernel_size=(3,3),
-                   strides=(1,1),
-                   groups=1,
-                   activation='RELu',
-                   data_format='channels_last',
-                   **kwargs):
+    def call(self, input):
+        return self.layer(input)
+
+
+class BottleneckUnit(nn.layers.Layer):
     """
     Bottleneck Unit from ResNetV2
     Arguments:
@@ -92,39 +99,62 @@ def BottleneckUnit(filters,
     ------------
     input->[PreActConv1x1]->[PreActConv3x3]->[PreActConv1x1] + input
     """
-    def fwd(input):
-        x = PreActConv(filters=filters // 4,
-                       kernel_size=(1,1),
-                       strides=(1,1),
-                       padding='same',
-                       data_format=data_format,
-                       groups=1,
-                       activation=activation,
-                       use_bias=False,
-                       kernel_regularizer=nn.regularizers.l2(0.0001),
-                       **kwargs)(input)
-        x = PreActConv(filters=filters // 4,
-                       kernel_size=kernel_size,
-                       strides=strides,
-                       padding='same',
-                       data_format=data_format,
-                       groups=groups,
-                       activation=activation,
-                       use_bias=False,
-                       kernel_regularizer=nn.regularizers.l2(0.0001),
-                       **kwargs)(x)
-        x = PreActConv(filters=filters,
-                       kernel_size=(1,1),
-                       strides=(1,1),
-                       padding='same',
-                       data_format=data_format,
-                       groups=1,
-                       activation=activation,
-                       use_bias=False,
-                       kernel_regularizer=nn.regularizers.l2(0.0001),
-                       **kwargs)(x)
-        return x
-    return fwd
+    def __init__(self,
+                filters,
+                kernel_size=(3,3),
+                strides=(1,1),
+                groups=1,
+                activation='RELu',
+                data_format='channels_last',
+                **kwargs):
+        super(BottleneckUnit, self).__init__(**kwargs)
+        self.layer = nn.Sequential()
+        self.layer.add(
+            PreActConv(
+                filters=filters // 4,
+                kernel_size=(1,1),
+                strides=(1,1),
+                padding='same',
+                data_format=data_format,
+                groups=1,
+                activation=activation,
+                use_bias=False,
+                kernel_regularizer=nn.regularizers.l2(0.0001),
+                **kwargs
+            )
+        )
+        self.layer.add(
+            PreActConv(
+                filters=filters // 4,
+                kernel_size=kernel_size,
+                strides=strides,
+                padding='same',
+                data_format=data_format,
+                groups=groups,
+                activation=activation,
+                use_bias=False,
+                kernel_regularizer=nn.regularizers.l2(0.0001),
+                **kwargs
+            )
+        )
+        self.layer.add(
+            PreActConv(
+                filters=filters,
+                kernel_size=(1,1),
+                strides=(1,1),
+                padding='same',
+                data_format=data_format,
+                groups=1,
+                activation=activation,
+                use_bias=False,
+                kernel_regularizer=nn.regularizers.l2(0.0001),
+                **kwargs
+            )
+        )
+    
+    def call(self, input):
+        return self.layer(input) 
+
 
 def ResStage(layers,
              filters,
@@ -179,6 +209,7 @@ def ResStage(layers,
         return input
     
     return fwd
+
 
 def ResNetV2(conv_per_stage,
              img_size=(32,32),
@@ -244,6 +275,7 @@ def ResNetV2(conv_per_stage,
     return tf.keras.models.Model(inputs=input, 
                                  outputs=output, 
                                  name=f'{f"Wide{filters}" if filters != 256 else ""}ResNet{sum(conv_per_stage) * 3 + 2}b')
+
 
 ############## Predefined Nets ##############
 def ResNet18(img_size=(32,32),
