@@ -1,119 +1,304 @@
 import tensorflow as tf
-from tensorflow.keras.backend import in_test_phase
-from numpy import sum, max
+import tensorflow.keras as nn
+from .ResNetV2 import BottleneckUnit
+from ..Layers import get_activation_layer, get_channels, linear_decay_fn
 
 """ 
-    Implementation of ResNet with Stochastic Depth for CIFAR10/32x32
+    Implementation of ResNet with Stochastic Depth for CIFAR/SVHN/32x32
 
     From: Deep Networks with Stochastic Depth, https://arxiv.org/abs/1603.09382
     By: Gao Huang, Yu Sun, Zhuang Liu, Daniel Sedra, Kilian Weinberger
 """
 
-############## Residual Net with Stochastic Depth ##############
-class StochasticResUnit(tf.keras.layers.Layer):
-    def __init__(self, filters, kernel_size, strides, current_layer, total_layers, p, k):
-        super().__init__()
-        self.survival_p = tf.Variable(1 - (current_layer**k/total_layers**k) * (1 - p), dtype=tf.dtypes.float32)
-
-        self.pool = tf.keras.layers.AvgPool2D(strides, strides=strides, data_format='channels_first') if strides != (1, 1) else tf.keras.layers.Lambda(lambda a: a)
-        self.filters = filters
-
-        self.BN1 = tf.keras.layers.BatchNormalization(1)
-        self.ReLU1 = tf.keras.layers.ReLU()
-        self.conv1 = tf.keras.layers.Conv2D(filters // 4, (1, 1), (1, 1), padding='same', data_format='channels_first', use_bias=False, kernel_regularizer=tf.keras.regularizers.l2(0.0001))
-
-        self.BN2 = tf.keras.layers.BatchNormalization(1)
-        self.ReLU2 = tf.keras.layers.ReLU()
-        self.conv2 = tf.keras.layers.Conv2D(filters // 4, kernel_size, strides, padding='same', data_format='channels_first', use_bias=False, kernel_regularizer=tf.keras.regularizers.l2(0.0001))
-
-        self.BN3 = tf.keras.layers.BatchNormalization(1)
-        self.ReLU3 = tf.keras.layers.ReLU()
-        self.conv3 = tf.keras.layers.Conv2D(filters, (1, 1), (1,1), padding='same', data_format='channels_first', use_bias=False, kernel_regularizer=tf.keras.regularizers.l2(0.0001))
-        
-        self.add = tf.keras.layers.Add()
-        pass
+############## Building Blocks ##############
+class StochResWrapper(nn.layers.Layer):
+    """
+    Arguments:
+    survival_rate: int
+        -
+    """
+    def __init__(self, 
+                 layer,
+                 survival_rate,
+                 transform_input_fn = (lambda x: x),
+                 name='StochasticResBlock_',
+                 **kwargs):
+        super(StochResWrapper, self).__init__(name=name + str(nn.backend.get_uid(name)), **kwargs)
+        self.layer = layer
+        self.p = tf.constant(survival_rate, dtype=tf.float32)
+        self.transform_input_fn = transform_input_fn
 
     def call(self, input):
-        sc = self.pool(input)
-        if input.shape[3] != self.filters:
-            sc = tf.pad(sc, [[0,0], [(self.filters - input.shape[1]) // 2, (self.filters - input.shape[1]) // 2], [0,0], [0,0]])
-
-        def ConvLayer(dIn, dSc):
-            x = self.BN1(dIn)
-            x = self.ReLU1(x)
-            x = self.conv1(x)
-            x = self.BN2(x)
-            x = self.ReLU2(x)
-            x = self.conv2(x)
-            x = self.BN3(x)
-            x = self.ReLU3(x)
-            x = self.conv3(x)
-            x = in_test_phase(tf.scalar_mul(self.survival_p, x), x)
-            return self.add([x, dSc])
-        
-        rand = tf.random.uniform([1], 0, 1)
-        x = tf.cond(
-            rand <= in_test_phase(1.0, self.survival_p),
-            lambda: ConvLayer(input, sc),
-            lambda: sc
+        survived = nn.backend.in_test_phase(
+            tf.constant(True, dtype=tf.bool),       # if in_test_phase
+            tf.random.uniform([1], 0, 1) < self.p   # if not in_test_phase
         )
 
+        return tf.cond(
+            survived,
+            lambda: self.transform_input_fn(input) + self.layer(input),
+            lambda: self.transform_input_fn(input)
+        )
+
+def StochasticDepthStage(layers,
+                         filters,
+                         survival_fn,
+                         stage_start_pos,
+                         kernel_size=(3,3),
+                         strides=(1,1),
+                         data_format='channels_last',
+                         activation='relu',
+                         **kwargs):
+    """
+    Arguments:
+    ----------
+    layers: int
+        Number of residual Units in that stage
+    filters: int
+        The dimensionality of the output space (i.e. the number of output filters in the convolution).
+    survival_fn: function
+        Function to calculate survival rate for each layer given its idx
+    stage_position: tuple/list of 2 integers
+        -
+    kernel_size: int, tuple/list of 2 integers
+        Central 2D convolution window's Height and Width
+    strides: int, tuple/list of 2 integers
+        Specifying the strides of the central convolution along the height and width
+    data_format: 'channels_last' or 'channels_first'
+        The ordering of the dimensions in the inputs. 
+    activation: String or keras.Layer
+        Activation function to use after each convolution.
+    """
+    Unit = BottleneckUnit
+
+    def pool_pad_input(input, 
+                       filters, 
+                       strides, 
+                       data_format):
+        """
+        Pools and pads input if necessary
+        Arguments:
+        ----------
+        Returns:
+        --------
+        """
+        sc = nn.layers.AvgPool2D(strides, data_format=data_format)(input) if strides != (1, 1) else input
+        if get_channels(input, data_format) != filters:
+            pad = [(filters - get_channels(input, data_format)) // 2] * 2
+            sc = tf.pad(sc, [[0,0], [0,0], [0,0], pad] if data_format=='channels_last' else [[0,0], pad, [0,0], [0,0]])
+        return sc
+    
+    def fwd(input):
+        transform_input_fn = lambda x: pool_pad_input(input=x, filters=filters, strides=strides, data_format=data_format)
+
+        x = StochResWrapper(
+            Unit(
+                filters,
+                kernel_size,
+                strides=strides,
+                activation=activation,
+                data_format=data_format,
+                **kwargs
+            ),
+            survival_rate=survival_fn(stage_start_pos),
+            transform_input_fn=transform_input_fn,
+            **kwargs
+        )(input)
+        
+        for i in range(1, layers):
+            x = StochResWrapper(
+                Unit(
+                    filters,
+                    kernel_size,
+                    strides=(1,1),
+                    activation=activation,
+                    data_format=data_format,
+                    **kwargs
+                ),
+                survival_rate=survival_fn(stage_start_pos + i),
+                **kwargs
+            )(x)
+
         return x
+    
+    return fwd
 
-def ResNetSD_Stage(layers, filters, kernel_size, strides, layerIdx, total_layers, p, k):
-    def f(input):
-        x = StochasticResUnit(filters, kernel_size, strides, layerIdx, total_layers, p, k)(input)
-        for i in range(layers - 1):
-            x = StochasticResUnit(filters, kernel_size, (1,1), layerIdx + i + 1, total_layers, p, k)(x)
-        return x
-    return f
+def ResNetSD(conv_per_stage,
+             min_survival_p,
+             img_size=(32,32),
+             img_channels=3,
+             classes=10,
+             filters=16,
+             activation='relu',
+             data_format='channels_last',
+             **kwargs):
+    """
+    Template for Bottleneck ResNet with 4 stages
+    Parameters:
+    ----------- 
+    conv_per_stage: list, tuple
+        Number of residual blocks in each stage
+    img_size: list, tuple
+        Size of a single input image
+    img_channels: int
+        Number of channels in a single input image
+    classes: int
+        Number of classification classes.
+    filters: int
+        Number of filters in stem layer
+    activation: string, keras.Layer
+        Activation function to use after each convolution.
+    data_format: 'channels_last' or 'channels_first'
+        The ordering of the dimensions in the inputs. 
+    """
 
-def ResNetSD(conv_per_stage, input_shape, classes, filters = 16, filter_multiplier = [1, 1, 1, 1], p = 0.5, k = 1):
-    """Bottleneck ResNet with Stochastic Depth"""
-
-    N = conv_per_stage
-    total_conv_layers = sum(conv_per_stage)
-    current_conv_layer = 1
+    input_shape = (*img_size, img_channels) if data_format=='channels_last' else (img_channels, *img_size)
+    strides = [(1,1)] + [(2,2)]*3
+    expansion = 4
+    
+    survival_fn = linear_decay_fn((0, 1), (sum(conv_per_stage), min_survival_p))
+    layer_cnt = 1 # ...
+    
 
     input = tf.keras.layers.Input(shape=input_shape)
 
-    x = tf.keras.layers.Lambda(lambda a: tf.transpose(a, [0, 3, 1, 2]))(input)
-    # Conv 1
-    x = tf.keras.layers.Conv2D(filters, (3, 3), (1, 1), padding='same', use_bias=False, kernel_regularizer=tf.keras.regularizers.l2(0.0001), data_format='channels_first')(x)
+    x = input
+    if data_format == 'channels_last':
+        x = tf.transpose(input, [0, 3, 1, 2])
+        data_format = 'channels_first'
+    
+    # Initial Convolution
+    x = tf.keras.layers.Conv2D(filters=filters, 
+                               kernel_size=(3, 3), 
+                               strides=(1, 1), 
+                               padding='same',
+                               data_format=data_format,
+                               use_bias=False, 
+                               kernel_regularizer=tf.keras.regularizers.l2(0.0001))(x)
+    # Residual Stages
+    for layers, strides in zip(conv_per_stage, strides):
+        x = StochasticDepthStage(layers=layers,
+                                 filters=filters * expansion,
+                                 survival_fn=survival_fn,
+                                 stage_start_pos=layer_cnt,
+                                 kernel_size=(3,3),
+                                 strides=strides,
+                                 data_format=data_format,
+                                 activation=activation,
+                                 **kwargs)(x)
+        filters *= 2
+        layer_cnt += layers
 
-    # Stage 1
-    x = ResNetSD_Stage(N[0], filters * 4 * 1 * filter_multiplier[0], (3,3), (1,1), current_conv_layer, total_conv_layers, p, k)(x)
-    current_conv_layer += N[0]
-    # Stage 2
-    x = ResNetSD_Stage(N[1], filters * 4 * 2 * filter_multiplier[1], (3,3), (2,2), current_conv_layer, total_conv_layers, p, k)(x)
-    current_conv_layer += N[1]
-    # Stage 3
-    x = ResNetSD_Stage(N[2], filters * 4 * 4 * filter_multiplier[2], (3,3), (2,2), current_conv_layer, total_conv_layers, p, k)(x)
-    current_conv_layer += N[2]
-    # Stage 4
-    x = ResNetSD_Stage(N[3], filters * 4 * 8 * filter_multiplier[3], (3,3), (2,2), current_conv_layer, total_conv_layers, p, k)(x)
-    current_conv_layer += N[3]
+    x = tf.keras.layers.BatchNormalization(-1 if data_format=='channels_last' else 1)(x)
+    x = get_activation_layer(activation)(x)
 
-    x = tf.keras.layers.BatchNormalization(1)(x) 
-    x = tf.keras.layers.ReLU()(x)
-
-    x = tf.keras.layers.GlobalAveragePooling2D(data_format='channels_first')(x)
+    x = tf.keras.layers.GlobalAveragePooling2D(data_format=data_format)(x)
     output = tf.keras.layers.Dense(classes)(x)
 
-    return tf.keras.models.Model(inputs=input, outputs=output, name=f'{f"Wide{filter_multiplier}" if max(filter_multiplier) > 1 else ""}ResNet{sum(conv_per_stage) * 3 + 2}SD_p{p}')
+    return tf.keras.models.Model(inputs=input,
+                                 outputs=output,
+                                 name=f'{f"Wide{filters}" if filters != 256 else ""}ResNet{sum(conv_per_stage) * 3 + 2}SD_p{min_survival_p}')
 
-############## Nets ##############
-def ResNetSD50(input_shape, classes, p = 0.5, k = 1):
-    """ResNet50 with Stochastic Depth"""
-    return ResNetSD(conv_per_stage = [3, 4, 6, 3], input_shape = input_shape, classes = classes, p = p, k = k)
+############## Predefined Nets ##############
+def ResNet50SD(img_size=(32,32),
+               img_channels=3,
+               min_survival_p=0.7,
+               classes=10,
+               activation='relu',
+               data_format='channels_last',
+               **kwargs):
+    """
+    ResNet50SD model for CIFAR/SVHN
+    Parameters:
+    ----------
+    img_size: list, tuple
+        Size of a single input image
+    img_channels: int
+        Number of channels in a single input image
+    classes: int
+        Number of classification classes.
+    activation: string, keras.Layer
+        Main activation function of the network.
+    data_format: 'channels_last' or 'channels_first'
+        The ordering of the dimensions in the inputs. 
+    Returns:
+    ----------
+    keras.Model
+    """
+    return ResNetSD(conv_per_stage=[3, 4, 6, 3],
+                    min_survival_p=min_survival_p,
+                    img_size=img_size,
+                    img_channels=img_channels,
+                    classes=classes,
+                    activation=activation,
+                    data_format=data_format,
+                    **kwargs)
 
-def ResNetSD101(input_shape, classes, p = 0.5, k = 1):
-    """ResNet101 with Stochastic Depth"""
-    return ResNetSD(conv_per_stage = [3, 4, 23, 3], input_shape = input_shape, classes = classes, p = p, k = k)
+def ResNet101SD(img_size=(32,32),
+                min_survival_p=0.5,
+                img_channels=3,
+                classes=10,
+                activation='relu',
+                data_format='channels_last',
+                **kwargs):
+    """
+    ResNet101SD model for CIFAR/SVHN
+    Parameters:
+    ----------
+    img_size: list, tuple
+        Size of a single input image
+    img_channels: int
+        Number of channels in a single input image
+    classes: int
+        Number of classification classes.
+    activation: string, keras.Layer
+        Main activation function of the network.
+    data_format: 'channels_last' or 'channels_first'
+        The ordering of the dimensions in the inputs. 
+    Returns:
+    ----------
+    keras.Model
+    """
+    return ResNetSD(conv_per_stage=[3, 4, 23, 3],
+                    min_survival_p=min_survival_p,
+                    img_size=img_size,
+                    img_channels=img_channels,
+                    classes=classes,
+                    activation=activation,
+                    data_format=data_format,
+                    **kwargs)
 
-def ResNetSD152(input_shape, classes, p = 0.35, k = 1):
-    """ResNet152 with Stochastic Depth"""
-    return ResNetSD(conv_per_stage = [3, 8, 33, 6], input_shape = input_shape, classes = classes, p = p, k = k)
-
-
+def ResNet152SD(img_size=(32,32),
+                min_survival_p=0.35,
+                img_channels=3,
+                classes=10,
+                activation='relu',
+                data_format='channels_last',
+                **kwargs):
+    """
+    ResNet152SD model for CIFAR/SVHN
+    Parameters:
+    ----------
+    img_size: list, tuple
+        Size of a single input image
+    img_channels: int
+        Number of channels in a single input image
+    classes: int
+        Number of classification classes.
+    activation: string, keras.Layer
+        Main activation function of the network.
+    data_format: 'channels_last' or 'channels_first'
+        The ordering of the dimensions in the inputs. 
+    Returns:
+    ----------
+    keras.Model
+    """
+    return ResNetSD(conv_per_stage=[3, 8, 36, 3],
+                    min_survival_p=min_survival_p,
+                    img_size=img_size,
+                    img_channels=img_channels,
+                    classes=classes,
+                    activation=activation,
+                    data_format=data_format,
+                    **kwargs)
 
