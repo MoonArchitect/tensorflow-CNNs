@@ -2,17 +2,9 @@ import tensorflow as tf
 import tensorflow.keras as nn
 from tensorflow.keras.backend import in_test_phase
 
-def PreActConv(filters,
-               kernel_size,
-               strides=1,
-               padding='same',
-               data_format='channels_last',
-               groups=1,
-               activation='RELu',
-               use_bias=False,
-               kernel_regularizer=nn.regularizers.l2(0.0001),
-               **kwargs):
-    """
+
+class PreActConv(nn.layers.Layer):
+    """ 
     PreActivation Convolution
     Arguments:
     ---------
@@ -40,12 +32,27 @@ def PreActConv(filters,
     -------------
     BN + Activation + Convolution
     """
-    def f(input):
+
+    def __init__(self,
+                 filters,
+                 kernel_size,
+                 strides=1,
+                 padding='same',
+                 data_format='channels_last',
+                 groups=1,
+                 activation='RELu',
+                 use_bias=False,
+                 kernel_regularizer=nn.regularizers.l2(0.0001),
+                 **kwargs):
+        super(PreActConv, self).__init__(**kwargs)
+        
         assert(data_format in ['channels_last', 'channels_first'])
 
-        x = nn.layers.BatchNormalization(-1 if data_format=='channels_last' else 1)(input)
-        x = get_activation_layer(activation)(x)
-        x = nn.layers.Conv2D(filters=filters,
+        self.layer = nn.Sequential()
+        self.layer.add(nn.layers.BatchNormalization(-1 if data_format=='channels_last' else 1))
+        self.layer.add(get_activation_layer(activation))
+        self.layer.add(
+            nn.layers.Conv2D(filters=filters,
                              kernel_size=kernel_size,
                              strides=strides,
                              padding=padding,
@@ -53,10 +60,11 @@ def PreActConv(filters,
                              groups=groups,
                              use_bias=use_bias,
                              kernel_regularizer=kernel_regularizer,
-                             **kwargs)(x)
-        return x
-
-    return f
+                             **kwargs)
+        )
+    
+    def call(self, input):
+        return self.layer(input)
 
 
 def get_activation_layer(activation, **kwargs):
@@ -93,5 +101,41 @@ def get_activation_layer(activation, **kwargs):
 def get_channels(x, data_format='channels_last'):
     return x.shape[3] if data_format=='channels_last' else x.shape[1]
 
+#region Decay Functions
+def linear_decay_fn(start_pos_val,
+                    end_pos_val,
+                    name="Linear Decay"):
+    """
+    Returns function to generate values with linear decay corresponding to (start/end)_pos_val
+    Arguments:
+    ----------
+    start_pos_val: tuple/list of 2 integers
+        -
+    end_pos_val: tuple/list of 2 integers
+        -
+    Returns:
+    --------
+    Python function
+        -> fn(x), takes 1 argument, position:float
+        -> Returns value:float
+    """
+    # Swap for convenience if 
+    if start_pos_val[0] > end_pos_val[0]:
+        temp = end_pos_val
+        end_pos_val = start_pos_val
+        start_pos_val = temp
+
+    def fn(x):
+        if not start_pos_val[0] <= x <= end_pos_val[0]:
+            raise ValueError(f"{name} | Position {x} is not in the range of specified positions: {start_pos_val[0]}->{end_pos_val[1]}")
+
+        return start_pos_val[1] + (x - start_pos_val[0]) / (end_pos_val[0] - start_pos_val[0]) * (end_pos_val[1] - start_pos_val[1])
+    return fn
+
+def linear_decay(x, start_pos_val,
+                 end_pos_val):
+    return linear_decay_fn(start_pos_val, end_pos_val)(x)
+
+#endregion
 
 
