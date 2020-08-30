@@ -151,7 +151,7 @@
   <tr>
     <th>+SD +HTD +Cutout16</th>
     <th>94.96%</th>
-    <th>-</th>
+    <th>5.04%</th>
     <th>-</th>
     <th>-</th>
     <th>-</th>
@@ -422,8 +422,11 @@
 
 * \* -> Reported values
 
-* SD = Stochastic Depth. From [this paper](https://arxiv.org/abs/1603.09382)
-* HTD = Hyperbolic-Tangent Learning Rate Decay schedule. From [this paper](https://arxiv.org/abs/1806.01593)
-* Mish = Self regularized non-monotonic activation function, f(x) = x*tanh(softplus(x)). From [this paper](https://arxiv.org/abs/1908.08681)
+* SD = Stochastic Depth. </br>
+  From [Deep Networks with Stochastic Depth](https://arxiv.org/abs/1603.09382)
+* HTD = Hyperbolic-Tangent Learning Rate Decay schedule. </br>
+  From [Stochastic Gradient Descent with Hyperbolic-Tangent Decay on Classification](https://arxiv.org/abs/1806.01593)
+* Mish = Self regularized non-monotonic activation function, f(x) = x*tanh(softplus(x)). </br>
+  From [Mish: A Self Regularized Non-Monotonic Activation Function](https://arxiv.org/abs/1908.08681)
 
 <!--- colspan="2" rowspan="2" ---> 
