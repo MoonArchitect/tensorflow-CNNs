@@ -174,8 +174,8 @@
   </tr>
   <tr>
     <th>+SD +HTD +Cutmix</th>
-    <th>-</th>
-    <th>-</th>
+    <th>95.56%</th>
+    <th>4.44%</th>
     <th>-</th>
     <th>-</th>
     <th>-</th>
