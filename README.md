@@ -6,8 +6,8 @@
     <th>Top1 Accuracy</th>
     <th>Top1 Error</th>
     <th>Param count</th>
-    <th>MFLOPs</br>(fwd. path)</th>
-    <th>Training Latency</br>(ms.)</th>
+    <th>FLOPs/2</th>
+    <th>Training speed</br>(imgs/sec)</th>
   </tr>
   <tr>
     <th colspan="3">ResNeSt</th>
