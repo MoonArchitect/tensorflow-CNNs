@@ -70,9 +70,9 @@
     <th colspan="2">ResNet34</th>
     <th>92.64%</th>
     <th>7.36%</th>
-    <th>-</th>
-    <th>-</th>
-    <th>-</th>
+    <th>1,327,226</th>
+    <th>71 M</th>
+    <th>3413</th>
   </tr>
   <tr>
     <th colspan="2">ResNet35b</th>
