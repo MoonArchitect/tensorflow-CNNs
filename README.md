@@ -71,16 +71,16 @@
     <th>92.64%</th>
     <th>7.36%</th>
     <th>1,327,226</th>
-    <th>34.65M</th>
+    <th>72.40M</th>
     <th>3413</th>
   </tr>
   <tr>
     <th colspan="2">ResNet35b</th>
     <th>92.83%</th>
     <th>7.17%</th>
-    <th>-</th>
-    <th>-</th>
-    <th>-</th>
+    <th>873,722</th>
+    <th>51.83M</th>
+    <th>2694</th>
   </tr>
   <tr>
     <th></th>
