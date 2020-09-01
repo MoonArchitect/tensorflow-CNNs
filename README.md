@@ -234,9 +234,9 @@
     <th colspan="2">WideResNet18+Cutout+HTD</th>
     <th>94.91%</th>
     <th>5.09%</th>
-    <th>-</th>
-    <th>-</th>
-    <th>-</th>
+    <th>11,205,578</th>
+    <th>609.96M</th>
+    <th>195</th>
   </tr>
   <!--- <<<<<<<<<<<<<<<<<<<<< ResNeXt >>>>>>>>>>>>>>>>>>>>> --->
   <tr>
