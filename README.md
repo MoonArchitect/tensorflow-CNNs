@@ -93,11 +93,11 @@
   </tr>
   <tr>
     <th>+HTD +Cutmix</th>
-    <th>-</th>
-    <th>-</th>
-    <th>-</th>
-    <th>-</th>
-    <th>-</th>
+    <th>95.06%</th>
+    <th>4.96%</th>
+    <th>873,722</th>
+    <th>51.83M</th>
+    <th>2694</th>
   </tr>
   <tr>
     <th colspan="2">ResNet50b</th>
