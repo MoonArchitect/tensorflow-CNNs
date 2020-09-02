@@ -1,4 +1,45 @@
-# Models
+# Deep Convolutional Neural Networks for Image Classification
+
+Implementation of various AI papers for image classification  
+\---- Section is under construction ----
+
+### Implemented and Planned Features:
+<details>
+  <summary> Model Architectures </summary>
+  
+- [x] ResNetV2
+- [x] ResNetV2 + Stochastic Depth
+- [x] ResNeXt
+- [x] ResNeXt + Stochastic Depth
+- [x] DenseNet (Currently Reworking)
+- [ ] SeNet
+- [ ] ResNeSt
+- [ ] EfficientNet
+- [ ] NAT
+- [ ] TResNet
+- [ ] PyramidNet
+- [ ] InceptionV4
+- [ ] InceptionV3
+- [ ] Xception
+- [ ] IBN-Net
+
+</details>
+
+<details>
+  <summary> Other Features </summary>
+  
+- [x] Step Learning Rate (LR) decay schedule
+- [x] HTD (Hyperbolic-Tangent LR Decay schedule)
+- [x] Cosine LR decay schedule
+- [x] Cutout
+- [x] Mixup
+- [x] Cutmix
+- [ ] Hard and Soft PatchUp
+- [ ] Mish
+- [ ] Swish
+
+</details>
+
 ## CIFAR10 Results
 <table>
   <tr>
