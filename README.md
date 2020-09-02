@@ -66,7 +66,7 @@
     <th> </th>
   </tr>
   <tr>
-    <th rowspan="21"></th>
+    <th rowspan="22"></th>
     <th colspan="2">ResNet34</th>
     <th>92.64%</th>
     <th>7.36%</th>
@@ -83,13 +83,21 @@
     <th>2694</th>
   </tr>
   <tr>
-    <th></th>
-    <th>⠀⠀+Mish⠀⠀</th>
+    <th rowspan="2"></th>
+    <th>+Mish</th>
     <th>93.50%</th>
     <th>6.50%</th>
     <th>873,722</th>
     <th>51.83M</th>
     <th>1861</th>
+  </tr>
+  <tr>
+    <th>+HTD +Cutmix</th>
+    <th>-</th>
+    <th>-</th>
+    <th>-</th>
+    <th>-</th>
+    <th>-</th>
   </tr>
   <tr>
     <th colspan="2">ResNet50b</th>
