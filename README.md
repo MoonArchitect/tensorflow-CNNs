@@ -87,9 +87,9 @@
     <th>⠀⠀+Mish⠀⠀</th>
     <th>93.50%</th>
     <th>6.50%</th>
-    <th>-</th>
-    <th>-</th>
-    <th>-</th>
+    <th>873,722</th>
+    <th>51.83M</th>
+    <th>1861</th>
   </tr>
   <tr>
     <th colspan="2">ResNet50b</th>
