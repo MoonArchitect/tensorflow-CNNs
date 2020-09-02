@@ -103,9 +103,9 @@
     <th colspan="2">ResNet50b</th>
     <th>93.18%</th>
     <th>6.82%</th>
-    <th>-</th>
-    <th>-</th>
-    <th>-</th>
+    <th>1,309,210</th>
+    <th>74.11M</th>
+    <th>1932</th>
   </tr>
   <tr>
     <th rowspan="11"></th>
