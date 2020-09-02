@@ -66,13 +66,22 @@
     <th> </th>
   </tr>
   <tr>
-    <th rowspan="22"></th>
+    <th rowspan="23"></th>
     <th colspan="2">ResNet34</th>
     <th>92.64%</th>
     <th>7.36%</th>
     <th>1,327,226</th>
     <th>72.40M</th>
     <th>3413</th>
+  </tr>
+  <tr>
+    <th rowspan="1"></th>
+    <th>+HTD +Cutmix</th>
+    <th>-</th>
+    <th>-</th>
+    <th>-</th>
+    <th>-</th>
+    <th>-</th>
   </tr>
   <tr>
     <th colspan="2">ResNet35b</th>
