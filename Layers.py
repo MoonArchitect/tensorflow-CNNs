@@ -3,6 +3,31 @@ import tensorflow.keras as nn
 from tensorflow.keras.backend import in_test_phase
 
 
+@tf.function
+@tf.custom_gradient
+def Mish_fn(x):
+    """
+    """
+    sx = tf.sigmoid(x)
+    th = tf.tanh(tf.math.softplus(x))
+    k = (th + x * sx * (1 - th * th))
+    def grad(dy):
+        return dy * k
+    
+    return x * th, grad
+
+class Mish(nn.layers.Layer):
+    """
+    Mish - Self regularized non-monotonic activation function, f(x) = x*tanh(softplus(x)).
+    From "Mish: A Self Regularized Non-Monotonic Activation Function", https://arxiv.org/abs/1908.08681
+    """
+    def __init__(self, *kwargs):
+        super(Mish, self).__init__(kwargs)
+
+    def call(self, x):
+        return Mish_fn(x)
+
+
 class PreActConv(nn.layers.Layer):
     """ 
     PreActivation Convolution
@@ -79,18 +104,17 @@ def get_activation_layer(activation, **kwargs):
         elif activation == "prelu":
             return nn.layers.PReLU(**kwargs)
         elif activation == "mish":
-            NotImplementedError("Mish is not implemented")
-            return None
+            return Mish(**kwargs)
         elif activation == "swish":
             NotImplementedError("Swish is not implemented")
-            return None
+            #return nn.layers.Lambda(lambda x: nn.activations.swish(x))
         elif activation == "hswish":
             NotImplementedError("Hswish is not implemented")
             return None
         elif activation == "sigmoid":
-            return tf.nn.sigmoid
+            return nn.layers.Lambda(lambda x: tf.nn.sigmoid(x))
         elif activation == "tanh":
-            return tf.nn.tanh
+            return nn.layers.Lambda(lambda x: tf.nn.tanh(x))
         else:
             raise NotImplementedError(f"{activation} is not implemented")
     else:
