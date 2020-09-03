@@ -35,7 +35,7 @@ Implementation of various AI papers for image classification
 - [x] Mixup
 - [x] Cutmix
 - [ ] Hard and Soft PatchUp
-- [ ] Mish
+- [x] Mish
 - [ ] Swish
 
 </details>
@@ -113,7 +113,7 @@ Implementation of various AI papers for image classification
     <th>7.36%</th>
     <th>1,327,226</th>
     <th>72.40M</th>
-    <th>3413</th>
+    <th>-</th>
   </tr>
   <tr>
     <th rowspan="1"></th>
@@ -130,7 +130,7 @@ Implementation of various AI papers for image classification
     <th>7.17%</th>
     <th>873,722</th>
     <th>51.83M</th>
-    <th>2694</th>
+    <th>-</th>
   </tr>
   <tr>
     <th rowspan="2"></th>
@@ -139,7 +139,7 @@ Implementation of various AI papers for image classification
     <th>6.50%</th>
     <th>873,722</th>
     <th>51.83M</th>
-    <th>1861</th>
+    <th>-</th>
   </tr>
   <tr>
     <th>+HTD +Cutmix</th>
@@ -147,7 +147,7 @@ Implementation of various AI papers for image classification
     <th>4.96%</th>
     <th>873,722</th>
     <th>51.83M</th>
-    <th>2694</th>
+    <th>-</th>
   </tr>
   <tr>
     <th colspan="2">ResNet50b</th>
@@ -155,7 +155,7 @@ Implementation of various AI papers for image classification
     <th>6.82%</th>
     <th>1,309,210</th>
     <th>74.11M</th>
-    <th>1932</th>
+    <th>-</th>
   </tr>
   <tr>
     <th rowspan="11"></th>
@@ -294,7 +294,7 @@ Implementation of various AI papers for image classification
     <th>5.09%</th>
     <th>11,205,578</th>
     <th>609.96M</th>
-    <th>195</th>
+    <th>-</th>
   </tr>
   <!--- <<<<<<<<<<<<<<<<<<<<< ResNeXt >>>>>>>>>>>>>>>>>>>>> --->
   <tr>
