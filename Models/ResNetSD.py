@@ -29,14 +29,14 @@ class StochResWrapper(nn.layers.Layer):
         self.transform_input_fn = transform_input_fn
 
     def call(self, input):
-        survived = nn.backend.in_test_phase(
-            tf.constant(True, dtype=tf.bool),       # if in_test_phase
-            tf.random.uniform([1], 0, 1) < self.p   # if not in_test_phase
-        )
+        def layer(input):
+            x = self.layer(input)
+            x = nn.backend.in_test_phase(tf.scalar_mul(self.p, x), x)
+            return x + self.transform_input_fn(input)
 
         return tf.cond(
-            survived,
-            lambda: self.transform_input_fn(input) + self.layer(input),
+            tf.random.uniform([1], 0, 1) < nn.backend.in_test_phase(1.0, self.p),
+            lambda: layer(input),
             lambda: self.transform_input_fn(input)
         )
 
