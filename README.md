@@ -130,7 +130,7 @@ Implementation of various AI papers for image classification
     <th>7.17%</th>
     <th>873,722</th>
     <th>51.83M</th>
-    <th>-</th>
+    <th>3012</th>
   </tr>
   <tr>
     <th rowspan="2"></th>
@@ -147,7 +147,7 @@ Implementation of various AI papers for image classification
     <th>4.96%</th>
     <th>873,722</th>
     <th>51.83M</th>
-    <th>-</th>
+    <th>3012</th>
   </tr>
   <tr>
     <th colspan="2">ResNet50b</th>
