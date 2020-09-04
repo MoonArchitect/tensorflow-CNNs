@@ -139,7 +139,7 @@ Implementation of various AI papers for image classification
     <th>6.50%</th>
     <th>873,722</th>
     <th>51.83M</th>
-    <th>-</th>
+    <th>2065</th>
   </tr>
   <tr>
     <th>+HTD +Cutmix</th>
