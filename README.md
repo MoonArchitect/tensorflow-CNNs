@@ -224,8 +224,8 @@ Implementation of various AI papers for image classification
   </tr>
   <tr>
     <th>+SD +HTD +Mixup1</th>
-    <th>-</th>
-    <th>-</th>
+    <th>95.48%</th>
+    <th>4.52%</th>
     <th>-</th>
     <th>-</th>
     <th>-</th>
