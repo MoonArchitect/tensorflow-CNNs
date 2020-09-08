@@ -14,7 +14,13 @@ from ..Layers import get_activation_layer, get_channels, linear_decay_fn
 class StochResWrapper(nn.layers.Layer):
     """
     Arguments:
+    layer: keras.Layer
+        -
     survival_rate: int
+        -
+    transform_input_fn: function
+        -
+    name: String
         -
     """
     def __init__(self, 
@@ -24,8 +30,9 @@ class StochResWrapper(nn.layers.Layer):
                  name='StochasticResBlock_',
                  **kwargs):
         super(StochResWrapper, self).__init__(name=name + str(nn.backend.get_uid(name)), **kwargs)
+
         self.layer = layer
-        self.p = tf.constant(survival_rate, dtype=tf.float32)
+        self.p = tf.constant(survival_rate, dtype=self._compute_dtype)
         self.transform_input_fn = transform_input_fn
 
     def call(self, input):
@@ -35,7 +42,7 @@ class StochResWrapper(nn.layers.Layer):
             return x + self.transform_input_fn(input)
 
         return tf.cond(
-            tf.random.uniform([1], 0, 1) < nn.backend.in_test_phase(1.0, self.p),
+            tf.random.uniform([1], 0, 1, dtype=self._compute_dtype) < nn.backend.in_test_phase(tf.constant(1.0, dtype=self._compute_dtype), self.p),
             lambda: layer(input),
             lambda: self.transform_input_fn(input)
         )
