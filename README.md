@@ -251,9 +251,9 @@ Implementation of various AI papers for image classification
     <th colspan="2">ResNet101b</th>
     <th>93.79%</th>
     <th>6.21%</th>
-    <th>-</th>
-    <th>-</th>
-    <th>-</th>
+    <th>2,530,426</th>
+    <th>149.87M</th>
+    <th>1387</th>
   </tr>
   <tr>
     <th rowspan="2"></th>
