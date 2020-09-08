@@ -139,7 +139,7 @@ Implementation of various AI papers for image classification
     <th>93.50%</th>
     <th>6.50%</th>
     <th>873,722</th>
-    <th>51.83M</th>
+    <th>52.23M</th>
     <th>2065</th>
   </tr>
   <tr>
@@ -163,9 +163,9 @@ Implementation of various AI papers for image classification
     <th>+Mish</th>
     <th>93.94%</th>
     <th>6.06%</th>
-    <th>-</th>
-    <th>-</th>
-    <th>-</th>
+    <th>1,320,570</th>
+    <th>74.77M</th>
+    <th>1478</th>
   </tr>
   <tr>
     <th>+HTD</th>
