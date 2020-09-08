@@ -160,7 +160,7 @@ Implementation of various AI papers for image classification
     <th>+Mish</th>
     <th>93.94%</th>
     <th>6.06%</th>
-    <th>1,320,570</th>
+    <th>1,309,210</th>
     <th>74.77M</th>
     <th>1478</th>
   </tr>
