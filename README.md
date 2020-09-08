@@ -121,8 +121,8 @@ Implementation of various AI papers for image classification
     <th>+HTD +Cutmix</th>
     <th>94.59%</th>
     <th>5.41%</th>
-    <th>-</th>
-    <th>-</th>
+    <th>1,327,226</th>
+    <th>72.40M</th>
     <th>4160</th>
   </tr>
   <tr>
