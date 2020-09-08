@@ -112,18 +112,15 @@ Implementation of various AI papers for image classification
     <th colspan="2">ResNet34</th>
     <th>92.64%</th>
     <th>7.36%</th>
-    <th>1,327,226</th>
-    <th>72.40M</th>
-    <th>4160</th>
+    <th rowspan="2">1,327,226</th>
+    <th rowspan="2">72.40M</th>
+    <th rowspan="2">4160</th>
   </tr>
   <tr>
     <th rowspan="1"></th>
     <th>+HTD +Cutmix</th>
     <th>94.59%</th>
     <th>5.41%</th>
-    <th>1,327,226</th>
-    <th>72.40M</th>
-    <th>4160</th>
   </tr>
   <tr>
     <th colspan="2">ResNet35b</th>
