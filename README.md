@@ -45,8 +45,8 @@ Implementation of various AI papers for image classification
 <table>
   <tr>
     <th colspan="3">⠀⠀⠀⠀⠀⠀⠀⠀⠀Model⠀⠀⠀⠀⠀⠀⠀⠀⠀</th>
-    <th>Top1 Accuracy</th>
-    <th>Top1 Error</th>
+    <th>Top1</br>⠀⠀Accuracy⠀⠀</th>
+    <th>Top1</br>⠀⠀Error⠀⠀</th>
     <th>Param count</th>
     <th>FLOPs/2</th>
     <th>Training speed</br>(imgs/sec)</th>
@@ -417,8 +417,8 @@ Implementation of various AI papers for image classification
   </tr>
   <tr>
     <th colspan="2">SeNet101</th>
-    <th>94.30%|94.79%*</th>
-    <th>5.70%|5.21%*</th>
+    <th>94.30%</br>94.79%*</th>
+    <th>5.70%</br>5.21%*</th>
     <th>-</th>
     <th>-</th>
     <th>-</th>
