@@ -217,17 +217,17 @@ Implementation of various AI papers for image classification
     <th>+SD +HTD +Mish</th>
     <th>94.50%</th>
     <th>5.50%</th>
-    <th>-</th>
-    <th>-</th>
-    <th>-</th>
+    <th>1,309,210</th>
+    <th>74.77M</th>
+    <th>1544</th>
   </tr>
   <tr>
     <th>+SD +Cosine +Mish</th>
     <th>94.69%</th>
     <th>5.31%</th>
-    <th>-</th>
-    <th>-</th>
-    <th>-</th>
+    <th>1,309,210</th>
+    <th>74.77M</th>
+    <th>1544</th>
   </tr>
   <tr>
     <th>+SD +HTD +Cutout16</th>
@@ -241,33 +241,33 @@ Implementation of various AI papers for image classification
     <th>+SD +HTD +Mixup0.2</th>
     <th>95.42%</th>
     <th>4.58%</th>
-    <th>-</th>
-    <th>-</th>
-    <th>-</th>
+    <th>1,309,210</th>
+    <th>74.11M</th>
+    <th>2247</th>
   </tr>
   <tr>
     <th>+SD +HTD +Mixup1</th>
     <th>95.48%</th>
     <th>4.52%</th>
-    <th>-</th>
-    <th>-</th>
-    <th>-</th>
+    <th>1,309,210</th>
+    <th>74.11M</th>
+    <th>2247</th>
   </tr>
   <tr>
     <th>+SD +HTD +Cutmix</th>
     <th>95.56%</th>
     <th>4.44%</th>
-    <th>-</th>
-    <th>-</th>
-    <th>-</th>
+    <th>1,309,210</th>
+    <th>74.11M</th>
+    <th>2247</th>
   </tr>
   <tr>
     <th>+SD +Mish +HTD +Cutout16</th>
     <th>95.37%</th>
     <th>4.63%</th>
-    <th>-</th>
-    <th>-</th>
-    <th>-</th>
+    <th>1,309,210</th>
+    <th>74.77M</th>
+    <th>1544</th>
   </tr>
   <tr>
     <th colspan="2">ResNet101b</th>
