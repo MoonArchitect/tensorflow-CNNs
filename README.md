@@ -201,9 +201,9 @@ Implementation of various AI papers for image classification
     <th>+SD</th>
     <th>94.05%</th>
     <th>5.95%</th>
-    <th>-</th>
-    <th>-</th>
-    <th>-</th>
+    <th>1,309,210</th>
+    <th>74.11M</th>
+    <th>2247</th>
   </tr>
   <tr>
     <th>+SD +Mish</th>
@@ -233,9 +233,9 @@ Implementation of various AI papers for image classification
     <th>+SD +HTD +Cutout16</th>
     <th>94.96%</th>
     <th>5.04%</th>
-    <th>-</th>
-    <th>-</th>
-    <th>-</th>
+    <th>1,309,210</th>
+    <th>74.11M</th>
+    <th>2247</th>
   </tr>
   <tr>
     <th>+SD +HTD +Mixup0.2</th>
