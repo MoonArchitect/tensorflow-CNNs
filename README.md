@@ -133,7 +133,7 @@ Implementation of various AI papers for image classification
     <th> </th>
   </tr>
   <tr>
-    <th rowspan="24"></th>
+    <th rowspan="25"></th>
     <th colspan="2">ResNet34</th>
     <th>92.64%</th>
     <th>7.36%</th>
@@ -179,7 +179,7 @@ Implementation of various AI papers for image classification
     <th rowspan="2">2171</th>
   </tr>
   <tr>
-    <th rowspan="11"></th>
+    <th rowspan="12"></th>
     <th>+HTD</th>
     <th>93.65%</th>
     <th>6.35%</th>
@@ -242,6 +242,14 @@ Implementation of various AI papers for image classification
     <th>+SD +HTD +Cutout16 +Mish</th>
     <th>95.37%</th>
     <th>4.63%</th>
+  </tr>
+  <tr>
+    <th>+SD +HTD +Cutmix +Mish</th>
+    <th>-</th>
+    <th>-</th>
+    <th>-</th>
+    <th>-</th>
+    <th>-</th>
   </tr>
   <tr>
     <th colspan="2">ResNet101b</th>
