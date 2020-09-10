@@ -182,14 +182,6 @@ Implementation of various AI papers for image classification
   </tr>
   <tr>
     <th rowspan="11"></th>
-    <th>+Mish</th>
-    <th>93.94%</th>
-    <th>6.06%</th>
-    <th>1,309,210</th>
-    <th>74.77M</th>
-    <th>1478</th>
-  </tr>
-  <tr>
     <th>+HTD</th>
     <th>93.65%</th>
     <th>6.35%</th>
@@ -204,30 +196,6 @@ Implementation of various AI papers for image classification
     <th>1,309,210</th>
     <th>74.11M</th>
     <th>2247</th>
-  </tr>
-  <tr>
-    <th>+SD +Mish</th>
-    <th>94.42%</th>
-    <th>5.58%</th>
-    <th>1,309,210</th>
-    <th>74.77M</th>
-    <th>1544</th>
-  </tr>
-  <tr>
-    <th>+SD +HTD +Mish</th>
-    <th>94.50%</th>
-    <th>5.50%</th>
-    <th>1,309,210</th>
-    <th>74.77M</th>
-    <th>1544</th>
-  </tr>
-  <tr>
-    <th>+SD +Cosine +Mish</th>
-    <th>94.69%</th>
-    <th>5.31%</th>
-    <th>1,309,210</th>
-    <th>74.77M</th>
-    <th>1544</th>
   </tr>
   <tr>
     <th>+SD +HTD +Cutout16</th>
@@ -260,6 +228,38 @@ Implementation of various AI papers for image classification
     <th>1,309,210</th>
     <th>74.11M</th>
     <th>2247</th>
+  </tr>
+  <tr>
+    <th>+Mish</th>
+    <th>93.94%</th>
+    <th>6.06%</th>
+    <th>1,309,210</th>
+    <th>74.77M</th>
+    <th>1478</th>
+  </tr>
+  <tr>
+    <th>+SD +Mish</th>
+    <th>94.42%</th>
+    <th>5.58%</th>
+    <th>1,309,210</th>
+    <th>74.77M</th>
+    <th>1544</th>
+  </tr>
+  <tr>
+    <th>+SD +HTD +Mish</th>
+    <th>94.50%</th>
+    <th>5.50%</th>
+    <th>1,309,210</th>
+    <th>74.77M</th>
+    <th>1544</th>
+  </tr>
+  <tr>
+    <th>+SD +Cosine +Mish</th>
+    <th>94.69%</th>
+    <th>5.31%</th>
+    <th>1,309,210</th>
+    <th>74.77M</th>
+    <th>1544</th>
   </tr>
   <tr>
     <th>+SD +Mish +HTD +Cutout16</th>
