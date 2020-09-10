@@ -151,7 +151,7 @@ Implementation of various AI papers for image classification
     <th colspan="2">ResNet35b</th>
     <th>92.83%</th>
     <th>7.17%</th>
-    <th>873,722</th>
+    <th rowspan="3">873,722</th>
     <th>51.83M</th>
     <th>3012</th>
   </tr>
@@ -160,7 +160,6 @@ Implementation of various AI papers for image classification
     <th>+Mish</th>
     <th>93.50%</th>
     <th>6.50%</th>
-    <th>873,722</th>
     <th>52.23M</th>
     <th>2065</th>
   </tr>
@@ -168,7 +167,6 @@ Implementation of various AI papers for image classification
     <th>+HTD +Cutmix</th>
     <th>95.06%</th>
     <th>4.96%</th>
-    <th>873,722</th>
     <th>51.83M</th>
     <th>3012</th>
   </tr>
@@ -176,98 +174,74 @@ Implementation of various AI papers for image classification
     <th colspan="2">ResNet50b</th>
     <th>93.18%</th>
     <th>6.82%</th>
-    <th>1,309,210</th>
-    <th>74.11M</th>
-    <th>2171</th>
+    <th rowspan="2">1,309,210</th>
+    <th rowspan="2">74.11M</th>
+    <th rowspan="2">2171</th>
   </tr>
   <tr>
     <th rowspan="11"></th>
     <th>+HTD</th>
     <th>93.65%</th>
     <th>6.35%</th>
-    <th>1,309,210</th>
-    <th>74.11M</th>
-    <th>2171</th>
   </tr>
   <tr>
     <th>+SD</th>
     <th>94.05%</th>
     <th>5.95%</th>
-    <th>1,309,210</th>
-    <th>74.11M</th>
-    <th>2247</th>
+    <th rowspan="5">1,309,210</th>
+    <th rowspan="5">74.11M</th>
+    <th rowspan="5">2247</th>
   </tr>
   <tr>
     <th>+SD +HTD +Cutout16</th>
     <th>94.96%</th>
     <th>5.04%</th>
-    <th>1,309,210</th>
-    <th>74.11M</th>
-    <th>2247</th>
   </tr>
   <tr>
     <th>+SD +HTD +Mixup0.2</th>
     <th>95.42%</th>
     <th>4.58%</th>
-    <th>1,309,210</th>
-    <th>74.11M</th>
-    <th>2247</th>
   </tr>
   <tr>
     <th>+SD +HTD +Mixup1</th>
     <th>95.48%</th>
     <th>4.52%</th>
-    <th>1,309,210</th>
-    <th>74.11M</th>
-    <th>2247</th>
   </tr>
   <tr>
     <th>+SD +HTD +Cutmix</th>
     <th>95.56%</th>
     <th>4.44%</th>
-    <th>1,309,210</th>
-    <th>74.11M</th>
-    <th>2247</th>
   </tr>
   <tr>
     <th>+Mish</th>
     <th>93.94%</th>
     <th>6.06%</th>
-    <th>1,309,210</th>
-    <th>74.77M</th>
+    <th rowspan="1">1,309,210</th>
+    <th rowspan="1">74.77M</th>
     <th>1478</th>
   </tr>
   <tr>
     <th>+SD +Mish</th>
     <th>94.42%</th>
     <th>5.58%</th>
-    <th>1,309,210</th>
-    <th>74.77M</th>
-    <th>1544</th>
+    <th rowspan="4">1,309,210</th>
+    <th rowspan="4">74.77M</th>
+    <th rowspan="4">1544</th>
   </tr>
   <tr>
     <th>+SD +HTD +Mish</th>
     <th>94.50%</th>
     <th>5.50%</th>
-    <th>1,309,210</th>
-    <th>74.77M</th>
-    <th>1544</th>
   </tr>
   <tr>
     <th>+SD +Cosine +Mish</th>
     <th>94.69%</th>
     <th>5.31%</th>
-    <th>1,309,210</th>
-    <th>74.77M</th>
-    <th>1544</th>
   </tr>
   <tr>
-    <th>+SD +Mish +HTD +Cutout16</th>
+    <th>+SD +HTD +Cutout16 +Mish</th>
     <th>95.37%</th>
     <th>4.63%</th>
-    <th>1,309,210</th>
-    <th>74.77M</th>
-    <th>1544</th>
   </tr>
   <tr>
     <th colspan="2">ResNet101b</th>
