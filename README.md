@@ -209,9 +209,9 @@ Implementation of various AI papers for image classification
     <th>+SD +Mish</th>
     <th>94.42%</th>
     <th>5.58%</th>
-    <th>-</th>
-    <th>-</th>
-    <th>-</th>
+    <th>1,309,210</th>
+    <th>74.77M</th>
+    <th>1544</th>
   </tr>
   <tr>
     <th>+SD +HTD +Mish</th>
