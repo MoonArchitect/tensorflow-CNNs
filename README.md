@@ -133,6 +133,14 @@ Implementation of various AI papers for image classification
     <th>-</th>
   </tr>
   <tr>
+    <th colspan="3"></br>MobileNetV3</th>
+    <th></th>
+    <th></th>
+    <th></th>
+    <th></th>
+    <th></th>
+  </tr>
+  <tr>
     <th colspan="3"></br>MobileNetV2</th>
     <th></th>
     <th></th>
