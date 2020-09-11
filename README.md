@@ -161,8 +161,8 @@ Implementation of various AI papers for image classification
   </tr>
   <tr>
     <th colspan="2">MobileNetV2 192px<sub>+HTD+Cutmix</sub></th>
-    <th>-</th>
-    <th>-</th>
+    <th>96.23%</th>
+    <th>3.77%</th>
     <th>-</th>
     <th>-</th>
     <th>-</th>
