@@ -110,7 +110,7 @@ Implementation of various AI papers for image classification
     <th></th>
   </tr>
   <tr>
-    <th rowspan="3"></th>
+    <th rowspan="4"></th>
     <th colspan="2">TResNetM-0.5-32px<sub>+HTD+Cutmix</sub></th>
     <th>-</th>
     <th>-</th>
@@ -120,6 +120,14 @@ Implementation of various AI papers for image classification
   </tr>
   <tr>
     <th colspan="2">TResNetM-0.5-192px<sub>+HTD+Cutmix</sub></th>
+    <th>-</th>
+    <th>-</th>
+    <th>-</th>
+    <th>-</th>
+    <th>-</th>
+  </tr>
+  <tr>
+    <th colspan="2">TResNetM-0.75-160px<sub>+HTD+Cutmix</sub></th>
     <th>-</th>
     <th>-</th>
     <th>-</th>
