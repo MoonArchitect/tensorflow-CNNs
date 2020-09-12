@@ -110,8 +110,8 @@ Implementation of various AI papers for image classification
     <th></th>
   </tr>
   <tr>
-    <th rowspan="4"></th>
-    <th colspan="2">TResNetM-0.5-32px<sub>+HTD+Cutmix</sub></th>
+    <th rowspan="5"></th>
+    <th colspan="2">TResNetM-.5-32px<sub>+HTD+Cutmix</sub></th>
     <th>-</th>
     <th>-</th>
     <th>-</th>
@@ -119,7 +119,7 @@ Implementation of various AI papers for image classification
     <th>-</th>
   </tr>
   <tr>
-    <th colspan="2">TResNetM-0.5-192px<sub>+HTD+Cutmix</sub></th>
+    <th colspan="2">TResNetM-.5-192px<sub>+HTD+Cutmix</sub></th>
     <th>-</th>
     <th>-</th>
     <th>-</th>
@@ -127,7 +127,7 @@ Implementation of various AI papers for image classification
     <th>-</th>
   </tr>
   <tr>
-    <th colspan="2">TResNetM-0.75-160px<sub>+HTD+Cutmix</sub></th>
+    <th colspan="2">TResNetM-.75-160px<sub>+Cos+Cutmix</sub></th>
     <th>-</th>
     <th>-</th>
     <th>-</th>
@@ -135,7 +135,15 @@ Implementation of various AI papers for image classification
     <th>-</th>
   </tr>
   <tr>
-    <th colspan="2">TResNetL-0.5-192px<sub>+HTD+Cutmix</sub></th>
+    <th colspan="2">TResNetM-128px<sub>+Cos+Cutmix</sub></th>
+    <th>-</th>
+    <th>-</th>
+    <th>-</th>
+    <th>-</th>
+    <th>-</th>
+  </tr>
+  <tr>
+    <th colspan="2">TResNetL-.5-192px<sub>+HTD+Cutmix</sub></th>
     <th>-</th>
     <th>-</th>
     <th>-</th>
@@ -285,7 +293,7 @@ Implementation of various AI papers for image classification
     <th>5.50%</th>
   </tr>
   <tr>
-    <th>+SD +Cosine +Mish</th>
+    <th>+SD +Cos +Mish</th>
     <th>94.69%</th>
     <th>5.31%</th>
   </tr>
@@ -548,6 +556,8 @@ Implementation of various AI papers for image classification
   From [Deep Networks with Stochastic Depth](https://arxiv.org/abs/1603.09382)
 * HTD = Hyperbolic-Tangent Learning Rate Decay schedule. </br>
   From [Stochastic Gradient Descent with Hyperbolic-Tangent Decay on Classification](https://arxiv.org/abs/1806.01593)
+* Cos = Cosine Learning Rate Decay schedule. </br>
+  From [Stochastic Gradient Descent with Warm Restarts](https://arxiv.org/abs/1608.03983)
 * Mish = Self regularized non-monotonic activation function, f(x) = x*tanh(softplus(x)). </br>
   From [Mish: A Self Regularized Non-Monotonic Activation Function](https://arxiv.org/abs/1908.08681)
 
