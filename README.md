@@ -112,8 +112,8 @@ Implementation of various AI papers for image classification
   <tr>
     <th rowspan="5"></th>
     <th colspan="2">TResNetM-.5-32px<sub>+HTD+Cutmix</sub></th>
-    <th>-</th>
-    <th>-</th>
+    <th>96.19%</th>
+    <th>3.81%</th>
     <th>-</th>
     <th>-</th>
     <th>-</th>
