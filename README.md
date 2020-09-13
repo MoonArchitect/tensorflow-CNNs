@@ -20,8 +20,6 @@ Implementation of various AI papers for image classification
 - [ ] NAT
 - [ ] TResNet
 - [ ] PyramidNet
-- [ ] InceptionV4
-- [ ] InceptionV3
 - [ ] Xception
 - [ ] IBN-Net
 
@@ -63,22 +61,6 @@ Implementation of various AI papers for image classification
   </tr>
   <tr>
     <th colspan="3" style="border-top:5px">EfficientNet</th>
-    <th></th>
-    <th></th>
-    <th></th>
-    <th></th>
-    <th></th>
-  </tr>
-  <tr>
-    <th colspan="3">InceptionV4</th>
-    <th></th>
-    <th></th>
-    <th></th>
-    <th></th>
-    <th></th>
-  </tr>
-  <tr>
-    <th colspan="3">InceptionV3</th>
     <th></th>
     <th></th>
     <th></th>
