@@ -111,7 +111,7 @@ def get_activation_layer(activation, **kwargs):
     """
     """
     assert (activation is not None)
-
+    
     if isinstance(activation, str):
         activation = activation.lower()
         if activation == "relu":
@@ -121,15 +121,15 @@ def get_activation_layer(activation, **kwargs):
         elif activation == "mish":
             return Mish(**kwargs)
         elif activation == "swish":
-            NotImplementedError("Swish is not implemented")
-            #return nn.layers.Lambda(lambda x: nn.activations.swish(x))
+            return nn.layers.Activation(tf.nn.swish, **kwargs)
         elif activation == "hswish":
-            NotImplementedError("Hswish is not implemented")
-            return None
+            #raise NotImplementedError("Hswish is not implemented")
+            print("hswish is not implemented efficiently yet, using swish instead")
+            return nn.layers.Activation(tf.nn.swish, **kwargs)
         elif activation == "sigmoid":
-            return nn.layers.Lambda(lambda x: tf.nn.sigmoid(x))
+            return nn.layers.Activation('sigmoid', **kwargs)
         elif activation == "tanh":
-            return nn.layers.Lambda(lambda x: tf.nn.tanh(x))
+            return nn.layers.Activation('tanh', **kwargs)
         else:
             raise NotImplementedError(f"{activation} is not implemented")
     else:
