@@ -2,6 +2,21 @@ import tensorflow as tf
 import tensorflow.keras as nn
 from tensorflow.keras.backend import in_test_phase
 
+class AA_downsampling(nn.layers.Layer):
+    """
+    """
+    def __init__(self, in_channels, data_format, **kwargs):
+        super().__init__(**kwargs)
+        self.data_format = 'NHWC' if data_format == 'channels_last' else 'NCHW'
+        
+        a = tf.constant([1., 2., 1.], dtype=self._compute_dtype)
+        filter = (a[:, None] * a[None, :])
+        filter = filter / tf.reduce_sum(filter)
+        self.filter = tf.repeat(filter[:, :, None, None], [in_channels], axis=2)
+        self.strides = [1,2,2,1] if data_format == 'channels_last' else [1,1,2,2]
+
+    def call(self, input):
+        return tf.nn.depthwise_conv2d(input, self.filter, self.strides, "SAME", data_format=self.data_format)
 
 @tf.function
 @tf.custom_gradient
