@@ -141,6 +141,39 @@ Implementation of various AI papers for image classification
     <th></th>
   </tr>
   <tr>
+    <th rowspan="4"></th>
+    <th colspan="2">MobileNetV3Small<sub>+Cos+Cutmix</sub></th>
+    <th>-</th>
+    <th>-</th>
+    <th>-</th>
+    <th>-</th>
+    <th>-</th>
+  </tr>
+  <tr>
+    <th colspan="2">MobileNetV3Small_2.<sub>+Cos+Cutmix</sub></th>
+    <th>-</th>
+    <th>-</th>
+    <th>-</th>
+    <th>-</th>
+    <th>-</th>
+  </tr>
+  <tr>
+    <th colspan="2">MobileNetV3Large<sub>+HTD+Cutmix</sub></th>
+    <th>-</th>
+    <th>-</th>
+    <th>-</th>
+    <th>-</th>
+    <th>-</th>
+  </tr>
+  <tr>
+    <th colspan="2">MobileNetV3Large_2.<sub>+HTD+Cutmix</sub></th>
+    <th>-</th>
+    <th>-</th>
+    <th>-</th>
+    <th>-</th>
+    <th>-</th>
+  </tr>
+  <tr>
     <th colspan="3"></br>MobileNetV2</th>
     <th></th>
     <th></th>
