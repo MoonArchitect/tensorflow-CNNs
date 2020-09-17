@@ -141,8 +141,16 @@ Implementation of various AI papers for image classification
     <th></th>
   </tr>
   <tr>
-    <th rowspan="5"></th>
+    <th rowspan="6"></th>
     <th colspan="2">MNetV3S 192px 1.5<sub>+Cos+Cutmix</sub></th>
+    <th>-</th>
+    <th>-</th>
+    <th>-</th>
+    <th>-</th>
+    <th>-</th>
+  </tr>
+  <tr>
+    <th colspan="2">MNetV3S 224px 2<sub>+Cos+Cutmix</sub></th>
     <th>-</th>
     <th>-</th>
     <th>-</th>
