@@ -159,8 +159,8 @@ Implementation of various AI papers for image classification
   </tr>
   <tr>
     <th colspan="2">MobileNetV3Small<sub>+Cos+Cutmix</sub></th>
-    <th>-</th>
-    <th>-</th>
+    <th>95.50%</th>
+    <th>4.50%</th>
     <th>-</th>
     <th>-</th>
     <th>-</th>
