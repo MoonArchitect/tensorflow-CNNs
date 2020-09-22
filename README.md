@@ -141,10 +141,18 @@ Implementation of various AI papers for image classification
     <th></th>
   </tr>
   <tr>
-    <th rowspan="6"></th>
+    <th rowspan="5"></th>
     <th colspan="2">MNetV3S 192px 1.5<sub>+Cos+Cutmix</sub></th>
     <th>94.49%</th>
     <th>5.51%</th>
+    <th>-</th>
+    <th>-</th>
+    <th>-</th>
+  </tr>
+  <tr>
+    <th colspan="2">MNetV3S 224px<sub>+Cos+Cutmix</sub></th>
+    <th>95.50%</th>
+    <th>4.50%</th>
     <th>-</th>
     <th>-</th>
     <th>-</th>
@@ -158,15 +166,7 @@ Implementation of various AI papers for image classification
     <th>-</th>
   </tr>
   <tr>
-    <th colspan="2">MobileNetV3Small<sub>+Cos+Cutmix</sub></th>
-    <th>95.50%</th>
-    <th>4.50%</th>
-    <th>-</th>
-    <th>-</th>
-    <th>-</th>
-  </tr>
-  <tr>
-    <th colspan="2">MobileNetV3Small_2.<sub>+Cos+Cutmix</sub></th>
+    <th colspan="2">MNetV3L<sub>+HTD+Cutmix</sub></th>
     <th>-</th>
     <th>-</th>
     <th>-</th>
@@ -174,15 +174,7 @@ Implementation of various AI papers for image classification
     <th>-</th>
   </tr>
   <tr>
-    <th colspan="2">MobileNetV3Large<sub>+HTD+Cutmix</sub></th>
-    <th>-</th>
-    <th>-</th>
-    <th>-</th>
-    <th>-</th>
-    <th>-</th>
-  </tr>
-  <tr>
-    <th colspan="2">MobileNetV3Large_2.<sub>+HTD+Cutmix</sub></th>
+    <th colspan="2">MNetV3L_2<sub>+HTD+Cutmix</sub></th>
     <th>-</th>
     <th>-</th>
     <th>-</th>
