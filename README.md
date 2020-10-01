@@ -141,7 +141,7 @@ Implementation of various AI papers for image classification
     <th></th>
   </tr>
   <tr>
-    <th rowspan="7"></th>
+    <th rowspan="8"></th>
     <th colspan="2">MNetV3S 160px 1.5<sub>+Cos+Cutmix</sub></th>
     <th>94.25%</th>
     <th>5.75%</th>
@@ -183,6 +183,14 @@ Implementation of various AI papers for image classification
   </tr>
   <tr>
     <th colspan="2">MNetV3L<sub>+HTD+Cutmix</sub></th>
+    <th>-</th>
+    <th>-</th>
+    <th>-</th>
+    <th>-</th>
+    <th>-</th>
+  </tr>
+  <tr>
+    <th colspan="2">MNetV3L 192px 2<sub>+HTD+Cutmix</sub></th>
     <th>-</th>
     <th>-</th>
     <th>-</th>
