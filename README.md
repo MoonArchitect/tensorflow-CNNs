@@ -191,8 +191,8 @@ Implementation of various AI papers for image classification
   </tr>
   <tr>
     <th colspan="2">MNetV3L<sub>+HTD+Cutmix</sub></th>
-    <th>-</th>
-    <th>-</th>
+    <th>96.37%</th>
+    <th>3.63%</th>
     <th>-</th>
     <th>-</th>
     <th>-</th>
