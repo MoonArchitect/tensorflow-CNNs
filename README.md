@@ -49,7 +49,7 @@ Implementation of various AI papers for image classification
     <th>Top1</br>⠀⠀Error⠀⠀</th>
     <th>Param count</th>
     <th>FLOPs/2</th>
-    <th>Training speed</br>(imgs/sec)</th>
+    <th>Training speed</br>(imgs/sec)|Tesla T4</th>
   </tr>
   <tr>
     <th colspan="3">ResNeSt</th>
