@@ -42,6 +42,7 @@ Implementation of various AI papers for image classification
 </details>
 
 ## CIFAR10 Results
+* Training speed measurements -> GPU:Tesla T4 + FP16 + XLA, Batch Size - 256 </br>(~~xxxx~~ imgs/sec) are for GTX1660 Super
 <table>
   <tr>
     <th colspan="3">⠀⠀⠀⠀⠀⠀⠀⠀⠀Model⠀⠀⠀⠀⠀⠀⠀⠀⠀</th>
@@ -253,7 +254,7 @@ Implementation of various AI papers for image classification
     <th>7.36%</th>
     <th rowspan="2">1,327,226</th>
     <th rowspan="2">72.40M</th>
-    <th rowspan="2">4160</th>
+    <th rowspan="2"><strike>4160</strike></th>
   </tr>
   <tr>
     <th rowspan="1"></th>
@@ -267,7 +268,7 @@ Implementation of various AI papers for image classification
     <th>7.17%</th>
     <th rowspan="3">873,722</th>
     <th>51.83M</th>
-    <th>3012</th>
+    <th><strike>3012</strike></th>
   </tr>
   <tr>
     <th rowspan="2"></th>
@@ -275,14 +276,14 @@ Implementation of various AI papers for image classification
     <th>93.50%</th>
     <th>6.50%</th>
     <th>52.23M</th>
-    <th>2065</th>
+    <th><strike>2065</strike></th>
   </tr>
   <tr>
     <th>+HTD +Cutmix</th>
     <th>95.06%</th>
     <th>4.96%</th>
     <th>51.83M</th>
-    <th>3012</th>
+    <th><strike>3012</strike></th>
   </tr>
   <tr>
     <th colspan="2">ResNet50b</th>
@@ -290,7 +291,7 @@ Implementation of various AI papers for image classification
     <th>6.82%</th>
     <th rowspan="2">1,309,210</th>
     <th rowspan="2">74.11M</th>
-    <th rowspan="2">2171</th>
+    <th rowspan="2"><strike>2171</strike></th>
   </tr>
   <tr>
     <th rowspan="12"></th>
@@ -304,7 +305,7 @@ Implementation of various AI papers for image classification
     <th>5.95%</th>
     <th rowspan="5">1,309,210</th>
     <th rowspan="5">74.11M</th>
-    <th rowspan="5">2247</th>
+    <th rowspan="5"><strike>2247</strike></th>
   </tr>
   <tr>
     <th>+SD +HTD +Cutout16</th>
@@ -332,7 +333,7 @@ Implementation of various AI papers for image classification
     <th>6.06%</th>
     <th rowspan="1">1,309,210</th>
     <th rowspan="1">74.77M</th>
-    <th>1478</th>
+    <th><strike>1478</strike></th>
   </tr>
   <tr>
     <th>+SD +Mish</th>
@@ -340,7 +341,7 @@ Implementation of various AI papers for image classification
     <th>5.58%</th>
     <th rowspan="4">1,309,210</th>
     <th rowspan="4">74.77M</th>
-    <th rowspan="4">1544</th>
+    <th rowspan="4"><strike>1544</strike></th>
   </tr>
   <tr>
     <th>+SD +HTD +Mish</th>
@@ -371,7 +372,7 @@ Implementation of various AI papers for image classification
     <th>6.21%</th>
     <th>2,530,426</th>
     <th>149.87M</th>
-    <th>1387</th>
+    <th><strike>1387</strike></th>
   </tr>
   <tr>
     <th rowspan="2"></th>
@@ -380,7 +381,7 @@ Implementation of various AI papers for image classification
     <th>5.60%</th>
     <th>2,530,426</th>
     <th>149.87M</th>
-    <th>1512</th>
+    <th><strike>1512</strike></th>
   </tr>
   <tr>
     <th>+SD +Mish +HTD +Cutout16</th>
@@ -388,7 +389,7 @@ Implementation of various AI papers for image classification
     <th>4.45%</th>
     <th>2,530,426</th>
     <th>151.21M</th>
-    <th>1074</th>
+    <th><strike>1074</strike></th>
   </tr>
   <tr>
     <th colspan="2">ResNet152b</th>
@@ -405,7 +406,7 @@ Implementation of various AI papers for image classification
     <th>4.94%</th>
     <th>3,528,314</th>
     <th>225.63M</th>
-    <th>1161</th>
+    <th><strike>1161</strike></th>
   </tr>
   <tr>
     <th colspan="2">ResNet170b +Mish +HTD +Cutmix</th>
