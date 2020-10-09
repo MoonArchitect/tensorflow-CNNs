@@ -410,8 +410,8 @@ Implementation of various AI papers for image classification
   </tr>
   <tr>
     <th colspan="2">ResNet170b +Mish +HTD +Cutmix</th>
-    <th>-</th>
-    <th>-</th>
+    <th>96.66%</th>
+    <th>3.34%</th>
     <th>4,414,202</th>
     <th>252.37M</th>
     <th>-</th>
