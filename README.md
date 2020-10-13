@@ -162,9 +162,9 @@ Implementation of various AI papers for image classification
     <th colspan="2">MNetV3S 192px 1.5<sub>+Cos+Cutmix</sub></th>
     <th>-</th>
     <th>-</th>
+    <th>1,732,152</th>
     <th>-</th>
-    <th>-</th>
-    <th>-</th>
+    <th>1542</th>
   </tr>
   <tr>
     <th colspan="2">MNetV3S 192px 2<sub>+Cos+Cutmix</sub></th>
