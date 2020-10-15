@@ -1,6 +1,12 @@
 import tensorflow as tf
 import tensorflow.keras as nn
 
+""" 
+    Implementation of MobileNetV2 for CIFAR/SVHN/32x32
+    
+    From: MobileNetV2: Inverted Residuals and Linear Bottlenecks, https://arxiv.org/abs/1801.04381 
+    By: Mark Sandler, Andrew Howard, Menglong Zhu, Andrey Zhmoginov, Liang-Chieh Chen
+"""
 
 def inverted_res_block(input, 
                        filters, 
@@ -155,7 +161,7 @@ def MobileNetV2(input_shape=(32, 32, 3),
     x = nn.layers.ReLU(6.0)(x)
     
     x = tf.keras.layers.GlobalAveragePooling2D(data_format=data_format)(x)
-    output = tf.keras.layers.Dense(classes)(x)
+    output = tf.keras.layers.Dense(classes)(x) # use Conv 1x1
 
     return tf.keras.models.Model(inputs=input,
                                  outputs=output,
@@ -311,7 +317,4 @@ def MobileNetV2_96(width_multiplier=1,
                        width_multiplier=width_multiplier,
                        classes=classes,
                        data_dormat=data_format)
-
-
-
 
