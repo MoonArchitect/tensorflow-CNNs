@@ -13,7 +13,7 @@ Implementation of various AI papers for image classification
 - [x] ResNeXt + Stochastic Depth
 - [x] DenseNet (Currently Reworking)
 - [x] MobileNetV2
-- [ ] MobileNetV3
+- [x] MobileNetV3
 - [ ] SeNet
 - [ ] ResNeSt
 - [ ] EfficientNet
