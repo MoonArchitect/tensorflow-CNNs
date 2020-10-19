@@ -556,7 +556,7 @@ Implementation of various AI papers for image classification
     <th></th>
   </tr>
   <tr>
-    <th rowspan="6"></th>
+    <th rowspan="4"></th>
     <th colspan="2">DenseNet100k12</th>
     <th>-</th>
     <th>-</th>
@@ -565,23 +565,7 @@ Implementation of various AI papers for image classification
     <th>-</th>
   </tr>
   <tr>
-    <th colspan="2">DenseNet100k16</th>
-    <th>-</th>
-    <th>-</th>
-    <th>-</th>
-    <th>-</th>
-    <th>-</th>
-  </tr>
-  <tr>
     <th colspan="2">DenseNet160k12</th>
-    <th>-</th>
-    <th>-</th>
-    <th>-</th>
-    <th>-</th>
-    <th>-</th>
-  </tr>
-  <tr>
-    <th colspan="2">DenseNet250k12</th>
     <th>-</th>
     <th>-</th>
     <th>-</th>
