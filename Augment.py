@@ -1,7 +1,59 @@
 import tensorflow as tf
 
-# In progress
+def from_image_slices(images,
+                      labels,
+                      batch_size,
+                      advanced_augment=None,
+                      flip_up_down=False,
+                      flip_left_right=False,
+                      #random_hue_range=None,
+                      random_shift_delta=None,
+                      random_contrast_delta=None,
+                      random_brightness_delta=None,
+                      #random_saturation_range=None
+                      num_parallel_calls=12,
+                      ):
+    """
+    """
+    dataset = tf.data.Dataset.from_tensor_slices((images, labels)
+                    ).repeat(
+                    ).shuffle(512, reshuffle_each_iteration=True
+                    ).batch(batch_size)
+    
+    if advanced_augment:
+        if advanced_augment == 'Cutout':
+            advanced_fn = Cutout(imgSize = images[0].shape[0],
+                                 cutSize = 16,
+                                 batch_size = batch_size,
+                                 returnDataset=True)
+        elif advanced_augment == 'Cutmix':
+            advanced_fn = Cutmix(imgSize = images[0].shape[0], 
+                                 batch_size = batch_size, 
+                                 returnDataset=True)
+        elif advanced_augment == 'Mixup':
+            advanced_fn = Mixup(alpha=0.2)
+        elif advanced_augment == 'HardPatchUp':
+            #advanced_fn = HardPatchUp()
+            raise NotImplementedError()
+        elif advanced_augment == 'SoftPatchUp':
+            #advanced_fn = SoftPatchUp()
+            raise NotImplementedError()
+        else:
+            raise ValueError(f"Value of advanced_augment has to be one of ['Cutout', 'Cutmix', 'Mixup', 'HardPatchUp', 'SoftPatchUp'], recieved {advanced_augment}")
 
+        dataset = dataset.interleave(advanced_fn, num_parallel_calls=num_parallel_calls)
+    
+    if flip_up_down or flip_left_right or random_shift_delta or random_contrast_delta or random_brightness_delta:
+        augment_fn = Augment(batch_size = batch_size,
+                             flip_up_down = flip_up_down,
+                             flip_left_right=flip_left_right,
+                             random_shift_delta=random_shift_delta,
+                             random_contrast_delta=random_contrast_delta,
+                             random_brightness_delta=random_brightness_delta,
+                             returnDataset=True)
+        dataset = dataset.interleave(augment_fn, num_parallel_calls=num_parallel_calls)
+
+    return dataset.prefetch(tf.data.experimental.AUTOTUNE)
 
 def Augment(batch_size,
             flip_up_down=None, 
@@ -136,3 +188,4 @@ def HardPatchUp():
     def map_fn(x, y):
         return x, y
     return map_fn
+
