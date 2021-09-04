@@ -136,9 +136,9 @@ def train(model,
             utils.Callbacks.ProgressCheckpoint(checkpoint, model_id,  hparams)
         )
 
-    train_ds, val_ds = data.readDatasets(path=data_dir)
+    train_ds, val_ds = data.read_dataset(path=data_dir)
 
-    train_ds, val_ds = data.prepareDatasets(
+    train_ds, val_ds = data.prepare_cifar10(
         train_ds, val_ds,
         batch_size=batch_size,
         adv_augment=adv_augment
@@ -164,7 +164,7 @@ def train(model,
     )
 
 
-def main():		# TODO when called creates new name (date) even if id is already in checkpoint
+def main():
     args = parse_args()
 
     if not args.full_info:

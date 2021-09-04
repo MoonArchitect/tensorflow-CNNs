@@ -1,10 +1,10 @@
 import os
 import tensorflow as tf
 
-__all__ = ["readDatasets", "prepareDatasets", "display_dataset"]
+__all__ = ["read_dataset", "prepare_cifar10", "display_dataset"]
 
 
-def readDatasets(path = "tfrecords/cifar10"):
+def read_dataset(path = "tfrecords/cifar10"):
     train_dataset = tf.data.TFRecordDataset([os.path.join(path, "train.tfrecord")])
     val_dataset = tf.data.TFRecordDataset([os.path.join(path, "val.tfrecord")])
 
@@ -31,7 +31,7 @@ def readDatasets(path = "tfrecords/cifar10"):
 
 
 
-def prepareDatasets(train_dataset,
+def prepare_cifar10(train_dataset,
                     val_dataset,
                     batch_size,
                     adv_augment = None):

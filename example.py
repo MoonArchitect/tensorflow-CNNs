@@ -5,7 +5,7 @@ import tensorflow as tf
 
 import models
 from utils import LearningSchedules
-from data import readDatasets, prepareDatasets
+from data import read_dataset, prepare_cifar10
 
 
 tf.keras.mixed_precision.set_global_policy('mixed_float16')		# enable mixed precision
@@ -18,8 +18,8 @@ max_lr = 0.4
 
 
 print("Dataset prep")
-train_ds, val_ds = readDatasets()
-train_ds, val_ds = prepareDatasets(
+train_ds, val_ds = read_dataset()
+train_ds, val_ds = prepare_cifar10(
     train_ds, val_ds,
     batch_size=batch_size,
     adv_augment="cutmix"
