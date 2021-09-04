@@ -118,14 +118,17 @@ def main():
     with open(args.checkpoint, "r+") as file:
         checkpoint = yaml.load(file, Loader=yaml.FullLoader)
 
-    
     ids = [hashlib.md5(("train.py" + clean + f" --checkpoint={args.checkpoint}").encode()).hexdigest() for clean in clean_arguments]
     
     for model, id in zip(arguments, ids):
-        if checkpoint is not None and id in checkpoint and checkpoint[id]["status"] == "Finished":
-            continue
-        
         command = "python train.py" + model + " --dryrun" + " --full_info"
+        
+        if checkpoint is not None and id in checkpoint:
+            if checkpoint[id]["status"] == "Finished":  # TODO check if "status" is present
+                continue
+            
+            command += f" --id={id} --name={checkpoint[id]['cfg']['name']}"  # TODO check if fields exist
+        
         print(f"\n{'-'*50}  Dry run: {id}  {'-'*50}")
         print(f"Running:   {command}\n\n")
         
@@ -134,17 +137,21 @@ def main():
         print(f"\n{'-'*150}\n")
 
     for model, id in zip(arguments, ids):
-        if checkpoint is not None and id in checkpoint and checkpoint[id]["status"] == "Finished":
-            continue
-        
         command = "python train.py" + model + f" --checkpoint=\"{args.checkpoint}\""
+        
+        if checkpoint is not None and id in checkpoint:
+            if checkpoint[id]["status"] == "Finished":  # TODO check if "status" is present
+                continue
+            
+            command += f" --id={id} --name={checkpoint[id]['cfg']['name']}"  # TODO check if fields exist
+
         print(f"\n{'-'*300}")
         print(f"Id:   {id}")
         print(f"Running:   {command}\n\n")
         
         os.system(command)
 
-        print(f"\n{'-'*300}\n")
+        print(f"\n{'-'*300}\n")  # TODO decrease
 
     # print(cfg)
 

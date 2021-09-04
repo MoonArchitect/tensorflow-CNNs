@@ -1,4 +1,6 @@
 import os
+import sys
+import hashlib
 import argparse
 from datetime import datetime
 from tensorboard.plugins.hparams.api import KerasCallback
@@ -42,7 +44,7 @@ train.py
 # continue			int			epoch to continue
 # name				string		model's name
 
-# TODO stop and inform if loss is NaN
+# TODO try to recover if loss is NaN
 # TODO subdivide Layers.py into individual files
 
 def parse_args():
@@ -55,9 +57,9 @@ def parse_args():
     parser.add_argument("--epochs", type=int, required=True, )
     parser.add_argument("--data", type=str, required=True, )
 
-    parser.add_argument("--id", type=int, default=0, help="" )
+    parser.add_argument("--name", type=str, default=None, help="" )
+    parser.add_argument("--id", type=str, default=None, help="" )
 
-    # parser.add_argument("--name", type=str, )
     parser.add_argument("--checkpoint", type=str, )
 
     parser.add_argument("--xla", dest="xla", action="store_true")
@@ -106,10 +108,10 @@ def train(model,
           batch_size: int,
           epochs: int,
           hparams: dict,
+          name: str,
+          model_id: str,
           adv_augment: str = None,
-          checkpoint: str = None,
-          name: str = None,
-          ):
+          checkpoint: str = None ):
 
     log_dir = os.path.join("logs", name)
     callbacks = [
@@ -131,7 +133,7 @@ def train(model,
 
     if checkpoint is not None:
         callbacks.append(
-            utils.Callbacks.ProgressCheckpoint(checkpoint, hparams)
+            utils.Callbacks.ProgressCheckpoint(checkpoint, model_id,  hparams)
         )
 
     train_ds, val_ds = data.readDatasets(path=data_dir)
@@ -162,7 +164,6 @@ def train(model,
     )
 
 
-
 def main():		# TODO when called creates new name (date) even if id is already in checkpoint
     args = parse_args()
 
@@ -175,9 +176,6 @@ def main():		# TODO when called creates new name (date) even if id is already in
     if args.fp16:
         tf.keras.mixed_precision.set_global_policy('mixed_float16')
 
-    if args.checkpoint is not None and ".yaml" not in args.checkpoint:
-        args.checkpoint += ".yaml"
-
     model_name, model_kwargs = parse_code(args.model)
     optimizer_name, optimizer_kwargs = parse_code(args.optimizer)
     lr_schedule_name, lr_schedule_kwargs = parse_code(args.lr_schedule)
@@ -185,8 +183,12 @@ def main():		# TODO when called creates new name (date) even if id is already in
     model = utils.creator.create_model(model_name, **model_kwargs)
     optimizer = utils.creator.create_optimzer(optimizer_name, **optimizer_kwargs)
     lr_schedule = utils.creator.create_lr_schedule(lr_schedule_name, **lr_schedule_kwargs)
+
+    if args.name is None:
+        args.name = model.name + datetime.now().strftime("@%m%d%H%M")
     
-    name = model.name + datetime.now().strftime("@%m%d%H%M")
+    if args.id is None:
+        args.id = hashlib.md5(" ".join(sys.argv).encode()).hexdigest()
 
     if args.dryrun:
         dry_run()
@@ -200,9 +202,10 @@ def main():		# TODO when called creates new name (date) even if id is already in
             epochs = args.epochs,
             adv_augment = args.augment,
             checkpoint = args.checkpoint,
-            name = name,
+            name = args.name,
+            model_id = args.id,
             hparams = {
-                "name": name,
+                "name": args.name,
                 "model": args.model,
                 "batch_size": args.batch_size,
                 "xla": args.xla,

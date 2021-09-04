@@ -1,5 +1,4 @@
 import sys
-import hashlib
 from datetime import datetime
 
 import yaml
@@ -13,15 +12,18 @@ class ProgressCheckpoint(Callback):
     """
     ProgressCheckpoint
     """
-    def __init__(self, path, hparams):
+    def __init__(self, path, model_id, hparams):
         super().__init__()
         
-        open(path, "a+").close()
+        if path[-5:] != ".yaml":
+            path += ".yaml"
+
+        open(path, "a+").close()  # TODO check if file exists first
         self.file = open(path, "r+")
         self.yaml = yaml.load(self.file, Loader=yaml.FullLoader)
 
         command = " ".join(sys.argv[0:])
-        self.id = hashlib.md5(command.encode()).hexdigest()
+        self.id = model_id
 
         if self.yaml is None:
             self.yaml = {}
