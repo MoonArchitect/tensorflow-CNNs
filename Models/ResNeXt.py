@@ -1,22 +1,23 @@
 import tensorflow as tf
 import tensorflow.keras as nn
 from .ResNetV2 import BasicUnit, BottleneckUnit
-from .Layers import get_activation_layer, get_channels
+from .layers import get_activation_layer, get_channels
 from utils.registry import register_model
 
-""" 
+"""
     Implementation of ResNetXt for CIFAR/SVHN/32x32
 
     From: Aggregated Residual Transformations for Deep Neural Networks, https://arxiv.org/abs/1611.05431
     By: Saining Xie, Ross Girshick, Piotr Dollár, Zhuowen Tu, Kaiming He
 """
 
+
 ############## Building Blocks ##############
 def ResNeXtStage(layers,
                  filters,
                  groups=16,
-                 kernel_size=(3,3),
-                 strides=(1,1),
+                 kernel_size=(3, 3),
+                 strides=(1, 1),
                  expansion = 2,
                  data_format='channels_last',
                  activation='relu',
@@ -37,7 +38,7 @@ def ResNeXtStage(layers,
     expansion: int
         -
     data_format: 'channels_last' or 'channels_first'
-        The ordering of the dimensions in the inputs. 
+        The ordering of the dimensions in the inputs.
     activation: String or keras.Layer
         Activation function to use after each convolution.
     bottleneck: Boolean
@@ -45,11 +46,12 @@ def ResNeXtStage(layers,
     """
 
     Block = BottleneckUnit
+
     def fwd(input):
         sc = nn.layers.AvgPool2D(strides, data_format=data_format)(input) if strides != (1, 1) else input
         if get_channels(input, data_format) != filters:
             pad = [(filters - get_channels(input, data_format)) // 2] * 2
-            sc = tf.pad(sc, [[0,0], [0,0], [0,0], pad] if data_format=='channels_last' else [[0,0], pad, [0,0], [0,0]])
+            sc = tf.pad(sc, [[0, 0], [0, 0], [0, 0], pad] if data_format == 'channels_last' else [[0, 0], pad, [0, 0], [0, 0]])
         
         x = Block(filters=filters,
                   kernel_size=kernel_size,
@@ -61,7 +63,7 @@ def ResNeXtStage(layers,
                   **kwargs)(input)
         input = nn.layers.Add()([x, sc])
         
-        for i in range(layers-1):
+        for _ in range(layers - 1):
             x = Block(filters=filters,
                       kernel_size=kernel_size,
                       groups=groups,
@@ -77,7 +79,7 @@ def ResNeXtStage(layers,
 
 
 def ResNeXt(conv_per_stage,
-            img_size=(32,32),
+            img_size=(32, 32),
             img_channels=3,
             classes=10,
             cardinality=16,
@@ -104,12 +106,12 @@ def ResNeXt(conv_per_stage,
     activation: string, keras.Layer
         Activation function to use after each convolution.
     data_format: 'channels_last' or 'channels_first'
-        The ordering of the dimensions in the inputs. 
+        The ordering of the dimensions in the inputs.
     """
     assert filters % cardinality == 0, f"Number of filters ({filters}) has to be divisible by cardinality ({cardinality})"
 
-    input_shape = (*img_size, img_channels) if data_format=='channels_last' else (img_channels, *img_size)
-    strides = [(1,1)] + [(2,2)]*3
+    input_shape = (*img_size, img_channels) if data_format == 'channels_last' else (img_channels, *img_size)
+    strides = [(1, 1)] + [(2, 2)] * 3
     expansion = 2
 
     input = tf.keras.layers.Input(shape=input_shape)
@@ -126,7 +128,7 @@ def ResNeXt(conv_per_stage,
         x = ResNeXtStage(layers=layers,
                          filters=filters * expansion,
                          groups=cardinality,
-                         kernel_size=(3,3),
+                         kernel_size=(3, 3),
                          strides=strides,
                          expansion=expansion,
                          data_format=data_format,
@@ -134,7 +136,7 @@ def ResNeXt(conv_per_stage,
                          **kwargs)(x)
         filters *= 2
 
-    x = tf.keras.layers.BatchNormalization(-1 if data_format=='channels_last' else 1)(x)
+    x = tf.keras.layers.BatchNormalization(-1 if data_format == 'channels_last' else 1)(x)
     x = get_activation_layer(activation)(x)
 
     x = tf.keras.layers.GlobalAveragePooling2D(data_format=data_format)(x)
@@ -147,7 +149,7 @@ def ResNeXt(conv_per_stage,
 
 ############## Predefined Nets ##############
 @register_model
-def ResNeXt35(img_size=(32,32),
+def ResNeXt35(img_size=(32, 32),
               img_channels=3,
               classes=10,
               activation='relu',
@@ -166,26 +168,27 @@ def ResNeXt35(img_size=(32,32),
     activation: string, keras.Layer
         Main activation function of the network.
     data_format: 'channels_last' or 'channels_first'
-        The ordering of the dimensions in the inputs. 
+        The ordering of the dimensions in the inputs.
     Returns:
     ----------
     keras.Model
     """
     return ResNeXt(conv_per_stage=[2, 3, 4, 2],
-                    img_size=img_size,
-                    img_channels=img_channels,
-                    classes=classes,
-                    activation=activation,
-                    data_format=data_format,
-                    **kwargs)
+                   img_size=img_size,
+                   img_channels=img_channels,
+                   classes=classes,
+                   activation=activation,
+                   data_format=data_format,
+                   **kwargs)
+
 
 @register_model
-def ResNeXt50(img_size=(32,32),
-             img_channels=3,
-             classes=10,
-             activation='relu',
-             data_format='channels_last',
-             **kwargs):
+def ResNeXt50(img_size=(32, 32),
+              img_channels=3,
+              classes=10,
+              activation='relu',
+              data_format='channels_last',
+              **kwargs):
     """
     ResNeXt50 model for CIFAR/SVHN
     Parameters:
@@ -199,7 +202,7 @@ def ResNeXt50(img_size=(32,32),
     activation: string, keras.Layer
         Main activation function of the network.
     data_format: 'channels_last' or 'channels_first'
-        The ordering of the dimensions in the inputs. 
+        The ordering of the dimensions in the inputs.
     Returns:
     ----------
     keras.Model
@@ -212,13 +215,14 @@ def ResNeXt50(img_size=(32,32),
                    data_format=data_format,
                    **kwargs)
 
+
 @register_model
-def ResNeXt101(img_size=(32,32),
-             img_channels=3,
-             classes=10,
-             activation='relu',
-             data_format='channels_last',
-             **kwargs):
+def ResNeXt101(img_size=(32, 32),
+               img_channels=3,
+               classes=10,
+               activation='relu',
+               data_format='channels_last',
+               **kwargs):
     """
     ResNeXt101 model for CIFAR/SVHN
     Parameters:
@@ -232,7 +236,7 @@ def ResNeXt101(img_size=(32,32),
     activation: string, keras.Layer
         Main activation function of the network.
     data_format: 'channels_last' or 'channels_first'
-        The ordering of the dimensions in the inputs. 
+        The ordering of the dimensions in the inputs.
     Returns:
     ----------
     keras.Model
@@ -245,13 +249,14 @@ def ResNeXt101(img_size=(32,32),
                    data_format=data_format,
                    **kwargs)
 
+
 @register_model
-def ResNeXt152(img_size=(32,32),
-                img_channels=3,
-                classes=10,
-                activation='relu',
-                data_format='channels_last',
-                **kwargs):
+def ResNeXt152(img_size=(32, 32),
+               img_channels=3,
+               classes=10,
+               activation='relu',
+               data_format='channels_last',
+               **kwargs):
     """
     ResNeXt152 model for CIFAR/SVHN
     Parameters:
@@ -265,7 +270,7 @@ def ResNeXt152(img_size=(32,32),
     activation: string, keras.Layer
         Main activation function of the network.
     data_format: 'channels_last' or 'channels_first'
-        The ordering of the dimensions in the inputs. 
+        The ordering of the dimensions in the inputs.
     Returns:
     ----------
     keras.Model

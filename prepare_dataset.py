@@ -6,7 +6,7 @@ import tensorflow as tf
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument("-d", "--dataset", choices=["cifar10"], required=True, help="dataset to create") # , "imagenet1k"
+    parser.add_argument("-d", "--dataset", choices=["cifar10"], required=True, help="dataset to create")  # , "imagenet1k"
     # parser.add_argument("-p", "--path", help="path to imagenet")
     parser.add_argument("-w", "--write-dir", default="tfrecords/", help="path to write TFRecords")
     
@@ -19,9 +19,9 @@ def main():
     if not os.path.isdir(wpath):
         os.makedirs(wpath)
 
-    if(cfg.dataset == "cifar10"):
+    if cfg.dataset == "cifar10":
         cifar10(wpath)
-    elif(cfg.dataset == "imagenet1k"):
+    elif cfg.dataset == "imagenet1k":
         raise NotImplementedError("imagenet1k not implemented")
 
 
@@ -33,7 +33,7 @@ def cifar10(path):
 
     start = time.perf_counter()
     print("Serializing Train Batch")
-    # 
+
     with tf.io.TFRecordWriter(os.path.join(path, "train.tfrecord")) as writer:
         data = tf.train.Example(
             features = tf.train.Features(
@@ -50,7 +50,7 @@ def cifar10(path):
         )
 
     
-    with tf.io.TFRecordWriter(os.path.join(path, "val.tfrecord")) as writer:  
+    with tf.io.TFRecordWriter(os.path.join(path, "val.tfrecord")) as writer:
         print("Serializing Validation Batch")
         data = tf.train.Example(
             features = tf.train.Features(
@@ -72,5 +72,5 @@ def cifar10(path):
 
 
 if __name__ == "__main__":
-    os.environ['TF_CPP_MIN_LOG_LEVEL'] = '1' 
+    os.environ['TF_CPP_MIN_LOG_LEVEL'] = '1'
     main()

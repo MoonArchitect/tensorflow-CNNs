@@ -1,15 +1,16 @@
 import tensorflow as tf
 import tensorflow.keras as nn
 from .SeNet import SEBlock
-from .Layers import get_activation_layer
+from .layers import get_activation_layer
 from utils.registry import register_model
 
-""" 
+"""
     Implementation of MobileNetV3 for CIFAR/SVHN/32x32
 
-    From: Searching for MobileNetV3, https://arxiv.org/abs/1905.02244 
+    From: Searching for MobileNetV3, https://arxiv.org/abs/1905.02244
     By: Andrew Howard, Mark Sandler, Grace Chu, Liang-Chieh Chen, Bo Chen, Mingxing Tan, Weijun Wang, Yukun Zhu, Ruoming Pang, Vijay Vasudevan, Quoc V. Le, Hartwig Adam
 """
+
 
 def MobileNetV3_Block(input,
                       filters,
@@ -21,7 +22,7 @@ def MobileNetV3_Block(input,
                       width_multiplier,
                       block_id,
                       data_format):
-    """ 
+    """
     Inverted residual block
     Arguments:
     ----------
@@ -42,10 +43,10 @@ def MobileNetV3_Block(input,
     block_id: int
         Id of current block in the network
     data_format: 'channels_last' or 'channels_first'
-        The ordering of the dimensions in the inputs. 
+        The ordering of the dimensions in the inputs.
     """
     block_name = f"block_{block_id}"
-    channel_axis = -1 if data_format=='channels_last' else 1
+    channel_axis = -1 if data_format == 'channels_last' else 1
     in_channels = input.shape[channel_axis]
     out_channels = filters * width_multiplier
     
@@ -56,13 +57,13 @@ def MobileNetV3_Block(input,
         kernel_size=1,
         data_format=data_format,
         use_bias=False,
-        name=block_name+"_expand_conv",
+        name=block_name + "_expand_conv",
         kernel_regularizer=nn.regularizers.l2(0.00002)
     )(x)
     x = nn.layers.BatchNormalization(
         axis=channel_axis,
-        name=block_name+"_expand_BN")(x)
-    x = get_activation_layer(activation, name=block_name+f"_expand_{activation}")(x)
+        name=block_name + "_expand_BN")(x)
+    x = get_activation_layer(activation, name=block_name + f"_expand_{activation}")(x)
     
     # Depthwise
     x = nn.layers.DepthwiseConv2D(
@@ -71,17 +72,17 @@ def MobileNetV3_Block(input,
         padding='same',
         data_format=data_format,
         use_bias=False,
-        name=block_name+"_depthwise",
+        name=block_name + "_depthwise",
         kernel_regularizer=nn.regularizers.l2(0.00002)
     )(x)
     x = nn.layers.BatchNormalization(
         axis=channel_axis,
-        name=block_name+"_depthwise_BN")(x)
-    x = get_activation_layer(activation, name=block_name+f"_depthwise_{activation}")(x)
+        name=block_name + "_depthwise_BN")(x)
+    x = get_activation_layer(activation, name=block_name + f"_depthwise_{activation}")(x)
     
     if use_SE:
         x = SEBlock(
-            in_channels = expansion_filters, 
+            in_channels = expansion_filters,
             reduction = 4,
             interanl_activation='relu',
             final_activation='swish',
@@ -94,17 +95,18 @@ def MobileNetV3_Block(input,
         kernel_size=1,
         data_format=data_format,
         use_bias=False,
-        name=block_name+"_compress_conv",
+        name=block_name + "_compress_conv",
         kernel_regularizer=nn.regularizers.l2(0.00002)
     )(x)
     x = nn.layers.BatchNormalization(
         axis=channel_axis,
-        name=block_name+"_compress_BN")(x)
+        name=block_name + "_compress_BN")(x)
     
     if out_channels == in_channels and stride == 1:
-        return nn.layers.Add(name=block_name+"_add")([x, input])
+        return nn.layers.Add(name=block_name + "_add")([x, input])
 
     return x
+
 
 def _mobile_net_v3(config,
                    input_shape=(32, 32, 3),
@@ -121,7 +123,7 @@ def _mobile_net_v3(config,
     config: list, shape=[layers,6]
         Network configuration, layer format = [kernel size, expansion, out, use_SE, activation, stride]
     input_shape: list, tuple
-        Shape of an input image 
+        Shape of an input image
     upsample_resolution: int
         Resolution to which input image will be upsampled. (MobileNetV2 was designed for 224px image input)
     width_multiplier: float
@@ -129,11 +131,11 @@ def _mobile_net_v3(config,
     classes: int
         Number of classification classes.
     data_format: 'channels_last' or 'channels_first'
-        The ordering of the dimensions in the inputs. 
+        The ordering of the dimensions in the inputs.
     """
     assert width_multiplier > 0
-    channel_axis = -1 if data_format=='channels_last' else 1
-    mean_axis = [1, 2] if data_format=='channels_last' else [2, 3]
+    channel_axis = -1 if data_format == 'channels_last' else 1
+    # mean_axis = [1, 2] if data_format == 'channels_last' else [2, 3]
     block_cnt = 0
 
     input = tf.keras.layers.Input(shape=input_shape)
@@ -170,33 +172,34 @@ def _mobile_net_v3(config,
         use_bias=False,
         name=f"Conv_{last_stage_filters}"
     )(x)
-    x = nn.layers.BatchNormalization(axis=channel_axis,  name="Conv_960_BN")(x) 
+    x = nn.layers.BatchNormalization(axis=channel_axis,  name="Conv_960_BN")(x)
     x = get_activation_layer('hswish', name="Conv_960_hswish")(x)
     x = nn.layers.GlobalAveragePooling2D(data_format=data_format)(x)
-    x = nn.layers.Dense(1280 if last_stage_filters == 960 else 1024, use_bias=False)(x) 
-    #x = nn.layers.Lambda(lambda x: tf.reduce_mean(x, axis=mean_axis, keepdims=True))(x)
+    x = nn.layers.Dense(1280 if last_stage_filters == 960 else 1024, use_bias=False)(x)
+    # x = nn.layers.Lambda(lambda x: tf.reduce_mean(x, axis=mean_axis, keepdims=True))(x)
 
-    #x = nn.layers.Conv2D(
+    # x = nn.layers.Conv2D(
     #    filters = 1280 if last_stage_filters == 960 else 1024,
     #    kernel_size=1,
     #    data_format=data_format,
     #    use_bias=False,
     #    name=f"Conv_{1280 if last_stage_filters == 960 else 1024}"
-    #)(x)
+    # )(x)
     x = get_activation_layer(activation, name="Conv_1280_hswish")(x)
-    #x = nn.layers.Conv2D(
+    # x = nn.layers.Conv2D(
     #    filters = classes,
     #    kernel_size=1,
     #    data_format=data_format,
     #    use_bias=False
-    #)(x)
+    # )(x)
 
-    #x = nn.layers.Flatten(data_format=data_format)(x)
+    # x = nn.layers.Flatten(data_format=data_format)(x)
     output = nn.layers.Dense(classes)(x)
 
     return tf.keras.models.Model(inputs=input,
                                  outputs=output,
                                  name=name)
+
 
 def MobileNetV3Large(input_shape=(32, 32, 3),
                      upsample_resolution=224,
@@ -205,8 +208,8 @@ def MobileNetV3Large(input_shape=(32, 32, 3),
                      data_format='channels_last'):
     """
     """
+    # kernel, exp, out, use_SE, activ, stride
     large_cfg = [
-    #kernel, exp, out, use_SE, activ, stride
         [3,  16,   16,  False,  'relu',  1],
         [3,  64,   24,  False,  'relu',  2],
         [3,  72,   24,  False,  'relu',  1],
@@ -232,6 +235,7 @@ def MobileNetV3Large(input_shape=(32, 32, 3),
                           data_format=data_format,
                           name=f'MobileNetV3Large_{upsample_resolution}_{width_multiplier}')
 
+
 def MobileNetV3Small(input_shape=(32, 32, 3),
                      upsample_resolution=224,
                      width_multiplier=1.0,
@@ -239,8 +243,8 @@ def MobileNetV3Small(input_shape=(32, 32, 3),
                      data_format='channels_last'):
     """
     """
+    # kernel, exp,  out, use_SE, activ, stride
     small_cfg = [
-    #kernel, exp,  out, use_SE, activ, stride
         [3,   16,   16,   True,   'relu',  2],
         [3,   72,   24,  False,   'relu',  2],
         [3,   88,   24,  False,   'relu',  1],
@@ -262,10 +266,11 @@ def MobileNetV3Small(input_shape=(32, 32, 3),
                           data_format=data_format,
                           name=f'MobileNetV3Small_{upsample_resolution}_{width_multiplier}')
 
+
 ############## Predefined Nets ##############
 @register_model
 def MobileNetV3Large_320(width_multiplier=1,
-                         input_shape=(32,32,3),
+                         input_shape=(32, 32, 3),
                          classes=10,
                          data_format='channels_last'):
     """
@@ -276,11 +281,11 @@ def MobileNetV3Large_320(width_multiplier=1,
     width_multiplier: float
         Controls the width of the network.
     input_shape: list/tuple
-        Shape of an input image 
+        Shape of an input image
     classes: int
         Number of classification classes.
     data_format: 'channels_last' or 'channels_first'
-        The ordering of the dimensions in the inputs. 
+        The ordering of the dimensions in the inputs.
     """
     return MobileNetV3Large(input_shape=input_shape,
                             upsample_resolution=320,
@@ -288,9 +293,10 @@ def MobileNetV3Large_320(width_multiplier=1,
                             classes=classes,
                             data_format=data_format)
 
+
 @register_model
 def MobileNetV3Large_224(width_multiplier=1,
-                         input_shape=(32,32,3),
+                         input_shape=(32, 32, 3),
                          classes=10,
                          data_format='channels_last'):
     """
@@ -301,11 +307,11 @@ def MobileNetV3Large_224(width_multiplier=1,
     width_multiplier: float
         Controls the width of the network.
     input_shape: list/tuple
-        Shape of an input image 
+        Shape of an input image
     classes: int
         Number of classification classes.
     data_format: 'channels_last' or 'channels_first'
-        The ordering of the dimensions in the inputs. 
+        The ordering of the dimensions in the inputs.
     """
     return MobileNetV3Large(input_shape=input_shape,
                             upsample_resolution=224,
@@ -313,9 +319,10 @@ def MobileNetV3Large_224(width_multiplier=1,
                             classes=classes,
                             data_format=data_format)
 
+
 @register_model
 def MobileNetV3Large_192(width_multiplier=1,
-                         input_shape=(32,32,3),
+                         input_shape=(32, 32, 3),
                          classes=10,
                          data_format='channels_last'):
     """
@@ -326,11 +333,11 @@ def MobileNetV3Large_192(width_multiplier=1,
     width_multiplier: float
         Controls the width of the network.
     input_shape: list/tuple
-        Shape of an input image 
+        Shape of an input image
     classes: int
         Number of classification classes.
     data_format: 'channels_last' or 'channels_first'
-        The ordering of the dimensions in the inputs. 
+        The ordering of the dimensions in the inputs.
     """
     return MobileNetV3Large(input_shape=input_shape,
                             upsample_resolution=192,
@@ -338,9 +345,10 @@ def MobileNetV3Large_192(width_multiplier=1,
                             classes=classes,
                             data_format=data_format)
 
+
 @register_model
 def MobileNetV3Large_160(width_multiplier=1,
-                         input_shape=(32,32,3),
+                         input_shape=(32, 32, 3),
                          classes=10,
                          data_format='channels_last'):
     """
@@ -351,11 +359,11 @@ def MobileNetV3Large_160(width_multiplier=1,
     width_multiplier: float
         Controls the width of the network.
     input_shape: list/tuple
-        Shape of an input image 
+        Shape of an input image
     classes: int
         Number of classification classes.
     data_format: 'channels_last' or 'channels_first'
-        The ordering of the dimensions in the inputs. 
+        The ordering of the dimensions in the inputs.
     """
     return MobileNetV3Large(input_shape=input_shape,
                             upsample_resolution=160,
@@ -363,9 +371,10 @@ def MobileNetV3Large_160(width_multiplier=1,
                             classes=classes,
                             data_format=data_format)
 
+
 @register_model
 def MobileNetV3Large_128(width_multiplier=1,
-                         input_shape=(32,32,3),
+                         input_shape=(32, 32, 3),
                          classes=10,
                          data_format='channels_last'):
     """
@@ -376,11 +385,11 @@ def MobileNetV3Large_128(width_multiplier=1,
     width_multiplier: float
         Controls the width of the network.
     input_shape: list/tuple
-        Shape of an input image 
+        Shape of an input image
     classes: int
         Number of classification classes.
     data_format: 'channels_last' or 'channels_first'
-        The ordering of the dimensions in the inputs. 
+        The ordering of the dimensions in the inputs.
     """
     return MobileNetV3Large(input_shape=input_shape,
                             upsample_resolution=128,
@@ -388,9 +397,10 @@ def MobileNetV3Large_128(width_multiplier=1,
                             classes=classes,
                             data_format=data_format)
 
+
 @register_model
 def MobileNetV3Small_320(width_multiplier=1,
-                         input_shape=(32,32,3),
+                         input_shape=(32, 32, 3),
                          classes=10,
                          data_format='channels_last'):
     """
@@ -401,11 +411,11 @@ def MobileNetV3Small_320(width_multiplier=1,
     width_multiplier: float
         Controls the width of the network.
     input_shape: list/tuple
-        Shape of an input image 
+        Shape of an input image
     classes: int
         Number of classification classes.
     data_format: 'channels_last' or 'channels_first'
-        The ordering of the dimensions in the inputs. 
+        The ordering of the dimensions in the inputs.
     """
     return MobileNetV3Large(input_shape=input_shape,
                             upsample_resolution=320,
@@ -413,9 +423,10 @@ def MobileNetV3Small_320(width_multiplier=1,
                             classes=classes,
                             data_format=data_format)
 
+
 @register_model
 def MobileNetV3Small_224(width_multiplier=1,
-                         input_shape=(32,32,3),
+                         input_shape=(32, 32, 3),
                          classes=10,
                          data_format='channels_last'):
     """
@@ -426,11 +437,11 @@ def MobileNetV3Small_224(width_multiplier=1,
     width_multiplier: float
         Controls the width of the network.
     input_shape: list/tuple
-        Shape of an input image 
+        Shape of an input image
     classes: int
         Number of classification classes.
     data_format: 'channels_last' or 'channels_first'
-        The ordering of the dimensions in the inputs. 
+        The ordering of the dimensions in the inputs.
     """
     return MobileNetV3Small(input_shape=input_shape,
                             upsample_resolution=224,
@@ -438,9 +449,10 @@ def MobileNetV3Small_224(width_multiplier=1,
                             classes=classes,
                             data_format=data_format)
 
+
 @register_model
 def MobileNetV3Small_192(width_multiplier=1,
-                         input_shape=(32,32,3),
+                         input_shape=(32, 32, 3),
                          classes=10,
                          data_format='channels_last'):
     """
@@ -451,11 +463,11 @@ def MobileNetV3Small_192(width_multiplier=1,
     width_multiplier: float
         Controls the width of the network.
     input_shape: list/tuple
-        Shape of an input image 
+        Shape of an input image
     classes: int
         Number of classification classes.
     data_format: 'channels_last' or 'channels_first'
-        The ordering of the dimensions in the inputs. 
+        The ordering of the dimensions in the inputs.
     """
     return MobileNetV3Small(input_shape=input_shape,
                             upsample_resolution=192,
@@ -463,11 +475,12 @@ def MobileNetV3Small_192(width_multiplier=1,
                             classes=classes,
                             data_format=data_format)
 
+
 @register_model
 def MobileNetV3Small_160(width_multiplier=1,
-                        input_shape=(32,32,3),
-                        classes=10,
-                        data_format='channels_last'):
+                         input_shape=(32, 32, 3),
+                         classes=10,
+                         data_format='channels_last'):
     """
     MobileNetV3 Small with 160px sampled resolution
     
@@ -476,11 +489,11 @@ def MobileNetV3Small_160(width_multiplier=1,
     width_multiplier: float
         Controls the width of the network.
     input_shape: list/tuple
-        Shape of an input image 
+        Shape of an input image
     classes: int
         Number of classification classes.
     data_format: 'channels_last' or 'channels_first'
-        The ordering of the dimensions in the inputs. 
+        The ordering of the dimensions in the inputs.
     """
     return MobileNetV3Small(input_shape=input_shape,
                             upsample_resolution=160,
@@ -488,9 +501,10 @@ def MobileNetV3Small_160(width_multiplier=1,
                             classes=classes,
                             data_format=data_format)
 
+
 @register_model
 def MobileNetV3Small_128(width_multiplier=1,
-                         input_shape=(32,32,3),
+                         input_shape=(32, 32, 3),
                          classes=10,
                          data_format='channels_last'):
     """
@@ -501,11 +515,11 @@ def MobileNetV3Small_128(width_multiplier=1,
     width_multiplier: float
         Controls the width of the network.
     input_shape: list/tuple
-        Shape of an input image 
+        Shape of an input image
     classes: int
         Number of classification classes.
     data_format: 'channels_last' or 'channels_first'
-        The ordering of the dimensions in the inputs. 
+        The ordering of the dimensions in the inputs.
     """
     return MobileNetV3Small(input_shape=input_shape,
                             upsample_resolution=128,

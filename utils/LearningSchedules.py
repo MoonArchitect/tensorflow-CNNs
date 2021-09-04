@@ -7,7 +7,7 @@ from utils.registry import register_schedule
 
 @register_schedule
 def StepDecaySchedule(schedule, verbose=0):
-    """ 
+    """
     Parameters:
     ----------
     schedule: array of N (epoch,value) pairs, in increasing order of epoch
@@ -26,15 +26,16 @@ def StepDecaySchedule(schedule, verbose=0):
 
 @register_schedule
 def LinearDecaySchedule():
-	# interpolate step schedule
-	raise NotImplementedError("")
+    # interpolate step schedule
+    raise NotImplementedError("")
 
 
 @register_schedule
 def HTD(L, U, totalEpochs, lrmax, lrmin, warmup=0, verbose=0):
     """
     Hyperbolic-Tangent Decay schedule. From: Stochastic Gradient Descent with Hyperbolic-Tangent Decay on Classification, https://arxiv.org/abs/1806.01593
-    Parameters: 
+    
+    Parameters:
     ----------
     L: Lower Bound
     U: Upper Bound
@@ -54,11 +55,12 @@ def HTD(L, U, totalEpochs, lrmax, lrmin, warmup=0, verbose=0):
 def CosineDecay(totalEpochs, lrmax, lrmin, warmup=0, verbose=0):
     """
     Cosine Decay schedule. From: Stochastic Gradient Descent with Warm Restarts, https://arxiv.org/abs/1608.03983
+    
     Arguments:
     ----------
     totalEpochs: Number of epochs to train
     lrmax: Maximum lr (at the start of the training)
-    lrmin: Minimum lr (at the end of the training)   
+    lrmin: Minimum lr (at the end of the training)
     """
     def f(epoch):
         if epoch >= warmup:
@@ -66,3 +68,4 @@ def CosineDecay(totalEpochs, lrmax, lrmin, warmup=0, verbose=0):
         else:
             return (lrmax - lrmin) / warmup * (epoch + 0.5)
     return LearningRateScheduler(f, verbose)
+
