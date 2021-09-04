@@ -126,12 +126,12 @@ def main():
             continue
         
         command = "python train.py" + model + " --dryrun" + " --full_info"
-        print(f"\n{'-'*100}  Dry run: {id}  {'-'*100}")
+        print(f"\n{'-'*50}  Dry run: {id}  {'-'*50}")
         print(f"Running:   {command}\n\n")
         
         os.system(command)
 
-        print(f"\n{'-'*300}\n")
+        print(f"\n{'-'*150}\n")
 
     for model, id in zip(arguments, ids):
         if checkpoint is not None and id in checkpoint and checkpoint[id]["status"] == "Finished":

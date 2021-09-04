@@ -38,7 +38,7 @@ model.compile(
 model.summary()
 
 
-model_filename = datetime.now().strftime("%d^%H^%M_") + model.name
+model_filename = model.name + datetime.now().strftime("@%d^%H^%M")
 log_dir = os.path.join("logs", model_filename)
 
 tensorboard_callback = tf.keras.callbacks.TensorBoard(log_dir = log_dir, profile_batch = '100, 110')

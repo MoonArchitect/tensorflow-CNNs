@@ -122,7 +122,7 @@ def train(model,
         tf.keras.callbacks.experimental.BackupAndRestore(f"backup/{name}"),
 
         tf.keras.callbacks.ModelCheckpoint(
-            f"Checkpoints/{name}/Best/" + name + "_{val_accuracy:3f}%",
+            f"Checkpoints/{name}/best_{model.name}",
             save_weights_only=True, save_best_only=True, monitor='val_accuracy', mode='max',
         ),
 
@@ -185,8 +185,8 @@ def main():		# TODO when called creates new name (date) even if id is already in
     model = utils.creator.create_model(model_name, **model_kwargs)
     optimizer = utils.creator.create_optimzer(optimizer_name, **optimizer_kwargs)
     lr_schedule = utils.creator.create_lr_schedule(lr_schedule_name, **lr_schedule_kwargs)
-
-    name = model.name + datetime.now().strftime("_%mM'%dD'%Hh'%Mm")
+    
+    name = model.name + datetime.now().strftime("@%m%d%H%M")
 
     if args.dryrun:
         dry_run()
