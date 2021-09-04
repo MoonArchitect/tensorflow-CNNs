@@ -10,42 +10,8 @@ import utils
 import data
 
 
-"""
-
-train.py
-    cfg
-        cfg.yaml
-    model
-        model_name
-        --flags ...
-"""
-
-
-# verbose
-
-# ------------- Configuration File -------------
-# model			code		Models.ResnetV2.resnet18()
-# optimizer		code		tf.keras.optimizers.SGD(momentum=0.9, nesterov=True)
-# lr_schedule	code		LearningSchedules.HTD(-6, 3, 50, 0.15, 0.0002, 5)
-# batch size	int			64
-# epochs		int			300
-# data-dir
-
-# name 			string		if None -> auto create, if exists add unique id
-# xla
-# fp16
-# Cutmix
-# MixUp			alpha
-# Cutout		cutSize
-
-# ------------- Additional arguments -------------
-# progress_file		string		where to write progress
-# dry-run						test every config
-# continue			int			epoch to continue
-# name				string		model's name
-
 # TODO try to recover if loss is NaN
-# TODO subdivide Layers.py into individual files
+
 
 def parse_args():
     parser = argparse.ArgumentParser()
