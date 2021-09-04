@@ -1,4 +1,4 @@
-import models as m
+import models as m  # TODO fix collision with dict 'models' in registry
 import utils.LearningSchedules
 from utils.registry import is_model, optimizers, lr_schedules, models
 
