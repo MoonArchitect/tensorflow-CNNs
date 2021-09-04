@@ -1,6 +1,5 @@
-# TODO import it
-# import models
-# import utils.LearningSchedules
+import models as m
+import utils.LearningSchedules
 from utils.registry import is_model, optimizers, lr_schedules, models
 
 
