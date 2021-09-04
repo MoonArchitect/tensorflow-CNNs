@@ -1,3 +1,4 @@
+import os
 import sys
 from datetime import datetime
 
@@ -56,13 +57,24 @@ class ProgressCheckpoint(Callback):
         
 
     def on_train_end(self, logs=None):
-        # TODO remove backup/model_name_id folder
+        self.remove_backup()
 
         self.status["end"][-1] = datetime.now().strftime("%m/%d|%H:%M:%S")
         self.status["status"] = "Finished"
         
         self.dump_yaml()
         self.file.close()
+
+
+    def remove_backup(self):
+        backup_path = f"backup/{self.status['cfg']['name']}"
+        if os.path.exists(backup_path):
+            if len(os.listdir(backup_path)) == 0:
+                os.rmdir(backup_path)
+            else:
+                print(f"Couldn't delete '{backup_path}''. Folder is not empty")
+        else:
+            print(f"Couldn't find '{backup_path}'")
 
 
     def on_epoch_end(self, epoch, logs=None):
