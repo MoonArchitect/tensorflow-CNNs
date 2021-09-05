@@ -1,14 +1,16 @@
 import tensorflow as tf
 import tensorflow.keras as nn
-from .Layers import PreActConv, get_activation_layer, get_channels
+from .layers import PreActConv, get_activation_layer, get_channels
 from utils.registry import register_model
 
-""" 
+
+"""
     Implementation of ResNet V2 for CIFAR/SVHN/32x32
 
     From: Identity Mappings in Deep Residual Networks, https://arxiv.org/abs/1603.05027.
     By: Kaiming He, Xiangyu Zhang, Shaoqing Ren, Jian Sun
 """
+
 
 class AA_downsampling(nn.layers.Layer):
     """
@@ -21,10 +23,11 @@ class AA_downsampling(nn.layers.Layer):
         filter = (a[:, None] * a[None, :])
         filter = filter / tf.reduce_sum(filter)
         self.filter = tf.repeat(filter[:, :, None, None], [in_channels], axis=2)
-        self.strides = [1,2,2,1] if data_format == 'channels_last' else [1,1,2,2]
+        self.strides = [1, 2, 2, 1] if data_format == 'channels_last' else [1, 1, 2, 2]
 
-    def call(self, input):
-        return tf.nn.depthwise_conv2d(input, self.filter, self.strides, "SAME", data_format=self.data_format)
+    def call(self, inputs):
+        return tf.nn.depthwise_conv2d(inputs, self.filter, self.strides, "SAME", data_format=self.data_format)
+
 
 ############## Building Blocks ##############
 class BasicUnit(nn.layers.Layer):
@@ -34,7 +37,7 @@ class BasicUnit(nn.layers.Layer):
     ---------
     filters: int
         The dimensionality of the output space (i.e. the number of output filters in the convolution).
-    kernel_size: int, tuple/list of 2 integers 
+    kernel_size: int, tuple/list of 2 integers
         Height and width of the 2D convolution window
     strides: int, tuple/list of 2 integers
         Specifying the strides of the convolution along the height and width
@@ -43,7 +46,7 @@ class BasicUnit(nn.layers.Layer):
     activation: String, keras.Layer
         Activation function to use. If you don't specify anything, no activation is applied.
     data_format: String
-        The ordering of the dimensions in the inputs. 
+        The ordering of the dimensions in the inputs.
         'channels_last' = (batch_size, height, width, channels)
         'channels_first' = (batch_size, channels, height, width).
     Architecture:
@@ -52,8 +55,8 @@ class BasicUnit(nn.layers.Layer):
     """
     def __init__(self,
                  filters,
-                 kernel_size=(3,3),
-                 strides=(1,1),
+                 kernel_size=(3, 3),
+                 strides=(1, 1),
                  groups=1,
                  activation='RELu',
                  data_format='channels_last',
@@ -78,7 +81,7 @@ class BasicUnit(nn.layers.Layer):
             PreActConv(
                 filters=filters,
                 kernel_size=kernel_size,
-                strides=(1,1),
+                strides=(1, 1),
                 padding='same',
                 data_format=data_format,
                 groups=groups,
@@ -89,8 +92,8 @@ class BasicUnit(nn.layers.Layer):
             )
         )
 
-    def call(self, input):
-        return self.layer(input)
+    def call(self, inputs):
+        return self.layer(inputs)
 
 
 class BottleneckUnit(nn.layers.Layer):
@@ -100,7 +103,7 @@ class BottleneckUnit(nn.layers.Layer):
     ---------
     filters: int
         The dimensionality of the output space (i.e. the number of output filters in the convolution).
-    kernel_size: int, tuple/list of 2 integers 
+    kernel_size: int, tuple/list of 2 integers
         Height and width of the 2D convolution window
     strides: int, tuple/list of 2 integers
         Specifying the strides of the convolution along the height and width
@@ -111,7 +114,7 @@ class BottleneckUnit(nn.layers.Layer):
     activation: String, keras.Layer
         Activation function to use. If you don't specify anything, no activation is applied.
     data_format: String
-        The ordering of the dimensions in the inputs. 
+        The ordering of the dimensions in the inputs.
         'channels_last' = (batch_size, height, width, channels)
         'channels_first' = (batch_size, channels, height, width).
     Architecture:
@@ -120,8 +123,8 @@ class BottleneckUnit(nn.layers.Layer):
     """
     def __init__(self,
                  filters,
-                 kernel_size=(3,3),
-                 strides=(1,1),
+                 kernel_size=(3, 3),
+                 strides=(1, 1),
                  groups=1,
                  expansion=4,
                  activation='RELu',
@@ -134,8 +137,8 @@ class BottleneckUnit(nn.layers.Layer):
         self.layer.add(
             PreActConv(
                 filters=filters // expansion,
-                kernel_size=(1,1),
-                strides=(1,1),
+                kernel_size=(1, 1),
+                strides=(1, 1),
                 padding='same',
                 data_format=data_format,
                 groups=1,
@@ -161,7 +164,7 @@ class BottleneckUnit(nn.layers.Layer):
                 )
             )
         else:
-            self.layer.add(AA_downsampling(filters//expansion, data_format=data_format))
+            self.layer.add(AA_downsampling(filters // expansion, data_format=data_format))
             self.layer.add(
                 PreActConv(
                     filters=filters // expansion,
@@ -179,8 +182,8 @@ class BottleneckUnit(nn.layers.Layer):
         self.layer.add(
             PreActConv(
                 filters=filters,
-                kernel_size=(1,1),
-                strides=(1,1),
+                kernel_size=(1, 1),
+                strides=(1, 1),
                 padding='same',
                 data_format=data_format,
                 groups=1,
@@ -191,14 +194,14 @@ class BottleneckUnit(nn.layers.Layer):
             )
         )
     
-    def call(self, input):
-        return self.layer(input) 
+    def call(self, inputs):
+        return self.layer(inputs)
 
 
 def ResStage(layers,
              filters,
-             kernel_size=(3,3),
-             strides=(1,1),
+             kernel_size=(3, 3),
+             strides=(1, 1),
              data_format='channels_last',
              activation='relu',
              bottleneck=False,
@@ -215,7 +218,7 @@ def ResStage(layers,
     strides: int, tuple/list of 2 integers
         Specifying the strides of the central convolution along the height and width
     data_format: 'channels_last' or 'channels_first'
-        The ordering of the dimensions in the inputs. 
+        The ordering of the dimensions in the inputs.
     activation: String or keras.Layer
         Activation function to use after each convolution.
     bottleneck: Boolean
@@ -223,11 +226,12 @@ def ResStage(layers,
     """
 
     Unit = BottleneckUnit if bottleneck else BasicUnit
+    
     def fwd(input):
         sc = nn.layers.AvgPool2D(strides, data_format=data_format)(input) if strides != (1, 1) else input
         if get_channels(input, data_format) != filters:
             pad = [(filters - get_channels(input, data_format)) // 2] * 2
-            sc = tf.pad(sc, [[0,0], [0,0], [0,0], pad] if data_format=='channels_last' else [[0,0], pad, [0,0], [0,0]])
+            sc = tf.pad(sc, [[0, 0], [0, 0], [0, 0], pad] if data_format == 'channels_last' else [[0, 0], pad, [0, 0], [0, 0]])
         
         x = Unit(filters,
                  kernel_size,
@@ -237,7 +241,7 @@ def ResStage(layers,
                  **kwargs)(input)
         input = nn.layers.Add()([x, sc])
         
-        for i in range(layers-1):
+        for _ in range(layers - 1):
             x = Unit(filters,
                      kernel_size,
                      activation=activation,
@@ -251,8 +255,7 @@ def ResStage(layers,
 
 
 def ResNetV2(conv_per_stage,
-             img_size=(32,32),
-             img_channels=3,
+             input_shape=(32, 32, 3),
              classes=10,
              bottleneck=False,
              filters=16,
@@ -265,10 +268,8 @@ def ResNetV2(conv_per_stage,
     -----------
     conv_per_stage: list, tuple
         Number of residual blocks in each stage
-    img_size: list, tuple
-        Size of a single input image
-    img_channels: int
-        Number of channels in a single input image
+    input_shape: list, tuple
+        Shape of an input image
     classes: int
         Number of classification classes.
     bottleneck: bool
@@ -278,17 +279,16 @@ def ResNetV2(conv_per_stage,
     activation: string, keras.Layer
         Activation function to use after each convolution.
     data_format: 'channels_last' or 'channels_first'
-        The ordering of the dimensions in the inputs. 
+        The ordering of the dimensions in the inputs.
     """
 
-    input_shape = (*img_size, img_channels) if data_format=='channels_last' else (img_channels, *img_size)
-    strides = [(1,1)] + [(2,2)]*3
+    strides = [(1, 1)] + [(2, 2)] * 3
     expansion = 4 if bottleneck else 1
 
     input = tf.keras.layers.Input(shape=input_shape)
     
     x = input
-    #if data_format == 'channels_last':
+    # if data_format == 'channels_last':
     #    x = tf.transpose(input, [0, 3, 1, 2])
     #    data_format = 'channels_first'
     
@@ -305,7 +305,7 @@ def ResNetV2(conv_per_stage,
     for layers, strides in zip(conv_per_stage, strides):
         x = ResStage(layers=layers,
                      filters=filters * expansion,
-                     kernel_size=(3,3),
+                     kernel_size=(3, 3),
                      strides=strides,
                      data_format=data_format,
                      activation=activation,
@@ -313,221 +313,127 @@ def ResNetV2(conv_per_stage,
                      **kwargs)(x)
         filters *= 2
 
-    x = tf.keras.layers.BatchNormalization(-1 if data_format=='channels_last' else 1)(x)
+    x = tf.keras.layers.BatchNormalization(-1 if data_format == 'channels_last' else 1)(x)
     x = get_activation_layer(activation)(x)
 
     x = tf.keras.layers.GlobalAveragePooling2D(data_format=data_format)(x)
     output = tf.keras.layers.Dense(classes)(x)
 
-    return tf.keras.models.Model(inputs=input, 
-                                 outputs=output, 
+    return tf.keras.models.Model(inputs=input,
+                                 outputs=output,
                                  name=f'{f"Wide{filters}" if filters != 256 else ""}ResNet{sum(conv_per_stage) * (3 if bottleneck else 2) + 2}')
 
 
 ############## Predefined Nets ##############
 @register_model
-def ResNet18(img_size=(32,32),
-             img_channels=3,
-             classes=10,
-             activation='relu',
-             data_format='channels_last',
+def ResNet18(activation='relu',
              **kwargs):
     """
     ResNet18 model for CIFAR/SVHN
     Parameters:
     ----------
-    img_size: list, tuple
-        Size of a single input image
-    img_channels: int
-        Number of channels in a single input image
-    classes: int
-        Number of classification classes.
     activation: string, keras.Layer
         Main activation function of the network.
-    data_format: 'channels_last' or 'channels_first'
-        The ordering of the dimensions in the inputs. 
     Returns:
     ----------
     keras.Model
     """
     return ResNetV2(conv_per_stage=[2, 2, 2, 2],
-                    img_size=img_size,
-                    img_channels=img_channels,
-                    classes=classes,
                     bottleneck=False,
                     activation=activation,
-                    data_format=data_format,
                     **kwargs)
 
+
 @register_model
-def ResNet34(img_size=(32,32),
-             img_channels=3,
-             classes=10,
-             activation='relu',
-             data_format='channels_last',
+def ResNet34(activation='relu',
              **kwargs):
     """
     ResNet34 model for CIFAR/SVHN
     Parameters:
     ----------
-    img_size: list, tuple
-        Size of a single input image
-    img_channels: int
-        Number of channels in a single input image
-    classes: int
-        Number of classification classes.
     activation: string, keras.Layer
         Main activation function of the network.
-    data_format: 'channels_last' or 'channels_first'
-        The ordering of the dimensions in the inputs. 
     Returns:
     ----------
     keras.Model
     """
     return ResNetV2(conv_per_stage=[3, 4, 6, 3],
-                    img_size=img_size,
-                    img_channels=img_channels,
-                    classes=classes,
                     bottleneck=False,
                     activation=activation,
-                    data_format=data_format,
                     **kwargs)
 
+
 @register_model
-def ResNet35(img_size=(32,32),
-             img_channels=3,
-             classes=10,
-             activation='relu',
-             data_format='channels_last',
+def ResNet35(activation='relu',
              **kwargs):
     """
     ResNet35b model for CIFAR/SVHN
     Parameters:
     ----------
-    img_size: list, tuple
-        Size of a single input image
-    img_channels: int
-        Number of channels in a single input image
-    classes: int
-        Number of classification classes.
     activation: string, keras.Layer
         Main activation function of the network.
-    data_format: 'channels_last' or 'channels_first'
-        The ordering of the dimensions in the inputs. 
     Returns:
     ----------
     keras.Model
     """
     return ResNetV2(conv_per_stage=[2, 3, 4, 2],
-                    img_size=img_size,
-                    img_channels=img_channels,
-                    classes=classes,
                     bottleneck=True,
                     activation=activation,
-                    data_format=data_format,
                     **kwargs)
 
+
 @register_model
-def ResNet50(img_size=(32,32),
-             img_channels=3,
-             classes=10,
-             activation='relu',
-             data_format='channels_last',
+def ResNet50(activation='relu',
              **kwargs):
     """
     ResNet50b model for CIFAR/SVHN
     Parameters:
     ----------
-    img_size: list, tuple
-        Size of a single input image
-    img_channels: int
-        Number of channels in a single input image
-    classes: int
-        Number of classification classes.
     activation: string, keras.Layer
         Main activation function of the network.
-    data_format: 'channels_last' or 'channels_first'
-        The ordering of the dimensions in the inputs. 
     Returns:
     ----------
     keras.Model
     """
     return ResNetV2(conv_per_stage=[3, 4, 6, 3],
-                    img_size=img_size,
-                    img_channels=img_channels,
-                    classes=classes,
                     bottleneck=True,
                     activation=activation,
-                    data_format=data_format,
                     **kwargs)
 
+
 @register_model
-def ResNet101(img_size=(32,32),
-             img_channels=3,
-             classes=10,
-             activation='relu',
-             data_format='channels_last',
-             **kwargs):
+def ResNet101(activation='relu',
+              **kwargs):
     """
     ResNet101 model for CIFAR/SVHN
     Parameters:
     ----------
-    img_size: list, tuple
-        Size of a single input image
-    img_channels: int
-        Number of channels in a single input image
-    classes: int
-        Number of classification classes.
     activation: string, keras.Layer
         Main activation function of the network.
-    data_format: 'channels_last' or 'channels_first'
-        The ordering of the dimensions in the inputs. 
     Returns:
     ----------
     keras.Model
     """
     return ResNetV2(conv_per_stage=[3, 4, 23, 3],
-                    img_size=img_size,
-                    img_channels=img_channels,
-                    classes=classes,
                     bottleneck=True,
                     activation=activation,
-                    data_format=data_format,
                     **kwargs)
 
+
 @register_model
-def ResNet152(img_size=(32,32),
-             img_channels=3,
-             classes=10,
-             activation='relu',
-             data_format='channels_last',
-             **kwargs):
+def ResNet152(activation='relu',
+              **kwargs):
     """
     ResNet152b model for CIFAR/SVHN
     Parameters:
     ----------
-    img_size: list, tuple
-        Size of a single input image
-    img_channels: int
-        Number of channels in a single input image
-    classes: int
-        Number of classification classes.
     activation: string, keras.Layer
         Main activation function of the network.
-    data_format: 'channels_last' or 'channels_first'
-        The ordering of the dimensions in the inputs. 
     Returns:
     ----------
     keras.Model
     """
     return ResNetV2(conv_per_stage=[3, 8, 36, 3],
-                    img_size=img_size,
-                    img_channels=img_channels,
-                    classes=classes,
                     bottleneck=True,
                     activation=activation,
-                    data_format=data_format,
                     **kwargs)
-
-
-

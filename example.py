@@ -3,13 +3,13 @@ from datetime import datetime
 
 import tensorflow as tf
 
-import Models
-from utils import LearningRate
-from data import readDatasets, prepareDatasets
+import models
+from utils import LearningSchedules
+from data import read_dataset, prepare_cifar10
 
 
 tf.keras.mixed_precision.set_global_policy('mixed_float16')		# enable mixed precision
-os.environ['TF_XLA_FLAGS'] = "--tf_xla_auto_jit=3"				# enable XLA						
+os.environ['TF_XLA_FLAGS'] = "--tf_xla_auto_jit=3"				# enable XLA
 
 
 epochs = 50
@@ -18,31 +18,31 @@ max_lr = 0.4
 
 
 print("Dataset prep")
-train_ds, val_ds = readDatasets()
-train_ds, val_ds = prepareDatasets(
-	train_ds, val_ds,
-	batch_size=batch_size,
-	adv_augment="cutmix"
+train_ds, val_ds = read_dataset()
+train_ds, val_ds = prepare_cifar10(
+    train_ds, val_ds,
+    batch_size=batch_size,
+    adv_augment="cutmix"
 )
 
 
 print("Model compile")
-model = Models.ResNetV2.ResNet34()
+model = models.ResNetV2.ResNet34()
 
 model.compile(
-    loss=tf.keras.losses.CategoricalCrossentropy(True), 
-    optimizer=tf.keras.optimizers.SGD(momentum=0.9, nesterov=True), 
+    loss=tf.keras.losses.CategoricalCrossentropy(True),
+    optimizer=tf.keras.optimizers.SGD(momentum=0.9, nesterov=True),
     metrics=['accuracy']
 )
 
 model.summary()
 
 
-model_filename = datetime.now().strftime("%d^%H^%M_") + model.name
+model_filename = model.name + datetime.now().strftime("@%d^%H^%M")
 log_dir = os.path.join("logs", model_filename)
 
 tensorboard_callback = tf.keras.callbacks.TensorBoard(log_dir = log_dir, profile_batch = '100, 110')
-lr_callback = LearningRate.CosineDecay(epochs, max_lr, 0.003, 5)
+lr_callback = LearningSchedules.CosineDecay(epochs, max_lr, 0.003, 5)
 
 
 print("Fitting")
@@ -53,7 +53,7 @@ model.fit(
     validation_data = val_ds,
 
     callbacks = [
-        lr_callback, 
+        lr_callback,
         tensorboard_callback,
     ]
 )

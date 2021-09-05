@@ -1,15 +1,16 @@
 import tensorflow as tf
 import tensorflow.keras as nn
 from .ResNetV2 import BottleneckUnit
-from .Layers import get_activation_layer, get_channels, linear_decay_fn
+from .layers import get_activation_layer, get_channels, linear_decay_fn
 from utils.registry import register_model
 
-""" 
+"""
     Implementation of ResNet with Stochastic Depth for CIFAR/SVHN/32x32
 
     From: Deep Networks with Stochastic Depth, https://arxiv.org/abs/1603.09382
     By: Gao Huang, Yu Sun, Zhuang Liu, Daniel Sedra, Kilian Weinberger
 """
+
 
 ############## Building Blocks ##############
 class StochResWrapper(nn.layers.Layer):
@@ -24,7 +25,7 @@ class StochResWrapper(nn.layers.Layer):
     name: String
         -
     """
-    def __init__(self, 
+    def __init__(self,
                  layer,
                  survival_rate,
                  transform_input_fn = (lambda x: x),
@@ -36,7 +37,7 @@ class StochResWrapper(nn.layers.Layer):
         self.p = tf.constant(survival_rate, dtype=self._compute_dtype)
         self.transform_input_fn = transform_input_fn
 
-    def call(self, input):
+    def call(self, inputs):
         def layer(input):
             x = self.layer(input)
             x = nn.backend.in_test_phase(tf.scalar_mul(self.p, x), x)
@@ -44,16 +45,17 @@ class StochResWrapper(nn.layers.Layer):
 
         return tf.cond(
             tf.random.uniform([1], 0, 1, dtype=self._compute_dtype) < nn.backend.in_test_phase(tf.constant(1.0, dtype=self._compute_dtype), self.p),
-            lambda: layer(input),
-            lambda: self.transform_input_fn(input)
+            lambda: layer(inputs),
+            lambda: self.transform_input_fn(inputs)
         )
+
 
 def StochasticDepthStage(layers,
                          filters,
                          survival_fn,
                          stage_start_pos,
-                         kernel_size=(3,3),
-                         strides=(1,1),
+                         kernel_size=(3, 3),
+                         strides=(1, 1),
                          data_format='channels_last',
                          activation='relu',
                          **kwargs):
@@ -73,15 +75,15 @@ def StochasticDepthStage(layers,
     strides: int, tuple/list of 2 integers
         Specifying the strides of the central convolution along the height and width
     data_format: 'channels_last' or 'channels_first'
-        The ordering of the dimensions in the inputs. 
+        The ordering of the dimensions in the inputs.
     activation: String or keras.Layer
         Activation function to use after each convolution.
     """
     Unit = BottleneckUnit
 
-    def pool_pad_input(input, 
-                       filters, 
-                       strides, 
+    def pool_pad_input(input,
+                       filters,
+                       strides,
                        data_format):
         """
         Pools and pads input if necessary
@@ -93,7 +95,7 @@ def StochasticDepthStage(layers,
         sc = nn.layers.AvgPool2D(strides, data_format=data_format)(input) if strides != (1, 1) else input
         if get_channels(input, data_format) != filters:
             pad = [(filters - get_channels(input, data_format)) // 2] * 2
-            sc = tf.pad(sc, [[0,0], [0,0], [0,0], pad] if data_format=='channels_last' else [[0,0], pad, [0,0], [0,0]])
+            sc = tf.pad(sc, [[0, 0], [0, 0], [0, 0], pad] if data_format == 'channels_last' else [[0, 0], pad, [0, 0], [0, 0]])
         return sc
     
     def fwd(input):
@@ -118,7 +120,7 @@ def StochasticDepthStage(layers,
                 Unit(
                     filters,
                     kernel_size,
-                    strides=(1,1),
+                    strides=(1, 1),
                     activation=activation,
                     data_format=data_format,
                     **kwargs
@@ -131,10 +133,10 @@ def StochasticDepthStage(layers,
     
     return fwd
 
+
 def ResNetSD(conv_per_stage,
              min_survival_p,
-             img_size=(32,32),
-             img_channels=3,
+             input_shape=(32, 32, 3),
              classes=10,
              filters=16,
              activation='relu',
@@ -143,13 +145,11 @@ def ResNetSD(conv_per_stage,
     """
     Template for Bottleneck ResNet with 4 stages
     Parameters:
-    ----------- 
+    -----------
     conv_per_stage: list, tuple
         Number of residual blocks in each stage
-    img_size: list, tuple
-        Size of a single input image
-    img_channels: int
-        Number of channels in a single input image
+    input_shape: list, tuple
+        Shape of an input image
     classes: int
         Number of classification classes.
     filters: int
@@ -157,15 +157,14 @@ def ResNetSD(conv_per_stage,
     activation: string, keras.Layer
         Activation function to use after each convolution.
     data_format: 'channels_last' or 'channels_first'
-        The ordering of the dimensions in the inputs. 
+        The ordering of the dimensions in the inputs.
     """
 
-    input_shape = (*img_size, img_channels) if data_format=='channels_last' else (img_channels, *img_size)
-    strides = [(1,1)] + [(2,2)]*3
+    strides = [(1, 1)] + [(2, 2)] * 3
     expansion = 4
     
     survival_fn = linear_decay_fn((0, 1), (sum(conv_per_stage), min_survival_p))
-    layer_cnt = 1 # ...
+    layer_cnt = 1  # ...
     
 
     input = tf.keras.layers.Input(shape=input_shape)
@@ -176,12 +175,12 @@ def ResNetSD(conv_per_stage,
         data_format = 'channels_first'
         
     # Initial Convolution
-    x = tf.keras.layers.Conv2D(filters=filters, 
-                               kernel_size=(3, 3), 
-                               strides=(1, 1), 
+    x = tf.keras.layers.Conv2D(filters=filters,
+                               kernel_size=(3, 3),
+                               strides=(1, 1),
                                padding='same',
                                data_format=data_format,
-                               use_bias=False, 
+                               use_bias=False,
                                kernel_regularizer=tf.keras.regularizers.l2(0.0001))(x)
     # Residual Stages
     for layers, strides in zip(conv_per_stage, strides):
@@ -189,7 +188,7 @@ def ResNetSD(conv_per_stage,
                                  filters=filters * expansion,
                                  survival_fn=survival_fn,
                                  stage_start_pos=layer_cnt,
-                                 kernel_size=(3,3),
+                                 kernel_size=(3, 3),
                                  strides=strides,
                                  data_format=data_format,
                                  activation=activation,
@@ -197,7 +196,7 @@ def ResNetSD(conv_per_stage,
         filters *= 2
         layer_cnt += layers
 
-    x = tf.keras.layers.BatchNormalization(-1 if data_format=='channels_last' else 1)(x)
+    x = tf.keras.layers.BatchNormalization(-1 if data_format == 'channels_last' else 1)(x)
     x = get_activation_layer(activation)(x)
 
     x = tf.keras.layers.GlobalAveragePooling2D(data_format=data_format)(x)
@@ -207,143 +206,91 @@ def ResNetSD(conv_per_stage,
                                  outputs=output,
                                  name=f'{f"Wide{filters}" if filters != 256 else ""}ResNet{sum(conv_per_stage) * 3 + 2}SD_p{min_survival_p}')
 
+
 ############## Predefined Nets ##############
 @register_model
-def ResNet50SD(img_size=(32,32),
-               img_channels=3,
-               min_survival_p=0.7,
-               classes=10,
+def ResNet50SD(min_survival_p=0.7,
                activation='relu',
-               data_format='channels_last',
                **kwargs):
     """
     ResNet50b model for CIFAR/SVHN
     Parameters:
     ----------
-    img_size: list, tuple
-        Size of a single input image
-    img_channels: int
-        Number of channels in a single input image
-    classes: int
-        Number of classification classes.
+    min_survival_p: float
+        last layer's survival probability
     activation: string, keras.Layer
         Main activation function of the network.
-    data_format: 'channels_last' or 'channels_first'
-        The ordering of the dimensions in the inputs. 
     Returns:
     ----------
     keras.Model
     """
     return ResNetSD(conv_per_stage=[3, 4, 6, 3],
                     min_survival_p=min_survival_p,
-                    img_size=img_size,
-                    img_channels=img_channels,
-                    classes=classes,
                     activation=activation,
-                    data_format=data_format,
                     **kwargs)
 
+
 @register_model
-def ResNet101SD(img_size=(32,32),
-                min_survival_p=0.45,
-                img_channels=3,
-                classes=10,
+def ResNet101SD(min_survival_p=0.45,
                 activation='relu',
-                data_format='channels_last',
                 **kwargs):
     """
     ResNet101 model for CIFAR/SVHN
     Parameters:
     ----------
-    img_size: list, tuple
-        Size of a single input image
-    img_channels: int
-        Number of channels in a single input image
-    classes: int
-        Number of classification classes.
+    min_survival_p: float
+        last layer's survival probability
     activation: string, keras.Layer
         Main activation function of the network.
-    data_format: 'channels_last' or 'channels_first'
-        The ordering of the dimensions in the inputs. 
     Returns:
     ----------
     keras.Model
     """
     return ResNetSD(conv_per_stage=[3, 4, 23, 3],
                     min_survival_p=min_survival_p,
-                    img_size=img_size,
-                    img_channels=img_channels,
-                    classes=classes,
                     activation=activation,
-                    data_format=data_format,
                     **kwargs)
 
+
 @register_model
-def ResNet152SD(img_size=(32,32),
-                min_survival_p=0.35,
-                img_channels=3,
-                classes=10,
+def ResNet152SD(min_survival_p=0.35,
                 activation='relu',
-                data_format='channels_last',
                 **kwargs):
     """
     ResNet152b model for CIFAR/SVHN
     Parameters:
     ----------
-    img_size: list, tuple
-        Size of a single input image
-    img_channels: int
-        Number of channels in a single input image
-    classes: int
-        Number of classification classes.
+    min_survival_p: float
+        last layer's survival probability
     activation: string, keras.Layer
         Main activation function of the network.
-    data_format: 'channels_last' or 'channels_first'
-        The ordering of the dimensions in the inputs. 
     Returns:
     ----------
     keras.Model
     """
     return ResNetSD(conv_per_stage=[3, 8, 36, 3],
                     min_survival_p=min_survival_p,
-                    img_size=img_size,
-                    img_channels=img_channels,
-                    classes=classes,
                     activation=activation,
-                    data_format=data_format,
                     **kwargs)
 
+
 @register_model
-def ResNet170SD(img_size=(32,32),
-                min_survival_p=0.35,
-                img_channels=3,
-                classes=10,
+def ResNet170SD(min_survival_p=0.35,
                 activation='relu',
-                data_format='channels_last',
                 **kwargs):
     """
     ResNet170b model for CIFAR/SVHN
     Parameters:
     ----------
-    img_size: list, tuple
-        Size of a single input image
-    img_channels: int
-        Number of channels in a single input image
-    classes: int
-        Number of classification classes.
+    min_survival_p: float
+        last layer's survival probability
     activation: string, keras.Layer
         Main activation function of the network.
-    data_format: 'channels_last' or 'channels_first'
-        The ordering of the dimensions in the inputs. 
     Returns:
     ----------
     keras.Model
     """
     return ResNetSD(conv_per_stage=[4, 10, 36, 6],
                     min_survival_p=min_survival_p,
-                    img_size=img_size,
-                    img_channels=img_channels,
-                    classes=classes,
                     activation=activation,
-                    data_format=data_format,
                     **kwargs)

@@ -1,12 +1,13 @@
 import tensorflow as tf
 from utils.registry import register_model
 
-""" 
+"""
     Implementation of DenseNet for CIFAR10/32x32
 
     From: Densely Connected Convolutional Networks, https://arxiv.org/abs/1608.06993.
     By: Gao Huang, Zhuang Liu, Laurens van der Maaten, Kilian Q. Weinberger
 """
+
 
 def BNRConv(filters, kernel_size, strides, kernel_regularizer=tf.keras.regularizers.l2(0.0001)):
     """BN + RELu + Convolution"""
@@ -18,6 +19,8 @@ def BNRConv(filters, kernel_size, strides, kernel_regularizer=tf.keras.regulariz
     return f
 
 ############## Dense Net ##############
+
+
 def DenseNetUnit(filters):
     def f(input):
         x = BNRConv(filters * 4, (1, 1), (1, 1))(input)
@@ -25,18 +28,24 @@ def DenseNetUnit(filters):
         return x
     return f
 
+
 def DenseNetBlock(units, filters):
     def f(input):
-        for i in range(units):
+        for _ in range(units):
             x = DenseNetUnit(filters)(input)
             input = tf.concat([x, input], axis=3)
 
         return input
     return f
 
-def DenseNet(input_shape, classes, reduction=0.5, growth_rate = 12, layers = 100):
+
+def DenseNet(input_shape = (32, 32, 3), 
+             classes = 10, 
+             reduction=0.5, 
+             growth_rate = 12, 
+             layers = 100):
     """
-    DenseNet model for CIFAR10/SVHN/32x32 images    
+    DenseNet model for CIFAR10/SVHN/32x32 images
     Parameters:
     ----------
     Returns
@@ -50,12 +59,12 @@ def DenseNet(input_shape, classes, reduction=0.5, growth_rate = 12, layers = 100
     x = tf.keras.layers.Conv2D(growth_rate * 2, (3, 3), padding='same', use_bias=False, kernel_regularizer=tf.keras.regularizers.l2(0.0001))(input)
 
     x = DenseNetBlock(N, growth_rate)(x)
-    x = BNRConv(int(x.shape[3]*reduction), (1, 1), (1, 1))(x)
-    x = tf.keras.layers.AvgPool2D((2,2), (2,2))(x)
+    x = BNRConv(int(x.shape[3] * reduction), (1, 1), (1, 1))(x)
+    x = tf.keras.layers.AvgPool2D((2, 2), (2, 2))(x)
 
     x = DenseNetBlock(N, growth_rate)(x)
-    x = BNRConv(int(x.shape[3]*reduction), (1, 1), (1, 1))(x)
-    x = tf.keras.layers.AvgPool2D((2,2), (2,2))(x)
+    x = BNRConv(int(x.shape[3] * reduction), (1, 1), (1, 1))(x)
+    x = tf.keras.layers.AvgPool2D((2, 2), (2, 2))(x)
 
     x = DenseNetBlock(N, growth_rate)(x)
     x = tf.keras.layers.BatchNormalization()(x)
@@ -67,59 +76,48 @@ def DenseNet(input_shape, classes, reduction=0.5, growth_rate = 12, layers = 100
     return tf.keras.models.Model(inputs = input, outputs = output, name = f'DenseNet{layers}')
 
 ############## Nets ##############
-@register_model
-def DenseNet100k12(input_shape, 
-                  classes, 
-                  growth_rate = 12, 
-                  reduction = 0.5):
-    """
-    Parameters:
-    ----------
-    Returns
-    -------
-    """
-    return DenseNet(input_shape = input_shape,
-                    classes = classes,
-                    reduction = reduction,
-                    growth_rate = growth_rate,
-                    layers=100
-                    )
+
 
 @register_model
-def DenseNet100k16(input_shape,
-                  classes,
-                  growth_rate = 16,
-                  reduction = 0.5):
+def DenseNet100k12(growth_rate = 12,
+                   reduction = 0.5):
     """
     Parameters:
     ----------
     Returns
     -------
     """
-    return DenseNet(input_shape = input_shape, 
-                    classes = classes, 
-                    reduction = reduction,
+    return DenseNet(reduction = reduction,
                     growth_rate = growth_rate,
-                    layers=100
-                    )
+                    layers=100)
+
 
 @register_model
-def DenseNet160k12(input_shape, 
-                  classes, 
-                  growth_rate = 12, 
-                  reduction = 0.5):
+def DenseNet100k16(growth_rate = 16,
+                   reduction = 0.5):
     """
     Parameters:
     ----------
     Returns
     -------
     """
-    return DenseNet(input_shape = input_shape, 
-                    classes = classes, 
-                    reduction = reduction,
+    return DenseNet(reduction = reduction,
                     growth_rate = growth_rate,
-                    layers=100
-                    )
+                    layers=100)
+
+
+@register_model
+def DenseNet160k12(growth_rate = 12,
+                   reduction = 0.5):
+    """
+    Parameters:
+    ----------
+    Returns
+    -------
+    """
+    return DenseNet(reduction = reduction,
+                    growth_rate = growth_rate,
+                    layers=160)
 
 
 
