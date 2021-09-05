@@ -39,7 +39,11 @@ def DenseNetBlock(units, filters):
     return f
 
 
-def DenseNet(input_shape, classes, reduction=0.5, growth_rate = 12, layers = 100):
+def DenseNet(input_shape = (32, 32, 3), 
+             classes = 10, 
+             reduction=0.5, 
+             growth_rate = 12, 
+             layers = 100):
     """
     DenseNet model for CIFAR10/SVHN/32x32 images
     Parameters:
@@ -75,9 +79,7 @@ def DenseNet(input_shape, classes, reduction=0.5, growth_rate = 12, layers = 100
 
 
 @register_model
-def DenseNet100k12(input_shape,
-                   classes,
-                   growth_rate = 12,
+def DenseNet100k12(growth_rate = 12,
                    reduction = 0.5):
     """
     Parameters:
@@ -85,17 +87,13 @@ def DenseNet100k12(input_shape,
     Returns
     -------
     """
-    return DenseNet(input_shape = input_shape,
-                    classes = classes,
-                    reduction = reduction,
+    return DenseNet(reduction = reduction,
                     growth_rate = growth_rate,
                     layers=100)
 
 
 @register_model
-def DenseNet100k16(input_shape,
-                   classes,
-                   growth_rate = 16,
+def DenseNet100k16(growth_rate = 16,
                    reduction = 0.5):
     """
     Parameters:
@@ -103,17 +101,13 @@ def DenseNet100k16(input_shape,
     Returns
     -------
     """
-    return DenseNet(input_shape = input_shape,
-                    classes = classes,
-                    reduction = reduction,
+    return DenseNet(reduction = reduction,
                     growth_rate = growth_rate,
                     layers=100)
 
 
 @register_model
-def DenseNet160k12(input_shape,
-                   classes,
-                   growth_rate = 12,
+def DenseNet160k12(growth_rate = 12,
                    reduction = 0.5):
     """
     Parameters:
@@ -121,11 +115,9 @@ def DenseNet160k12(input_shape,
     Returns
     -------
     """
-    return DenseNet(input_shape = input_shape,
-                    classes = classes,
-                    reduction = reduction,
+    return DenseNet(reduction = reduction,
                     growth_rate = growth_rate,
-                    layers=100)
+                    layers=160)
 
 
 

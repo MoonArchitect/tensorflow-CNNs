@@ -166,163 +166,97 @@ def MobileNetV2(input_shape=(32, 32, 3),
 
     return tf.keras.models.Model(inputs=input,
                                  outputs=output,
-                                 name=f'MobileNetV2_{upsample_resolution}_{width_multiplier}')
+                                 name=f'MobileNetV2_{upsample_resolution}px_{width_multiplier}k')
 
 
 ############## Predefined Nets ##############
 
 @register_model
-def MobileNetV2_320(width_multiplier=1,
-                    input_shape=(32, 32, 3),
-                    classes=10,
-                    data_format='channels_last'):
+def MobileNetV2_320(width_multiplier=1):
     """
-    MobileNetV2 with 320px sampled resolution
+    MobileNetV2 with 320px upsampled resolution
     
     Arguments:
     ----------
     width_multiplier: float
         Controls the width of the network.
-    input_shape: list/tuple
-        Shape of an input image
-    classes: int
-        Number of classification classes.
-    data_format: 'channels_last' or 'channels_first'
-        The ordering of the dimensions in the inputs.
+    
     """
-    return MobileNetV2(input_shape=input_shape,
-                       upsample_resolution=320,
-                       width_multiplier=width_multiplier,
-                       classes=classes,
-                       data_format=data_format)
+    return MobileNetV2(upsample_resolution=320,
+                       width_multiplier=width_multiplier)
 
 
 @register_model
-def MobileNetV2_224(width_multiplier=1,
-                    input_shape=(32, 32, 3),
-                    classes=10,
-                    data_format='channels_last'):
+def MobileNetV2_224(width_multiplier=1):
     """
-    MobileNetV2 with 224px sampled resolution
+    MobileNetV2 with 224px upsampled resolution
     
     Arguments:
     ----------
     width_multiplier: float
         Controls the width of the network.
-    input_shape: list/tuple
-        Shape of an input image
-    classes: int
-        Number of classification classes.
-    data_format: 'channels_last' or 'channels_first'
-        The ordering of the dimensions in the inputs.
+    
     """
-    return MobileNetV2(input_shape=input_shape,
-                       upsample_resolution=224,
-                       width_multiplier=width_multiplier,
-                       classes=classes,
-                       data_format=data_format)
+    return MobileNetV2(upsample_resolution=224,
+                       width_multiplier=width_multiplier)
 
 
 @register_model
-def MobileNetV2_192(width_multiplier=1,
-                    input_shape=(32, 32, 3),
-                    classes=10,
-                    data_format='channels_last'):
+def MobileNetV2_192(width_multiplier=1):
     """
-    MobileNetV2 with 192px sampled resolution
+    MobileNetV2 with 192px upsampled resolution
     
     Arguments:
     ----------
     width_multiplier: float
         Controls the width of the network.
-    input_shape: list/tuple
-        Shape of an input image
-    classes: int
-        Number of classification classes.
-    data_format: 'channels_last' or 'channels_first'
-        The ordering of the dimensions in the inputs.
+    
     """
-    return MobileNetV2(input_shape=input_shape,
-                       upsample_resolution=192,
-                       width_multiplier=width_multiplier,
-                       classes=classes,
-                       data_format=data_format)
+    return MobileNetV2(upsample_resolution=192,
+                       width_multiplier=width_multiplier)
 
 
 @register_model
-def MobileNetV2_160(width_multiplier=1,
-                    input_shape=(32, 32, 3),
-                    classes=10,
-                    data_format='channels_last'):
+def MobileNetV2_160(width_multiplier=1):
     """
-    MobileNetV2 with 160px sampled resolution
+    MobileNetV2 with 160px upsampled resolution
     
     Arguments:
     ----------
     width_multiplier: float
         Controls the width of the network.
-    input_shape: list/tuple
-        Shape of an input image
-    classes: int
-        Number of classification classes.
-    data_format: 'channels_last' or 'channels_first'
-        The ordering of the dimensions in the inputs.
+    
     """
-    return MobileNetV2(input_shape=input_shape,
-                       upsample_resolution=160,
-                       width_multiplier=width_multiplier,
-                       classes=classes,
-                       data_format=data_format)
+    return MobileNetV2(upsample_resolution=160,
+                       width_multiplier=width_multiplier)
 
 
 @register_model
-def MobileNetV2_128(width_multiplier=1,
-                    input_shape=(32, 32, 3),
-                    classes=10,
-                    data_format='channels_last'):
+def MobileNetV2_128(width_multiplier=1):
     """
-    MobileNetV2 with 128px sampled resolution
+    MobileNetV2 with 128px upsampled resolution
     
     Arguments:
     ----------
     width_multiplier: float
         Controls the width of the network.
-    input_shape: list/tuple
-        Shape of an input image
-    classes: int
-        Number of classification classes.
-    data_format: 'channels_last' or 'channels_first'
-        The ordering of the dimensions in the inputs.
+    
     """
-    return MobileNetV2(input_shape=input_shape,
-                       upsample_resolution=128,
-                       width_multiplier=width_multiplier,
-                       classes=classes,
-                       data_format=data_format)
+    return MobileNetV2(upsample_resolution=128,
+                       width_multiplier=width_multiplier)
 
 
 @register_model
-def MobileNetV2_96(width_multiplier=1,
-                   input_shape=(32, 32, 3),
-                   classes=10,
-                   data_format='channels_last'):
+def MobileNetV2_96(width_multiplier=1):
     """
-    MobileNetV2 with 96px sampled resolution
+    MobileNetV2 with 96px upsampled resolution
     
     Arguments:
     ----------
     width_multiplier: float
         Controls the width of the network.
-    input_shape: list/tuple
-        Shape of an input image
-    classes: int
-        Number of classification classes.
-    data_format: 'channels_last' or 'channels_first'
-        The ordering of the dimensions in the inputs.
+    
     """
-    return MobileNetV2(input_shape=input_shape,
-                       upsample_resolution=96,
-                       width_multiplier=width_multiplier,
-                       classes=classes,
-                       data_format=data_format)
+    return MobileNetV2(upsample_resolution=96,
+                       width_multiplier=width_multiplier)
 

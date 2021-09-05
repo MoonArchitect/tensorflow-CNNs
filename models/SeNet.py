@@ -228,8 +228,7 @@ def SEStage(layers,
 
 
 def SeNet(conv_per_stage,
-          img_size=(32, 32),
-          img_channels=3,
+          input_shape=(32, 32, 3),
           reduction=16,
           classes=10,
           filters=16,
@@ -242,10 +241,8 @@ def SeNet(conv_per_stage,
     -----------
     conv_per_stage: list, tuple
         Number of residual blocks in each stage
-    img_size: list, tuple
-        Size of a single input image
-    img_channels: int
-        Number of channels in a single input image
+    input_shape: list, tuple
+        Shape of an input image
     reduction: int
         Reduction value for SE layers
     classes: int
@@ -260,7 +257,6 @@ def SeNet(conv_per_stage,
         The ordering of the dimensions in the inputs.
     """
 
-    input_shape = (*img_size, img_channels) if data_format == 'channels_last' else (img_channels, *img_size)
     strides = [(1, 1)] + [(2, 2)] * 3
 
     input = tf.keras.layers.Input(shape=input_shape)

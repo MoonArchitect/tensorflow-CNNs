@@ -255,8 +255,7 @@ def ResStage(layers,
 
 
 def ResNetV2(conv_per_stage,
-             img_size=(32, 32),
-             img_channels=3,
+             input_shape=(32, 32, 3),
              classes=10,
              bottleneck=False,
              filters=16,
@@ -269,10 +268,8 @@ def ResNetV2(conv_per_stage,
     -----------
     conv_per_stage: list, tuple
         Number of residual blocks in each stage
-    img_size: list, tuple
-        Size of a single input image
-    img_channels: int
-        Number of channels in a single input image
+    input_shape: list, tuple
+        Shape of an input image
     classes: int
         Number of classification classes.
     bottleneck: bool
@@ -285,7 +282,6 @@ def ResNetV2(conv_per_stage,
         The ordering of the dimensions in the inputs.
     """
 
-    input_shape = (*img_size, img_channels) if data_format == 'channels_last' else (img_channels, *img_size)
     strides = [(1, 1)] + [(2, 2)] * 3
     expansion = 4 if bottleneck else 1
 
@@ -330,213 +326,114 @@ def ResNetV2(conv_per_stage,
 
 ############## Predefined Nets ##############
 @register_model
-def ResNet18(img_size=(32, 32),
-             img_channels=3,
-             classes=10,
-             activation='relu',
-             data_format='channels_last',
+def ResNet18(activation='relu',
              **kwargs):
     """
     ResNet18 model for CIFAR/SVHN
     Parameters:
     ----------
-    img_size: list, tuple
-        Size of a single input image
-    img_channels: int
-        Number of channels in a single input image
-    classes: int
-        Number of classification classes.
     activation: string, keras.Layer
         Main activation function of the network.
-    data_format: 'channels_last' or 'channels_first'
-        The ordering of the dimensions in the inputs.
     Returns:
     ----------
     keras.Model
     """
     return ResNetV2(conv_per_stage=[2, 2, 2, 2],
-                    img_size=img_size,
-                    img_channels=img_channels,
-                    classes=classes,
                     bottleneck=False,
                     activation=activation,
-                    data_format=data_format,
                     **kwargs)
 
 
 @register_model
-def ResNet34(img_size=(32, 32),
-             img_channels=3,
-             classes=10,
-             activation='relu',
-             data_format='channels_last',
+def ResNet34(activation='relu',
              **kwargs):
     """
     ResNet34 model for CIFAR/SVHN
     Parameters:
     ----------
-    img_size: list, tuple
-        Size of a single input image
-    img_channels: int
-        Number of channels in a single input image
-    classes: int
-        Number of classification classes.
     activation: string, keras.Layer
         Main activation function of the network.
-    data_format: 'channels_last' or 'channels_first'
-        The ordering of the dimensions in the inputs.
     Returns:
     ----------
     keras.Model
     """
     return ResNetV2(conv_per_stage=[3, 4, 6, 3],
-                    img_size=img_size,
-                    img_channels=img_channels,
-                    classes=classes,
                     bottleneck=False,
                     activation=activation,
-                    data_format=data_format,
                     **kwargs)
 
 
 @register_model
-def ResNet35(img_size=(32, 32),
-             img_channels=3,
-             classes=10,
-             activation='relu',
-             data_format='channels_last',
+def ResNet35(activation='relu',
              **kwargs):
     """
     ResNet35b model for CIFAR/SVHN
     Parameters:
     ----------
-    img_size: list, tuple
-        Size of a single input image
-    img_channels: int
-        Number of channels in a single input image
-    classes: int
-        Number of classification classes.
     activation: string, keras.Layer
         Main activation function of the network.
-    data_format: 'channels_last' or 'channels_first'
-        The ordering of the dimensions in the inputs.
     Returns:
     ----------
     keras.Model
     """
     return ResNetV2(conv_per_stage=[2, 3, 4, 2],
-                    img_size=img_size,
-                    img_channels=img_channels,
-                    classes=classes,
                     bottleneck=True,
                     activation=activation,
-                    data_format=data_format,
                     **kwargs)
 
 
 @register_model
-def ResNet50(img_size=(32, 32),
-             img_channels=3,
-             classes=10,
-             activation='relu',
-             data_format='channels_last',
+def ResNet50(activation='relu',
              **kwargs):
     """
     ResNet50b model for CIFAR/SVHN
     Parameters:
     ----------
-    img_size: list, tuple
-        Size of a single input image
-    img_channels: int
-        Number of channels in a single input image
-    classes: int
-        Number of classification classes.
     activation: string, keras.Layer
         Main activation function of the network.
-    data_format: 'channels_last' or 'channels_first'
-        The ordering of the dimensions in the inputs.
     Returns:
     ----------
     keras.Model
     """
     return ResNetV2(conv_per_stage=[3, 4, 6, 3],
-                    img_size=img_size,
-                    img_channels=img_channels,
-                    classes=classes,
                     bottleneck=True,
                     activation=activation,
-                    data_format=data_format,
                     **kwargs)
 
 
 @register_model
-def ResNet101(img_size=(32, 32),
-              img_channels=3,
-              classes=10,
-              activation='relu',
-              data_format='channels_last',
+def ResNet101(activation='relu',
               **kwargs):
     """
     ResNet101 model for CIFAR/SVHN
     Parameters:
     ----------
-    img_size: list, tuple
-        Size of a single input image
-    img_channels: int
-        Number of channels in a single input image
-    classes: int
-        Number of classification classes.
     activation: string, keras.Layer
         Main activation function of the network.
-    data_format: 'channels_last' or 'channels_first'
-        The ordering of the dimensions in the inputs.
     Returns:
     ----------
     keras.Model
     """
     return ResNetV2(conv_per_stage=[3, 4, 23, 3],
-                    img_size=img_size,
-                    img_channels=img_channels,
-                    classes=classes,
                     bottleneck=True,
                     activation=activation,
-                    data_format=data_format,
                     **kwargs)
 
 
 @register_model
-def ResNet152(img_size=(32, 32),
-              img_channels=3,
-              classes=10,
-              activation='relu',
-              data_format='channels_last',
+def ResNet152(activation='relu',
               **kwargs):
     """
     ResNet152b model for CIFAR/SVHN
     Parameters:
     ----------
-    img_size: list, tuple
-        Size of a single input image
-    img_channels: int
-        Number of channels in a single input image
-    classes: int
-        Number of classification classes.
     activation: string, keras.Layer
         Main activation function of the network.
-    data_format: 'channels_last' or 'channels_first'
-        The ordering of the dimensions in the inputs.
     Returns:
     ----------
     keras.Model
     """
     return ResNetV2(conv_per_stage=[3, 8, 36, 3],
-                    img_size=img_size,
-                    img_channels=img_channels,
-                    classes=classes,
                     bottleneck=True,
                     activation=activation,
-                    data_format=data_format,
                     **kwargs)
-
-
-

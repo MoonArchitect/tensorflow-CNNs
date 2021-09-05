@@ -107,8 +107,7 @@ def ResNeXtSD_Stage(layers,
 
 def ResNeXtSD(conv_per_stage,
               min_survival_p,
-              img_size=(32, 32),
-              img_channels=3,
+              input_shape=(32, 32, 3),
               classes=10,
               cardinality=16,
               filters=64,
@@ -121,10 +120,8 @@ def ResNeXtSD(conv_per_stage,
     -----------
     conv_per_stage: list, tuple
         Number of residual blocks in each stage
-    img_size: list, tuple
-        Size of a single input image
-    img_channels: int
-        Number of channels in a single input image
+    input_shape: list, tuple
+        Shape of an input image
     classes: int
         Number of classification classes.
     filters: int
@@ -138,7 +135,6 @@ def ResNeXtSD(conv_per_stage,
     """
     assert filters % cardinality == 0, f"Number of filters ({filters}) has to be divisible by cardinality ({cardinality})"
 
-    input_shape = (*img_size, img_channels) if data_format == 'channels_last' else (img_channels, *img_size)
     strides = [(1, 1)] + [(2, 2)] * 3
     expansion = 2
     
@@ -190,144 +186,88 @@ def ResNeXtSD(conv_per_stage,
 ############## Predefined Nets ##############
 @register_model
 def ResNeXtSD35(min_survival_p=0.8,
-                img_size=(32, 32),
-                img_channels=3,
-                classes=10,
                 activation='relu',
-                data_format='channels_last',
                 **kwargs):
     """
     ResNeXtSD35 model for CIFAR/SVHN
     Parameters:
     ----------
-    img_size: list, tuple
-        Size of a single input image
-    img_channels: int
-        Number of channels in a single input image
-    classes: int
-        Number of classification classes.
+    min_survival_p: float
+        last layer's survival probability
     activation: string, keras.Layer
         Main activation function of the network.
-    data_format: 'channels_last' or 'channels_first'
-        The ordering of the dimensions in the inputs.
     Returns:
     ----------
     keras.Model
     """
     return ResNeXtSD(conv_per_stage=[2, 3, 4, 2],
                      min_survival_p=min_survival_p,
-                     img_size=img_size,
-                     img_channels=img_channels,
-                     classes=classes,
                      activation=activation,
-                     data_format=data_format,
                      **kwargs)
 
 
 @register_model
 def ResNeXtSD50(min_survival_p=0.65,
-                img_size=(32, 32),
-                img_channels=3,
-                classes=10,
                 activation='relu',
-                data_format='channels_last',
                 **kwargs):
     """
     ResNeXtSD50 model for CIFAR/SVHN
     Parameters:
     ----------
-    img_size: list, tuple
-        Size of a single input image
-    img_channels: int
-        Number of channels in a single input image
-    classes: int
-        Number of classification classes.
+    min_survival_p: float
+        last layer's survival probability
     activation: string, keras.Layer
         Main activation function of the network.
-    data_format: 'channels_last' or 'channels_first'
-        The ordering of the dimensions in the inputs.
     Returns:
     ----------
     keras.Model
     """
     return ResNeXtSD(conv_per_stage=[3, 4, 6, 3],
                      min_survival_p=min_survival_p,
-                     img_size=img_size,
-                     img_channels=img_channels,
-                     classes=classes,
                      activation=activation,
-                     data_format=data_format,
                      **kwargs)
 
 
 @register_model
 def ResNeXtSD101(min_survival_p=0.5,
-                 img_size=(32, 32),
-                 img_channels=3,
-                 classes=10,
                  activation='relu',
-                 data_format='channels_last',
                  **kwargs):
     """
     ResNeXtSD101 model for CIFAR/SVHN
     Parameters:
     ----------
-    img_size: list, tuple
-        Size of a single input image
-    img_channels: int
-        Number of channels in a single input image
-    classes: int
-        Number of classification classes.
+    min_survival_p: float
+        last layer's survival probability
     activation: string, keras.Layer
         Main activation function of the network.
-    data_format: 'channels_last' or 'channels_first'
-        The ordering of the dimensions in the inputs.
     Returns:
     ----------
     keras.Model
     """
     return ResNeXtSD(conv_per_stage=[3, 4, 23, 3],
                      min_survival_p=min_survival_p,
-                     img_size=img_size,
-                     img_channels=img_channels,
-                     classes=classes,
                      activation=activation,
-                     data_format=data_format,
                      **kwargs)
 
 
 @register_model
 def ResNeXtSD152(min_survival_p=0.35,
-                 img_size=(32, 32),
-                 img_channels=3,
-                 classes=10,
                  activation='relu',
-                 data_format='channels_last',
                  **kwargs):
     """
     ResNeXtSD152 model for CIFAR/SVHN
     Parameters:
     ----------
-    img_size: list, tuple
-        Size of a single input image
-    img_channels: int
-        Number of channels in a single input image
-    classes: int
-        Number of classification classes.
+    min_survival_p: float
+        last layer's survival probability
     activation: string, keras.Layer
         Main activation function of the network.
-    data_format: 'channels_last' or 'channels_first'
-        The ordering of the dimensions in the inputs.
     Returns:
     ----------
     keras.Model
     """
     return ResNeXtSD(conv_per_stage=[3, 8, 36, 3],
                      min_survival_p=min_survival_p,
-                     img_size=img_size,
-                     img_channels=img_channels,
-                     classes=classes,
                      activation=activation,
-                     data_format=data_format,
                      **kwargs)
 

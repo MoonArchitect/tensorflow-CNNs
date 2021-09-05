@@ -108,13 +108,13 @@ def MobileNetV3_Block(input,
     return x
 
 
-def _mobile_net_v3(config,
-                   input_shape=(32, 32, 3),
-                   upsample_resolution=224,
-                   width_multiplier=1.0,
-                   classes=10,
-                   data_format='channels_last',
-                   name="MobileNetV3_custom"):
+def MobileNetV3_builder(config,
+                        input_shape=(32, 32, 3),
+                        upsample_resolution=224,
+                        width_multiplier=1.0,
+                        classes=10,
+                        data_format='channels_last',
+                        name="MobileNetV3_custom"):
 
     """
     Template for
@@ -227,13 +227,13 @@ def MobileNetV3Large(input_shape=(32, 32, 3),
         [5, 960,  160,   True, 'hswish', 1],
     ]
 
-    return _mobile_net_v3(large_cfg,
-                          input_shape=input_shape,
-                          upsample_resolution=upsample_resolution,
-                          width_multiplier=width_multiplier,
-                          classes=classes,
-                          data_format=data_format,
-                          name=f'MobileNetV3Large_{upsample_resolution}_{width_multiplier}')
+    return MobileNetV3_builder(large_cfg,
+                               input_shape=input_shape,
+                               upsample_resolution=upsample_resolution,
+                               width_multiplier=width_multiplier,
+                               classes=classes,
+                               data_format=data_format,
+                               name=f'MobileNetV3L_{upsample_resolution}px_{width_multiplier}k')
 
 
 def MobileNetV3Small(input_shape=(32, 32, 3),
@@ -258,274 +258,164 @@ def MobileNetV3Small(input_shape=(32, 32, 3),
         [5,  576,   96,   True, 'hswish',  1]
     ]
 
-    return _mobile_net_v3(small_cfg,
-                          input_shape=input_shape,
-                          upsample_resolution=upsample_resolution,
-                          width_multiplier=width_multiplier,
-                          classes=classes,
-                          data_format=data_format,
-                          name=f'MobileNetV3Small_{upsample_resolution}_{width_multiplier}')
+    return MobileNetV3_builder(small_cfg,
+                               input_shape=input_shape,
+                               upsample_resolution=upsample_resolution,
+                               width_multiplier=width_multiplier,
+                               classes=classes,
+                               data_format=data_format,
+                               name=f'MobileNetV3S_{upsample_resolution}px_{width_multiplier}k')
 
 
 ############## Predefined Nets ##############
 @register_model
-def MobileNetV3Large_320(width_multiplier=1,
-                         input_shape=(32, 32, 3),
-                         classes=10,
-                         data_format='channels_last'):
+def MobileNetV3L_320(width_multiplier=1):
     """
-    MobileNetV3 Large with 320px sampled resolution
+    MobileNetV3 Large with 320px upupsampled resolution
     
     Arguments:
     ----------
     width_multiplier: float
         Controls the width of the network.
-    input_shape: list/tuple
-        Shape of an input image
-    classes: int
-        Number of classification classes.
-    data_format: 'channels_last' or 'channels_first'
-        The ordering of the dimensions in the inputs.
+    
     """
-    return MobileNetV3Large(input_shape=input_shape,
-                            upsample_resolution=320,
-                            width_multiplier=width_multiplier,
-                            classes=classes,
-                            data_format=data_format)
+    return MobileNetV3Large(upsample_resolution=320,
+                            width_multiplier=width_multiplier)
 
 
 @register_model
-def MobileNetV3Large_224(width_multiplier=1,
-                         input_shape=(32, 32, 3),
-                         classes=10,
-                         data_format='channels_last'):
+def MobileNetV3L_224(width_multiplier=1):
     """
-    MobileNetV3 Large with 224px sampled resolution
+    MobileNetV3 Large with 224px upsampled resolution
     
     Arguments:
     ----------
     width_multiplier: float
         Controls the width of the network.
-    input_shape: list/tuple
-        Shape of an input image
-    classes: int
-        Number of classification classes.
-    data_format: 'channels_last' or 'channels_first'
-        The ordering of the dimensions in the inputs.
+    
     """
-    return MobileNetV3Large(input_shape=input_shape,
-                            upsample_resolution=224,
-                            width_multiplier=width_multiplier,
-                            classes=classes,
-                            data_format=data_format)
+    return MobileNetV3Large(upsample_resolution=224,
+                            width_multiplier=width_multiplier)
 
 
 @register_model
-def MobileNetV3Large_192(width_multiplier=1,
-                         input_shape=(32, 32, 3),
-                         classes=10,
-                         data_format='channels_last'):
+def MobileNetV3L_192(width_multiplier=1):
     """
-    MobileNetV3 Large with 192px sampled resolution
+    MobileNetV3 Large with 192px upsampled resolution
     
     Arguments:
     ----------
     width_multiplier: float
         Controls the width of the network.
-    input_shape: list/tuple
-        Shape of an input image
-    classes: int
-        Number of classification classes.
-    data_format: 'channels_last' or 'channels_first'
-        The ordering of the dimensions in the inputs.
+    
     """
-    return MobileNetV3Large(input_shape=input_shape,
-                            upsample_resolution=192,
-                            width_multiplier=width_multiplier,
-                            classes=classes,
-                            data_format=data_format)
+    return MobileNetV3Large(upsample_resolution=192,
+                            width_multiplier=width_multiplier)
 
 
 @register_model
-def MobileNetV3Large_160(width_multiplier=1,
-                         input_shape=(32, 32, 3),
-                         classes=10,
-                         data_format='channels_last'):
+def MobileNetV3L_160(width_multiplier=1):
     """
-    MobileNetV3 Large with 160px sampled resolution
+    MobileNetV3 Large with 160px upsampled resolution
     
     Arguments:
     ----------
     width_multiplier: float
         Controls the width of the network.
-    input_shape: list/tuple
-        Shape of an input image
-    classes: int
-        Number of classification classes.
-    data_format: 'channels_last' or 'channels_first'
-        The ordering of the dimensions in the inputs.
+    
     """
-    return MobileNetV3Large(input_shape=input_shape,
-                            upsample_resolution=160,
-                            width_multiplier=width_multiplier,
-                            classes=classes,
-                            data_format=data_format)
+    return MobileNetV3Large(upsample_resolution=160,
+                            width_multiplier=width_multiplier)
 
 
 @register_model
-def MobileNetV3Large_128(width_multiplier=1,
-                         input_shape=(32, 32, 3),
-                         classes=10,
-                         data_format='channels_last'):
+def MobileNetV3L_128(width_multiplier=1):
     """
-    MobileNetV3 Large with 128px sampled resolution
+    MobileNetV3 Large with 128px upsampled resolution
     
     Arguments:
     ----------
     width_multiplier: float
         Controls the width of the network.
-    input_shape: list/tuple
-        Shape of an input image
-    classes: int
-        Number of classification classes.
-    data_format: 'channels_last' or 'channels_first'
-        The ordering of the dimensions in the inputs.
+    
     """
-    return MobileNetV3Large(input_shape=input_shape,
-                            upsample_resolution=128,
-                            width_multiplier=width_multiplier,
-                            classes=classes,
-                            data_format=data_format)
+    return MobileNetV3Large(upsample_resolution=128,
+                            width_multiplier=width_multiplier)
 
 
 @register_model
-def MobileNetV3Small_320(width_multiplier=1,
-                         input_shape=(32, 32, 3),
-                         classes=10,
-                         data_format='channels_last'):
+def MobileNetV3S_320(width_multiplier=1):
     """
-    MobileNetV3 Small with 320px sampled resolution
+    MobileNetV3 Small with 320px upsampled resolution
     
     Arguments:
     ----------
     width_multiplier: float
         Controls the width of the network.
-    input_shape: list/tuple
-        Shape of an input image
-    classes: int
-        Number of classification classes.
-    data_format: 'channels_last' or 'channels_first'
-        The ordering of the dimensions in the inputs.
+    
     """
-    return MobileNetV3Large(input_shape=input_shape,
-                            upsample_resolution=320,
-                            width_multiplier=width_multiplier,
-                            classes=classes,
-                            data_format=data_format)
+    return MobileNetV3Large(upsample_resolution=320,
+                            width_multiplier=width_multiplier)
 
 
 @register_model
-def MobileNetV3Small_224(width_multiplier=1,
-                         input_shape=(32, 32, 3),
-                         classes=10,
-                         data_format='channels_last'):
+def MobileNetV3S_224(width_multiplier=1):
     """
-    MobileNetV3 Small with 224px sampled resolution
+    MobileNetV3 Small with 224px upsampled resolution
     
     Arguments:
     ----------
     width_multiplier: float
         Controls the width of the network.
-    input_shape: list/tuple
-        Shape of an input image
-    classes: int
-        Number of classification classes.
-    data_format: 'channels_last' or 'channels_first'
-        The ordering of the dimensions in the inputs.
+    
     """
-    return MobileNetV3Small(input_shape=input_shape,
-                            upsample_resolution=224,
-                            width_multiplier=width_multiplier,
-                            classes=classes,
-                            data_format=data_format)
+    return MobileNetV3Small(upsample_resolution=224,
+                            width_multiplier=width_multiplier)
 
 
 @register_model
-def MobileNetV3Small_192(width_multiplier=1,
-                         input_shape=(32, 32, 3),
-                         classes=10,
-                         data_format='channels_last'):
+def MobileNetV3S_192(width_multiplier=1):
     """
-    MobileNetV3 Small with 192px sampled resolution
+    MobileNetV3 Small with 192px upsampled resolution
     
     Arguments:
     ----------
     width_multiplier: float
         Controls the width of the network.
-    input_shape: list/tuple
-        Shape of an input image
-    classes: int
-        Number of classification classes.
-    data_format: 'channels_last' or 'channels_first'
-        The ordering of the dimensions in the inputs.
+    
     """
-    return MobileNetV3Small(input_shape=input_shape,
-                            upsample_resolution=192,
-                            width_multiplier=width_multiplier,
-                            classes=classes,
-                            data_format=data_format)
+    return MobileNetV3Small(upsample_resolution=192,
+                            width_multiplier=width_multiplier)
 
 
 @register_model
-def MobileNetV3Small_160(width_multiplier=1,
-                         input_shape=(32, 32, 3),
-                         classes=10,
-                         data_format='channels_last'):
+def MobileNetV3S_160(width_multiplier=1):
     """
-    MobileNetV3 Small with 160px sampled resolution
+    MobileNetV3 Small with 160px upsampled resolution
     
     Arguments:
     ----------
     width_multiplier: float
         Controls the width of the network.
-    input_shape: list/tuple
-        Shape of an input image
-    classes: int
-        Number of classification classes.
-    data_format: 'channels_last' or 'channels_first'
-        The ordering of the dimensions in the inputs.
+    
     """
-    return MobileNetV3Small(input_shape=input_shape,
-                            upsample_resolution=160,
-                            width_multiplier=width_multiplier,
-                            classes=classes,
-                            data_format=data_format)
+    return MobileNetV3Small(upsample_resolution=160,
+                            width_multiplier=width_multiplier)
 
 
 @register_model
-def MobileNetV3Small_128(width_multiplier=1,
-                         input_shape=(32, 32, 3),
-                         classes=10,
-                         data_format='channels_last'):
+def MobileNetV3S_128(width_multiplier=1):
     """
-    MobileNetV3 Small with 128px sampled resolution
+    MobileNetV3 Small with 128px upsampled resolution
     
     Arguments:
     ----------
     width_multiplier: float
         Controls the width of the network.
-    input_shape: list/tuple
-        Shape of an input image
-    classes: int
-        Number of classification classes.
-    data_format: 'channels_last' or 'channels_first'
-        The ordering of the dimensions in the inputs.
+    
     """
-    return MobileNetV3Small(input_shape=input_shape,
-                            upsample_resolution=128,
-                            width_multiplier=width_multiplier,
-                            classes=classes,
-                            data_format=data_format)
+    return MobileNetV3Small(upsample_resolution=128,
+                            width_multiplier=width_multiplier)
 
 
 
