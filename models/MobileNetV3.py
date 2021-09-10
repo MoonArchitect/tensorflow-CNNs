@@ -11,6 +11,11 @@ from utils.registry import register_model
     By: Andrew Howard, Mark Sandler, Grace Chu, Liang-Chieh Chen, Bo Chen, Mingxing Tan, Weijun Wang, Yukun Zhu, Ruoming Pang, Vijay Vasudevan, Quoc V. Le, Hartwig Adam
 """
 
+# TODO this mobilenetv3 is not equivalent to one presented in paper for imagenet
+# Differences:
+#   - 
+#   - 
+
 
 def MobileNetV3_Block(input,
                       filters,
@@ -145,7 +150,7 @@ def MobileNetV3_builder(config,
         upsample = upsample_resolution // input_shape[1]
         x = nn.layers.UpSampling2D([upsample, upsample], data_format=data_format)(x)
 
-    x = nn.layers.Conv2D(filters=16, kernel_size=3, strides=2, padding='same', use_bias=False, data_format=data_format)(x)
+    x = nn.layers.Conv2D(filters=32, kernel_size=7, strides=2, padding='same', use_bias=False, data_format=data_format)(x)
     x = nn.layers.BatchNormalization(axis=channel_axis)(x)
     x = get_activation_layer('hswish')(x)
     
@@ -175,7 +180,8 @@ def MobileNetV3_builder(config,
     x = nn.layers.BatchNormalization(axis=channel_axis,  name="Conv_960_BN")(x)
     x = get_activation_layer('hswish', name="Conv_960_hswish")(x)
     x = nn.layers.GlobalAveragePooling2D(data_format=data_format)(x)
-    x = nn.layers.Dense(1280 if last_stage_filters == 960 else 1024, use_bias=False)(x)
+    
+    # x = nn.layers.Dense(1280 if last_stage_filters == 960 else 1024, use_bias=False)(x)
     # x = nn.layers.Lambda(lambda x: tf.reduce_mean(x, axis=mean_axis, keepdims=True))(x)
 
     # x = nn.layers.Conv2D(
@@ -185,15 +191,9 @@ def MobileNetV3_builder(config,
     #    use_bias=False,
     #    name=f"Conv_{1280 if last_stage_filters == 960 else 1024}"
     # )(x)
-    x = get_activation_layer(activation, name="Conv_1280_hswish")(x)
-    # x = nn.layers.Conv2D(
-    #    filters = classes,
-    #    kernel_size=1,
-    #    data_format=data_format,
-    #    use_bias=False
-    # )(x)
+    # x = get_activation_layer(activation, name="Conv_1280_hswish")(x)
 
-    # x = nn.layers.Flatten(data_format=data_format)(x)
+    x = nn.layers.Flatten(data_format=data_format)(x)
     output = nn.layers.Dense(classes)(x)
 
     return tf.keras.models.Model(inputs=input,
