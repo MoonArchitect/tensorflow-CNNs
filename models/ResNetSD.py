@@ -49,7 +49,7 @@ class StochResWrapper(nn.layers.Layer):
             lambda: self.transform_input_fn(inputs)
         )
 
-
+# TODO expose a training (boolean) argument in the call() method
 def StochasticDepthStage(layers,
                          filters,
                          survival_fn,

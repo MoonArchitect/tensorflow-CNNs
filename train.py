@@ -130,7 +130,7 @@ def train(model,
     )
 
 
-def main():
+def main():  # TODO allow args and kwargs
     args = parse_args()
 
     if not args.full_info:

@@ -39,10 +39,10 @@ def DenseNetBlock(units, filters):
     return f
 
 
-def DenseNet(input_shape = (32, 32, 3), 
-             classes = 10, 
-             reduction=0.5, 
-             growth_rate = 12, 
+def DenseNet(input_shape = (32, 32, 3),
+             classes = 10,
+             reduction=0.5,
+             growth_rate = 12,
              layers = 100):
     """
     DenseNet model for CIFAR10/SVHN/32x32 images
