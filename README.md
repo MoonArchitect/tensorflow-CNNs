@@ -1,43 +1,43 @@
 # Deep Convolutional Neural Networks for Image Classification
 
 Implementation of various AI papers for image classification  
-\---- Section is under construction ----
 
-### Implemented and Planned Features:
+
+### Implemented:
 <details>
   <summary> Model Architectures </summary>
   
-- [x] ResNetV2
-- [x] ResNetV2 + Stochastic Depth
-- [x] ResNeXt
-- [x] ResNeXt + Stochastic Depth
-- [x] DenseNet (Currently Reworking)
-- [x] MobileNetV2
-- [x] MobileNetV3
-- [ ] SeNet
-- [ ] ResNeSt
+- ResNetV2
+- ResNetV2 + Stochastic Depth
+- ResNeXt
+- ResNeXt + Stochastic Depth
+- DenseNet
+- MobileNetV2
+- MobileNetV3
+- SeNet
+<!-- - [ ] ResNeSt
 - [ ] EfficientNet
 - [ ] NAT
 - [ ] TResNet
 - [ ] PyramidNet
 - [ ] Xception
-- [ ] IBN-Net
+- [ ] IBN-Net -->
 
 </details>
 
 <details>
   <summary> Other Features </summary>
   
-- [x] Step Learning Rate (LR) decay schedule
-- [x] HTD (Hyperbolic-Tangent LR Decay schedule)
-- [x] Cosine LR decay schedule
-- [x] Cutout
-- [x] Mixup
-- [x] Cutmix
-- [ ] Hard and Soft PatchUp
-- [x] Mish
-- [ ] Swish
-- [ ] EvoNorm
+- Step Learning Rate (LR) decay schedule
+- HTD (Hyperbolic-Tangent LR Decay schedule)
+- Cosine LR decay schedule
+- Cutout
+- Mixup
+- Cutmix
+- Mish
+<!-- - [ ] Hard and Soft PatchUp -->
+<!-- - [ ] Swish
+- [ ] EvoNorm -->
 
 </details>
 
@@ -46,14 +46,14 @@ Implementation of various AI papers for image classification
 <table>
   <tr>
     <th colspan="3">⠀⠀⠀⠀⠀⠀⠀⠀⠀Model⠀⠀⠀⠀⠀⠀⠀⠀⠀</th>
-    <th>Top1</br>⠀⠀Accuracy⠀⠀</th>
-    <th>Top1</br>⠀⠀Error⠀⠀</th>
+    <th>Top1</br>⠀Accuracy⠀</th>
+    <th>Top1</br>⠀Error⠀</th>
     <th>Param count</th>
     <th>FLOPs/2</th>
     <th>Training speed</br>(imgs/sec)</th>
   </tr>
   <tr>
-    <th colspan="3">ResNeSt</th>
+    <th colspan="3">TResNet</th>
     <th></th>
     <th></th>
     <th></th>
@@ -61,39 +61,7 @@ Implementation of various AI papers for image classification
     <th></th>
   </tr>
   <tr>
-    <th colspan="3" style="border-top:5px">EfficientNet</th>
-    <th></th>
-    <th></th>
-    <th></th>
-    <th></th>
-    <th></th>
-  </tr>
-  <tr>
-    <th colspan="3">Xception</th>
-    <th></th>
-    <th></th>
-    <th></th>
-    <th></th>
-    <th></th>
-  </tr>
-  <tr>
-    <th colspan="3">IBN-Net</th>
-    <th></th>
-    <th></th>
-    <th></th>
-    <th></th>
-    <th></th>
-  </tr>
-  <tr>
-    <th colspan="3"></br>TResNet</th>
-    <th></th>
-    <th></th>
-    <th></th>
-    <th></th>
-    <th></th>
-  </tr>
-  <tr>
-    <th rowspan="5"></th>
+    <th rowspan="4"></th>
     <th colspan="2">TResNetM-.5-32px<sub>+HTD+Cutmix</sub></th>
     <th>95.05%</th>
     <th>4.95%</th>
@@ -126,15 +94,7 @@ Implementation of various AI papers for image classification
     <th>-</th>
   </tr>
   <tr>
-    <th colspan="2">TResNetL-.5-192px<sub>+HTD+Cutmix</sub></th>
-    <th>-</th>
-    <th>-</th>
-    <th>-</th>
-    <th>-</th>
-    <th>-</th>
-  </tr>
-  <tr>
-    <th colspan="3"></br>MobileNetV3</th>
+    <th colspan="3">MobileNetV3</th>
     <th></th>
     <th></th>
     <th></th>
@@ -142,7 +102,7 @@ Implementation of various AI papers for image classification
     <th></th>
   </tr>
   <tr>
-    <th rowspan="9"></th>
+    <th rowspan="5"></th>
     <th colspan="2">MNetV3S 160px 1.5<sub>+Cos+Cutmix</sub></th>
     <th>94.25%</th>
     <th>5.75%</th>
@@ -157,14 +117,6 @@ Implementation of various AI papers for image classification
     <th>1,533,896</th>
     <th>-</th>
     <th>1600</th>
-  </tr>
-  <tr>
-    <th colspan="2">MNetV3S 192px 1.5<sub>+Cos+Cutmix</sub></th>
-    <th>-</th>
-    <th>-</th>
-    <th>1,732,152</th>
-    <th>-</th>
-    <th>1542</th>
   </tr>
   <tr>
     <th colspan="2">MNetV3S 192px 2<sub>+Cos+Cutmix</sub></th>
@@ -183,14 +135,6 @@ Implementation of various AI papers for image classification
     <th>1347</th>
   </tr>
   <tr>
-    <th colspan="2">MNetV3S 224px 2<sub>+Cos+Cutmix</sub></th>
-    <th>-</th>
-    <th>-</th>
-    <th>-</th>
-    <th>-</th>
-    <th>-</th>
-  </tr>
-  <tr>
     <th colspan="2">MNetV3L<sub>+HTD+Cutmix</sub></th>
     <th>96.37%</th>
     <th>3.63%</th>
@@ -199,23 +143,7 @@ Implementation of various AI papers for image classification
     <th>-</th>
   </tr>
   <tr>
-    <th colspan="2">MNetV3L 192px 2<sub>+HTD+Cutmix</sub></th>
-    <th>-</th>
-    <th>-</th>
-    <th>-</th>
-    <th>-</th>
-    <th>-</th>
-  </tr>
-  <tr>
-    <th colspan="2">MNetV3L_2<sub>+HTD+Cutmix</sub></th>
-    <th>-</th>
-    <th>-</th>
-    <th>-</th>
-    <th>-</th>
-    <th>-</th>
-  </tr>
-  <tr>
-    <th colspan="3"></br>MobileNetV2</th>
+    <th colspan="3">MobileNetV2</th>
     <th></th>
     <th></th>
     <th></th>
@@ -240,7 +168,7 @@ Implementation of various AI papers for image classification
     <th>-</th>
   </tr>
   <tr>
-    <th colspan="3"></br>ResNetV2</th>
+    <th colspan="3">ResNetV2</th>
     <th> </th>
     <th> </th>
     <th> </th>
@@ -426,7 +354,7 @@ Implementation of various AI papers for image classification
   </tr>
   <!--- <<<<<<<<<<<<<<<<<<<<< ResNeXt >>>>>>>>>>>>>>>>>>>>> --->
   <tr>
-    <th colspan="3"></br>ResNeXt</th>
+    <th colspan="3">ResNeXt</th>
     <th></th>
     <th></th>
     <th></th>
@@ -434,7 +362,7 @@ Implementation of various AI papers for image classification
     <th></th>
   </tr>
   <tr>
-    <th rowspan="6"></th>
+    <th rowspan="4"></th>
     <th colspan="2">ResNetXt50C32</th>
     <th>94.07%</th>
     <th>5.93%</th>
@@ -468,26 +396,11 @@ Implementation of various AI papers for image classification
     <th>-</th>
     <th>-</th>
   </tr>
-  <tr>
-    <th colspan="2">ResNetXt152C32</th>
-    <th>-</th>
-    <th>-</th>
-    <th>-</th>
-    <th>-</th>
-    <th>-</th>
-  </tr>
-  <tr>
-    <th></th>
-    <th>+SD</th>
-    <th>-</th>
-    <th>-</th>
-    <th>-</th>
-    <th>-</th>
-    <th>-</th>
+  </th>
   </tr>
   <!--- <<<<<<<<<<<<<<<<<<<<< SeNet >>>>>>>>>>>>>>>>>>>>> --->
   <tr>
-    <th colspan="3"></br>SeNet</th>
+    <th colspan="3">SeNet</th>
     <th></th>
     <th></th>
     <th></th>
@@ -546,48 +459,6 @@ Implementation of various AI papers for image classification
     <th>-</th>
     <th>-</th>
   </tr>
-  <!--- <<<<<<<<<<<<<<<<<<<<< DenseNet >>>>>>>>>>>>>>>>>>>>> --->
-  <tr>
-    <th colspan="3"></br>DenseNet</th>
-    <th></th>
-    <th></th>
-    <th></th>
-    <th></th>
-    <th></th>
-  </tr>
-  <tr>
-    <th rowspan="4"></th>
-    <th colspan="2">DenseNet100k12</th>
-    <th>-</th>
-    <th>-</th>
-    <th>-</th>
-    <th>-</th>
-    <th>-</th>
-  </tr>
-  <tr>
-    <th colspan="2">DenseNet160k12</th>
-    <th>-</th>
-    <th>-</th>
-    <th>-</th>
-    <th>-</th>
-    <th>-</th>
-  </tr>
-  <tr>
-    <th colspan="2">DenseNet250k24</th>
-    <th>96.38*</th>
-    <th>3.62*</th>
-    <th>15.3M</th>
-    <th>-</th>
-    <th>-</th>
-  </tr>
-  <tr>
-    <th colspan="2">DenseNet190k40</th>
-    <th>96.54*</th>
-    <th>3.46*</th>
-    <th>25.6M</th>
-    <th>-</th>
-    <th>-</th>
-  </tr>
 </table>
 
 * \* -> Reported values
@@ -601,4 +472,3 @@ Implementation of various AI papers for image classification
 * Mish = Self regularized non-monotonic activation function, f(x) = x*tanh(softplus(x)). </br>
   From [Mish: A Self Regularized Non-Monotonic Activation Function](https://arxiv.org/abs/1908.08681)
 
-<!--- colspan="2" rowspan="2" ---> 
