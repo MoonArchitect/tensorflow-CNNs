@@ -51,14 +51,14 @@ class PreActConv(nn.layers.Layer):
         self.bn = nn.layers.BatchNormalization(-1 if data_format == 'channels_last' else 1)
         self.act = get_activation_layer(activation)
         self.conv = nn.layers.Conv2D(filters=filters,
-                                       kernel_size=kernel_size,
-                                       strides=strides,
-                                       padding=padding,
-                                       data_format=data_format,
-                                       groups=groups,
-                                       use_bias=use_bias,
-                                       kernel_regularizer=kernel_regularizer,
-                                       **kwargs)
+                                     kernel_size=kernel_size,
+                                     strides=strides,
+                                     padding=padding,
+                                     data_format=data_format,
+                                     groups=groups,
+                                     use_bias=use_bias,
+                                     kernel_regularizer=kernel_regularizer,
+                                     **kwargs)
     
 
     # def build(self, input_shape):
