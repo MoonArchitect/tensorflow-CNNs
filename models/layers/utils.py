@@ -22,7 +22,7 @@ def get_activation_layer(activation, **kwargs):
         elif activation == "swish":
             return nn.layers.Activation(tf.nn.swish, **kwargs)
         elif activation == "hswish":
-            print("hswish is not implemented efficiently yet, using swish instead")
+            # print("hswish is not implemented efficiently yet, using swish instead")
             return nn.layers.Activation(tf.nn.swish, **kwargs)
         elif activation == "sigmoid":
             return nn.layers.Activation('sigmoid', **kwargs)

@@ -144,9 +144,9 @@ def ResNeXtSD(conv_per_stage,
     input = tf.keras.layers.Input(shape=input_shape)
 
     x = input
-    if data_format == 'channels_last':
-        x = tf.transpose(input, [0, 3, 1, 2])
-        data_format = 'channels_first'
+    # if data_format == 'channels_last':
+    #     x = tf.transpose(input, [0, 3, 1, 2])
+    #     data_format = 'channels_first'
 
     # Initial Convolution
     x = tf.keras.layers.Conv2D(filters=filters,

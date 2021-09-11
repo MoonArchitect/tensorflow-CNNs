@@ -39,6 +39,7 @@ def DenseNetBlock(units, filters):
     return f
 
 
+# TODO unify arguments
 def DenseNet(input_shape = (32, 32, 3),
              classes = 10,
              reduction=0.5,
