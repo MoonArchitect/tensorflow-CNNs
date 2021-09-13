@@ -136,7 +136,7 @@ def performance_benachmark(models=None,
     elif not isinstance(models, list):
         models = [ models ]
 
-    assert all([ isinstance(model, str) for model in models ])
+    assert all([ isinstance(model, str) for model in models ]), f"Each entry should be a registered model_name of type str, recieved {models}"
     
     print("Clearing session . . .")
     nn.backend.clear_session()
