@@ -1,6 +1,5 @@
 import tensorflow as tf
 import tensorflow.keras as nn
-# from .ResNetV2 import BottleneckUnit, BasicUnit
 from .layers import get_activation_layer, get_channels
 # from utils.registry import register_model
 
@@ -96,7 +95,7 @@ class SEBlock(nn.layers.Layer):
     def __init__(self,
                  in_channels,
                  reduction = 4,
-                 interanl_activation='relu',
+                 internal_activation='relu',
                  final_activation='sigmoid',
                  data_format='channels_last',
                  **kwargs):
@@ -106,14 +105,14 @@ class SEBlock(nn.layers.Layer):
         self.axis = [1, 2] if data_format == 'channels_last' else [2, 3]
         
         self.conv1 = nn.layers.Conv2D(in_channels // reduction, 1, kernel_initializer=nn.initializers.he_normal(), data_format=data_format)
-        self.interanl_act = get_activation_layer(interanl_activation)
+        self.internal_act = get_activation_layer(internal_activation)
         self.conv2 = nn.layers.Conv2D(in_channels, 1, kernel_initializer=nn.initializers.he_normal(), data_format=data_format)
         self.final_act = get_activation_layer(final_activation)
 
     def call(self, inputs):
         x = tf.reduce_mean(inputs, self.axis, keepdims=True)
         x = self.conv1(x)
-        x = self.interanl_act(x)
+        x = self.internal_act(x)
         x = self.conv2(x)
         x = self.final_act(x)
         return x * inputs
@@ -262,9 +261,9 @@ def SeNet(conv_per_stage,
     input = tf.keras.layers.Input(shape=input_shape)
     
     x = input
-    if data_format == 'channels_last':
-        x = tf.transpose(input, [0, 3, 1, 2])
-        data_format = 'channels_first'
+    # if data_format == 'channels_last':
+    #     x = tf.transpose(input, [0, 3, 1, 2])
+    #     data_format = 'channels_first'
     
     # Initial Convolution
     x = tf.keras.layers.Conv2D(
@@ -305,3 +304,4 @@ def SeNet(conv_per_stage,
                                  name=f'{f"Wide{filters}" if filters != 256 else ""}SeNet{sum(conv_per_stage) * 2  + 2}')
 
 ############## Predefined Nets ##############
+

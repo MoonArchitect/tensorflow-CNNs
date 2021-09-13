@@ -109,7 +109,7 @@ def parse_flags(configs, quotes = True):  # TODO swap double quotes for single q
     return serialized
 
 
-def parse_commands(configs, checkpoint_dir):
+def parse_commands(configs, checkpoint_dir):  # TODO remove module name from code flags
     commands = []
     arguments = parse_flags(configs)
     

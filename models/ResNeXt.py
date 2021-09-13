@@ -48,11 +48,6 @@ def ResNeXtStage(layers,
     Block = BottleneckUnit
 
     def fwd(input):
-        sc = nn.layers.AvgPool2D(strides, data_format=data_format)(input) if strides != (1, 1) else input
-        if get_channels(input, data_format) != filters:
-            pad = [(filters - get_channels(input, data_format)) // 2] * 2
-            sc = tf.pad(sc, [[0, 0], [0, 0], [0, 0], pad] if data_format == 'channels_last' else [[0, 0], pad, [0, 0], [0, 0]])
-        
         x = Block(filters=filters,
                   kernel_size=kernel_size,
                   strides=strides,
@@ -61,7 +56,6 @@ def ResNeXtStage(layers,
                   activation=activation,
                   data_format=data_format,
                   **kwargs)(input)
-        input = nn.layers.Add()([x, sc])
         
         for _ in range(layers - 1):
             x = Block(filters=filters,
@@ -70,10 +64,9 @@ def ResNeXtStage(layers,
                       expansion=expansion,
                       activation=activation,
                       data_format=data_format,
-                      **kwargs)(input)
-            input = nn.layers.Add()([x, input])
+                      **kwargs)(x)
         
-        return input
+        return x
     
     return fwd
 

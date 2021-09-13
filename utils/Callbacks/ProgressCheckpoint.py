@@ -56,7 +56,7 @@ class ProgressCheckpoint(Callback):
         self.status["status"] = "Training"
         
 
-    def on_train_end(self, logs=None):
+    def on_train_end(self, logs=None):  # TODO called even after stopping due to NaN loss
         self.remove_backup()
 
         self.status["end"][-1] = datetime.now().strftime("%m/%d|%H:%M:%S")

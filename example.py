@@ -8,8 +8,8 @@ from utils import LearningSchedules
 from data import read_dataset, prepare_cifar10
 
 
-tf.keras.mixed_precision.set_global_policy('mixed_float16')		# enable mixed precision
-os.environ['TF_XLA_FLAGS'] = "--tf_xla_auto_jit=3"				# enable XLA
+tf.keras.mixed_precision.set_global_policy('mixed_float16')     # enable mixed precision
+os.environ['TF_XLA_FLAGS'] = "--tf_xla_auto_jit=3"              # enable XLA
 
 
 epochs = 50

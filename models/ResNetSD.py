@@ -1,7 +1,7 @@
 import tensorflow as tf
 import tensorflow.keras as nn
-from .ResNetV2 import BottleneckUnit
-from .layers import get_activation_layer, get_channels, linear_decay_fn
+from .ResNetV2 import AA_downsampling
+from .layers import get_activation_layer, get_channels, linear_decay_fn, PreActConv
 from utils.registry import register_model
 
 """
@@ -12,42 +12,146 @@ from utils.registry import register_model
 """
 
 
-############## Building Blocks ##############
-class StochResWrapper(nn.layers.Layer):
+class StochasticBottleneckUnit(nn.layers.Layer):
     """
+    Stochastic Bottleneck Unit from ResNetSD
     Arguments:
-    layer: keras.Layer
+    ---------
+    filters: int
+        The dimensionality of the output space (i.e. the number of output filters in the convolution).
+    kernel_size: int, tuple/list of 2 integers
+        Height and width of the 2D convolution window
+    strides: int, tuple/list of 2 integers
+        Specifying the strides of the convolution along the height and width
+    groups: int
+        The number of groups in which the input is split along the channel axis. Each group is convolved separately with filters / groups filters
+    expansion: int
         -
-    survival_rate: int
-        -
-    transform_input_fn: function
-        -
-    name: String
-        -
+    activation: String, keras.Layer
+        Activation function to use. If you don't specify anything, no activation is applied.
+    data_format: String
+        The ordering of the dimensions in the inputs.
+        'channels_last' = (batch_size, height, width, channels)
+        'channels_first' = (batch_size, channels, height, width).
+    Architecture:
+    ------------
+    main_path:
+        input->[PreActConv1x1]->[PreActConv3x3]->[PreActConv1x1] + input->output
+    alternate_path:
+        input->output
+    inference_path:
+        input->([PreActConv1x1]->[PreActConv3x3]->[PreActConv1x1])*p + input->output
+
     """
     def __init__(self,
-                 layer,
-                 survival_rate,
-                 transform_input_fn = (lambda x: x),
-                 name='StochasticResBlock_',
+                 filters,
+                 main_probability,
+                 kernel_size=(3, 3),
+                 strides=(1, 1),
+                 groups=1,
+                 expansion=4,
+                 activation='RELu',
+                 data_format='channels_last',
                  **kwargs):
-        super(StochResWrapper, self).__init__(name=name + str(nn.backend.get_uid(name)), **kwargs)
+        super(StochasticBottleneckUnit, self).__init__(**kwargs)
+        assert data_format == 'channels_last'
+        assert len(strides) == 2 and strides[0] == strides[1]
+        assert filters // expansion % groups == 0 and filters // expansion // groups > 0
         
-        self.layer = layer
-        self.p = tf.constant(survival_rate, dtype=self._compute_dtype)
-        self.transform_input_fn = transform_input_fn
+        self.main_probability = tf.constant(main_probability, dtype=self._compute_dtype)
+        self.filters = filters
+        
+        self.input_pool = None
+        self.downsampler = None
+        self.pad = None
 
-    def call(self, inputs):
-        def layer(input):
-            x = self.layer(input)
-            x = nn.backend.in_test_phase(tf.scalar_mul(self.p, x), x)
-            return x + self.transform_input_fn(input)
+        if strides != (1, 1):
+            self.input_pool = nn.layers.AvgPool2D(strides, data_format=data_format)
+            self.downsampler = AA_downsampling(
+                filters // expansion,
+                data_format=data_format
+            )
 
-        return tf.cond(
-            tf.random.uniform([1], 0, 1, dtype=self._compute_dtype) < nn.backend.in_test_phase(tf.constant(1.0, dtype=self._compute_dtype), self.p),
-            lambda: layer(inputs),
-            lambda: self.transform_input_fn(inputs)
+        self.block1 = PreActConv(
+            filters=filters // expansion,
+            kernel_size=(1, 1),
+            strides=(1, 1),
+            padding='same',
+            data_format=data_format,
+            groups=1,
+            activation=activation,
+            use_bias=False,
+            kernel_regularizer=nn.regularizers.l2(0.0001),
+            **kwargs
         )
+
+        
+        self.block2 = PreActConv(
+            filters=filters // expansion,
+            kernel_size=kernel_size,
+            strides=(1, 1),
+            padding='same',
+            data_format=data_format,
+            groups=groups,
+            activation=activation,
+            use_bias=False,
+            kernel_regularizer=nn.regularizers.l2(0.0001),
+            **kwargs
+        )
+        
+        
+        self.block3 = PreActConv(
+            filters=filters,
+            kernel_size=(1, 1),
+            strides=(1, 1),
+            padding='same',
+            data_format=data_format,
+            groups=1,
+            activation=activation,
+            use_bias=False,
+            kernel_regularizer=nn.regularizers.l2(0.0001),
+            **kwargs
+        )
+
+
+    def build(self, input_shape):  # assumed data_format == 'channels_last'
+        if input_shape[3] != self.filters:
+            self.pad = [(self.filters - input_shape[3]) // 2] * 2
+
+        return super().build(input_shape)
+
+    
+    def call(self, inputs, training=None):
+
+        def inputs_transform(inputs):
+            if self.input_pool:
+                inputs = self.input_pool(inputs)
+            
+            if self.pad:
+                inputs = tf.pad(inputs, [[0, 0], [0, 0], [0, 0], self.pad])
+            
+            return inputs
+        
+        def training_path(inputs):
+            x = self.block1(inputs)
+            x = self.block2(x)
+
+            if self.downsampler:
+                x = self.downsampler(x)
+            
+            outputs = self.block3(x)
+
+            return outputs
+        
+
+        if training:
+            return tf.cond(
+                tf.random.uniform([1], 0, 1, dtype=self._compute_dtype) < self.main_probability,
+                lambda: training_path(inputs) + inputs_transform(inputs),
+                lambda: inputs_transform(inputs)
+            )
+        else:
+            return tf.scalar_mul(self.main_probability, training_path(inputs)) + inputs_transform(inputs)
 
 
 def StochasticDepthStage(layers,
@@ -79,53 +183,25 @@ def StochasticDepthStage(layers,
     activation: String or keras.Layer
         Activation function to use after each convolution.
     """
-    Unit = BottleneckUnit
-
-    def pool_pad_input(input,
-                       filters,
-                       strides,
-                       data_format):
-        """
-        Pools and pads input if necessary
-        Arguments:
-        ----------
-        Returns:
-        --------
-        """
-        sc = nn.layers.AvgPool2D(strides, data_format=data_format)(input) if strides != (1, 1) else input
-        if get_channels(input, data_format) != filters:
-            pad = [(filters - get_channels(input, data_format)) // 2] * 2
-            sc = tf.pad(sc, [[0, 0], [0, 0], [0, 0], pad] if data_format == 'channels_last' else [[0, 0], pad, [0, 0], [0, 0]])
-        return sc
-    
     def fwd(input):
-        transform_input_fn = lambda x: pool_pad_input(input=x, filters=filters, strides=strides, data_format=data_format)
-        
-        x = StochResWrapper(
-            Unit(
-                filters,
-                kernel_size,
-                strides=strides,
-                activation=activation,
-                data_format=data_format,
-                **kwargs
-            ),
-            survival_rate=survival_fn(stage_start_pos),
-            transform_input_fn=transform_input_fn,
+        x = StochasticBottleneckUnit(
+            filters=filters,
+            kernel_size=kernel_size,
+            main_probability=survival_fn(stage_start_pos),
+            strides=strides,
+            activation=activation,
+            data_format=data_format,
             **kwargs
         )(input)
         
         for i in range(1, layers):
-            x = StochResWrapper(
-                Unit(
-                    filters,
-                    kernel_size,
-                    strides=(1, 1),
-                    activation=activation,
-                    data_format=data_format,
-                    **kwargs
-                ),
-                survival_rate=survival_fn(stage_start_pos + i),
+            x = StochasticBottleneckUnit(
+                filters=filters,
+                kernel_size=kernel_size,
+                main_probability=survival_fn(stage_start_pos + i),
+                strides=(1, 1),
+                activation=activation,
+                data_format=data_format,
                 **kwargs
             )(x)
 
@@ -143,9 +219,9 @@ def ResNetSD(conv_per_stage,
              data_format='channels_last',
              **kwargs):
     """
-    Template for Bottleneck ResNet with 4 stages
-    Parameters:
+    ResNet with Stochastic Depth
     -----------
+    Parameters:
     conv_per_stage: list, tuple
         Number of residual blocks in each stage
     input_shape: list, tuple
@@ -170,9 +246,9 @@ def ResNetSD(conv_per_stage,
     input = tf.keras.layers.Input(shape=input_shape)
 
     x = input
-    if data_format == 'channels_last':
-        x = tf.transpose(input, [0, 3, 1, 2])
-        data_format = 'channels_first'
+    # if data_format == 'channels_last':
+    #     x = tf.transpose(input, [0, 3, 1, 2])
+    #     data_format = 'channels_first'
         
     # Initial Convolution
     x = tf.keras.layers.Conv2D(filters=filters,

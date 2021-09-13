@@ -35,20 +35,29 @@ def prepare_cifar10(train_dataset,
                     val_dataset,
                     batch_size,
                     adv_augment = None):
+    """
+    """
     # normalize
     mean = [125.306918046875, 122.950394140625, 113.86538318359375]
     std = [62.99321927813685, 62.088707640014405, 66.70489964063101]
     train_dataset = train_dataset.map(
         lambda x, y: (( tf.cast(x, tf.float32) - mean) / std, tf.one_hot(y[0], 10, 1., 0.)),
-        num_parallel_calls = 8, deterministic = False).cache()
+        num_parallel_calls = 8, deterministic = False
+    ).cache()
 
     val_dataset = val_dataset.map(
         lambda x, y: (( tf.cast(x, tf.float32) - mean) / std, tf.one_hot(y[0], 10, 1., 0.)),
-        num_parallel_calls = 8, deterministic = False).cache()
+        num_parallel_calls = 8,
+        deterministic = False
+    ).cache()
 
-
-    train_dataset = train_dataset.repeat().shuffle(1024, reshuffle_each_iteration=True).batch(batch_size)
-    val_dataset = val_dataset.batch(batch_size).prefetch(tf.data.AUTOTUNE)
+    # TODO combine with above
+    train_dataset = train_dataset.repeat() \
+                                 .shuffle(1024, reshuffle_each_iteration=True) \
+                                 .batch(batch_size)
+    
+    val_dataset = val_dataset.batch(batch_size) \
+                             .prefetch(tf.data.AUTOTUNE)
 
 
     """ flip left-right, random 4px shift """
@@ -61,11 +70,9 @@ def prepare_cifar10(train_dataset,
     
     train_dataset = train_dataset.map(augment, num_parallel_calls = 8, deterministic = False)
     
-    # adv_augment
     if adv_augment:
         adv_augment.lower()
 
-        # adv_fn = lambda x, y: (x, y)  # not necessary
         img_size = 32
 
         if adv_augment == "cutmix":
@@ -90,16 +97,24 @@ def _cutmix_fn(imgSize, batch_size):
         def make_mask(id):
             lam = tf.random.uniform([1], 0, 1)
             pos = tf.random.uniform([2], 0, imgSize + 1, tf.int32)
-            dim = tf.math.minimum([imgSize, imgSize] - pos, tf.cast([imgSize, imgSize] * tf.math.sqrt(1 - lam[0]), dtype=tf.int32))
+            dim = tf.math.minimum(
+                [imgSize, imgSize] - pos,
+                tf.cast([imgSize, imgSize] * tf.math.sqrt(1 - lam[0]), dtype=tf.int32)
+            )
 
-            mask = tf.pad(tf.zeros(dim), [[pos[0], imgSize - pos[0] - dim[0]], [pos[1], imgSize - pos[1] - dim[1]]], mode='CONSTANT', constant_values=1)
+            mask = tf.pad(
+                tf.zeros(dim),
+                [[pos[0], imgSize - pos[0] - dim[0]], [pos[1], imgSize - pos[1] - dim[1]]],
+                mode='CONSTANT',
+                constant_values=1
+            )
             mask = tf.expand_dims(mask, -1)
             mask = tf.ensure_shape(mask, [32, 32, 1])
 
             return mask, tf.expand_dims(tf.cast(1 - dim[0] * dim[1] / 1024, dtype=tf.float32), -1)
         
         masks = tf.map_fn(
-            lambda i: make_mask(i),
+            make_mask,
             tf.range(0, batch_size, dtype=tf.int32),
             fn_output_signature=(tf.TensorSpec([32, 32, 1]), tf.TensorSpec([1]))
         )
@@ -133,10 +148,15 @@ def _cutout_fn(imgSize, batch_size, cutSize):
     def map_fn(x, y):
         cutout = tf.zeros([batch_size, cutSize, cutSize])
         
-        randPos = tf.cast(tf.random.uniform([batch_size, 2], 0, imgSize + 1, tf.int32), dtype=tf.float32)
+        randPos = tf.cast(
+            tf.random.uniform([batch_size, 2], 0, imgSize + 1, tf.int32),
+            dtype=tf.float32
+        )
+
+        pad = imgSize - cutSize // 2
         cutout = tf.pad(
             cutout,
-            [ [0, 0], [imgSize - cutSize // 2, imgSize - cutSize // 2], [imgSize - cutSize // 2, imgSize - cutSize // 2] ],
+            [ [0, 0], [pad, pad], [pad, pad] ],
             constant_values=1, mode='CONSTANT'
         )
 
@@ -159,7 +179,7 @@ def display_dataset(ds):
     from matplotlib import pyplot as plt
     import numpy as np
 
-    imgs, labels = next(ds.as_numpy_iterator())
+    imgs, _ = next(ds.as_numpy_iterator())
     imgs = np.array(imgs)
     imgs *= [62.99321927813685, 62.088707640014405, 66.70489964063101]
     imgs += [125.306918046875, 122.950394140625, 113.86538318359375]

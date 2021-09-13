@@ -4,9 +4,13 @@ from .utils import get_activation_layer
 
 class PreActConv(nn.layers.Layer):
     """
-    PreActivation Convolution
-    Arguments:
+    PreActivated Convolution
+    -------------
+    Architecture:
+    in -> BN -> Activation -> Convolution -> out
     ---------
+    Arguments
+    
     filters: int
         The dimensionality of the output space (i.e. the number of output filters in the convolution).
     kernel_size: int, tuple/list of 2 integers
@@ -17,8 +21,8 @@ class PreActConv(nn.layers.Layer):
         The number of groups in which the input is split along the channel axis. Each group is convolved separately with filters / groups filters
     activation: String, keras.Layer
         Activation function to use. If you don't specify anything, no activation is applied.
-    padding: 'valid' or 'same'
-        -
+    padding: str
+        'valid' or 'same'
     use_bias: bool
         Whether the layer uses a bias vector.
     kernel_regularizer: tf.keras.regularizers.Regularizer
@@ -27,9 +31,6 @@ class PreActConv(nn.layers.Layer):
         The ordering of the dimensions in the inputs.
         'channels_last' = (batch_size, height, width, channels)
         'channels_first' = (batch_size, channels, height, width).
-    Architecture:
-    -------------
-    BN + Activation + Convolution
     """
 
     def __init__(self,
@@ -42,30 +43,30 @@ class PreActConv(nn.layers.Layer):
                  activation='RELu',
                  use_bias=False,
                  kernel_regularizer=nn.regularizers.l2(0.0001),
-                 # shape=None,
                  **kwargs):
         super(PreActConv, self).__init__(**kwargs)
         
-        assert(data_format in ['channels_last', 'channels_first'])
+        assert data_format in ['channels_last', 'channels_first']
 
-        self.layer = nn.Sequential()
-        self.layer.add(nn.layers.BatchNormalization(-1 if data_format == 'channels_last' else 1))
-        self.layer.add(get_activation_layer(activation))
-        self.layer.add(
-            nn.layers.Conv2D(filters=filters,
-                             kernel_size=kernel_size,
-                             strides=strides,
-                             padding=padding,
-                             data_format=data_format,
-                             groups=groups,
-                             use_bias=use_bias,
-                             kernel_regularizer=kernel_regularizer,
-                             **kwargs)
-        )
+        self.bn = nn.layers.BatchNormalization(-1 if data_format == 'channels_last' else 1)
+        self.act = get_activation_layer(activation)
+        self.conv = nn.layers.Conv2D(filters=filters,
+                                     kernel_size=kernel_size,
+                                     strides=strides,
+                                     padding=padding,
+                                     data_format=data_format,
+                                     groups=groups,
+                                     use_bias=use_bias,
+                                     kernel_regularizer=kernel_regularizer,
+                                     **kwargs)
     
+
     # def build(self, input_shape):
-    #    self.z = tf.zeros(input_shape[1:])
     #    return super().build(input_shape)
 
+
     def call(self, inputs):
-        return self.layer(inputs)
+        x = self.bn(inputs)
+        x = self.act(x)
+        x = self.conv(x)
+        return x

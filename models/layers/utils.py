@@ -15,6 +15,8 @@ def get_activation_layer(activation, **kwargs):
         activation = activation.lower()
         if activation == "relu":
             return nn.layers.ReLU(**kwargs)
+        elif activation == "relu6":
+            return nn.layers.ReLU(max_value=6.0, **kwargs)
         elif activation == "prelu":
             return nn.layers.PReLU(**kwargs)
         elif activation == "mish":
@@ -22,7 +24,7 @@ def get_activation_layer(activation, **kwargs):
         elif activation == "swish":
             return nn.layers.Activation(tf.nn.swish, **kwargs)
         elif activation == "hswish":
-            print("hswish is not implemented efficiently yet, using swish instead")
+            # print("hswish is not implemented efficiently yet, using swish instead")
             return nn.layers.Activation(tf.nn.swish, **kwargs)
         elif activation == "sigmoid":
             return nn.layers.Activation('sigmoid', **kwargs)

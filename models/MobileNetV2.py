@@ -1,6 +1,10 @@
 import tensorflow as tf
 import tensorflow.keras as nn
+
+from .SeNet import SEBlock
+from .layers import get_activation_layer
 from utils.registry import register_model
+
 
 """
     Implementation of MobileNetV2 for CIFAR/SVHN/32x32
@@ -10,19 +14,11 @@ from utils.registry import register_model
 """
 
 
-def inverted_res_block(input,
-                       filters,
-                       expansion,
-                       stride,
-                       width_multiplier,
-                       block_id,
-                       data_format):
+class InvertedResidualBlock(nn.layers.Layer):
     """
     Inverted residual block
     Arguments:
     ----------
-    input: Tensor
-        Input tensor
     filters: int
         Number of output filters
     expansion: int
@@ -36,62 +32,106 @@ def inverted_res_block(input,
     data_format: 'channels_last' or 'channels_first'
         The ordering of the dimensions in the inputs.
     """
-    block_name = f"block_{block_id}"
-    channel_axis = -1 if data_format == 'channels_last' else 1
-    in_channels = input.shape[channel_axis]
-    out_channels = filters * width_multiplier
-    
-    x = input
-    # Expand
-    if block_id:
-        x = nn.layers.Conv2D(
-            filters=in_channels * expansion,
-            kernel_size=1,
-            data_format=data_format,
-            use_bias=False,
-            name=block_name + "_expand_conv",
-            kernel_regularizer=nn.regularizers.l2(0.00004)
-        )(x)
-    x = nn.layers.BatchNormalization(
-        axis=channel_axis,
-        momentum=0.999,
-        name=block_name + "_expand_BN")(x)
-    x = nn.layers.ReLU(max_value=6.0, name=block_name + "_expand_relu6")(x)
-    
-    # Depthwise
-    x = nn.layers.DepthwiseConv2D(
-        kernel_size=3,
-        strides=stride,
-        padding='same',
-        data_format=data_format,
-        use_bias=False,
-        name=block_name + "_depthwise",
-        kernel_regularizer=nn.regularizers.l2(0.00004)
-    )(x)
-    x = nn.layers.BatchNormalization(
-        axis=channel_axis,
-        momentum=0.999,
-        name=block_name + "_depthwise_BN")(x)
-    x = nn.layers.ReLU(max_value=6.0, name=block_name + "_depthwise_relu6")(x)
+    def __init__(self,  # TODO check with width_mult = 2
+                 out_channels,
+                 expansion,
+                 stride,
+                 kernel_size = (3, 3),
+                 # width_multiplier,
+                 use_SE = False,
+                 activation="relu6",
+                 emit_first_conv = False,
+                 data_format = 'channels_last',
+                 **kwargs):
+        super().__init__(**kwargs)
 
-    # Compress
-    x = nn.layers.Conv2D(
-        filters=out_channels,
-        kernel_size=1,
-        data_format=data_format,
-        use_bias=False,
-        name=block_name + "_compress_conv",
-        kernel_regularizer=nn.regularizers.l2(0.00004)
-    )(x)
-    x = nn.layers.BatchNormalization(
-        axis=channel_axis,
-        momentum=0.999,
-        name=block_name + "_compress_BN")(x)
-    
-    if out_channels == in_channels and stride == 1:
-        return nn.layers.Add(name=block_name + "_add")([x, input])
+        channel_axis = -1 if data_format == 'channels_last' else 1
+        self.out_channels = out_channels  # filters * width_multiplier
+        self.in_channels = None
+        self.stride = stride
+        self.emit_first_conv = emit_first_conv
+        self.expansion = expansion
+        self.data_format = data_format
+        self.use_SE = use_SE
 
-    return x
+        # Expand
+        self.expand_conv = None
+        self.expand_act = get_activation_layer(activation)  # nn.layers.ReLU(max_value=6.0)
+        self.expand_bn = nn.layers.BatchNormalization(axis=channel_axis,
+                                                      momentum=0.999)
+        
+        # depthwise
+        self.depthwise_act = get_activation_layer(activation)  # nn.layers.ReLU(max_value=6.0)
+        self.depthwise_conv = nn.layers.DepthwiseConv2D(kernel_size=kernel_size,
+                                                        strides=stride,
+                                                        padding='same',
+                                                        data_format=data_format,
+                                                        use_bias=False,
+                                                        kernel_regularizer=nn.regularizers.l2(0.00004))
+        self.depthwise_bn = nn.layers.BatchNormalization(axis=channel_axis,
+                                                         momentum=0.999)
+
+        self.se_block = None
+
+        # Compress
+        self.compress_conv = nn.layers.Conv2D(filters=self.out_channels,
+                                              kernel_size=1,
+                                              data_format=data_format,
+                                              use_bias=False,
+                                              kernel_regularizer=nn.regularizers.l2(0.00004))
+        self.compress_bn = nn.layers.BatchNormalization(axis=channel_axis,
+                                                        momentum=0.999)
+
+    
+    def build(self, input_shape):
+        channel_axis = -1 if self.data_format == 'channels_last' else 1
+        self.in_channels = input_shape[channel_axis]
+
+        if not self.emit_first_conv:
+            # self.expand_conv = nn.layers.Conv2D(filters=self.in_channels * self.expansion,
+            self.expand_conv = nn.layers.Conv2D(filters=self.expansion,
+                                                kernel_size=1,
+                                                data_format=self.data_format,
+                                                use_bias=False,
+                                                kernel_regularizer=nn.regularizers.l2(0.00004))
+
+        if self.use_SE:
+            self.se_block = SEBlock(
+                # in_channels = self.in_channels * self.expansion,  # expansion_filters,
+                in_channels = self.expansion,  # expansion_filters,
+                reduction = 4,
+                internal_activation='relu',
+                final_activation='swish',
+                data_format = self.data_format
+            )
+
+        return super().build(input_shape)
+
+    def call(self, inputs):
+        x = inputs
+        
+        # Expand
+        if not self.emit_first_conv:
+            x = self.expand_conv(x)
+        x = self.expand_bn(x)
+        x = self.expand_act(x)
+
+        # Depthwise
+        x = self.depthwise_conv(x)
+        x = self.depthwise_bn(x)
+        x = self.depthwise_act(x)
+
+        if self.use_SE:
+            x = self.se_block(x)
+
+        # Compress
+        x = self.compress_conv(x)
+        x = self.compress_bn(x)
+
+        if self.out_channels == self.in_channels and self.stride == 1:
+            x = x + inputs
+
+        return x
 
 
 def MobileNetV2(input_shape=(32, 32, 3),
@@ -115,11 +155,10 @@ def MobileNetV2(input_shape=(32, 32, 3),
     data_format: 'channels_last' or 'channels_first'
         The ordering of the dimensions in the inputs.
     """
-    assert width_multiplier > 0
+    assert width_multiplier in [0.5, 0.75, 1.0, 1.25, 1.5, 2.0], "'width_multiplier' has to be one of [0.5, 0.75, 1.0, 1.25, 1.5, 2.0]"
     channel_axis = -1 if data_format == 'channels_last' else 1
-    block_cnt = 0
     config = [
-        # t,   c, n, s
+        # t,  c, n, s
         (1,  16, 1, 1),
         (6,  24, 2, 2),
         (6,  32, 3, 2),
@@ -130,26 +169,37 @@ def MobileNetV2(input_shape=(32, 32, 3),
     ]
 
     input = tf.keras.layers.Input(shape=input_shape)
-    x = input
     
+    x = input
     if input_shape[1] != upsample_resolution:
         upsample = upsample_resolution // input_shape[1]
         x = nn.layers.UpSampling2D([upsample, upsample], data_format=data_format)(x)
 
     x = nn.layers.Conv2D(filters=32, kernel_size=3, strides=2, padding='same', use_bias = False, data_format = data_format)(x)
     
-    for expansion, filters, n, first_stride in config:
-        for strides in [first_stride] + [1] * (n - 1):
-            x = inverted_res_block(
-                input=x,
-                filters=filters,
-                expansion=expansion,
-                stride=strides,
-                width_multiplier=width_multiplier,
-                block_id=block_cnt,
+    expansion, filters, n, first_stride = config[0]
+    x = InvertedResidualBlock(
+        out_channels=filters * width_multiplier,
+        # filters=filters,
+        expansion=32 * expansion,
+        stride=first_stride,
+        # width_multiplier=width_multiplier,
+        emit_first_conv=True,
+        data_format=data_format
+    )(x)
+    input_filters = filters * width_multiplier
+
+    for expansion, filters, n, first_stride in config[1:]:
+        for stride in [first_stride] + [1] * (n - 1):
+            x = InvertedResidualBlock(
+                out_channels=filters * width_multiplier,
+                # filters=filters,
+                expansion=input_filters * expansion,
+                stride=stride,
+                # width_multiplier=width_multiplier,
                 data_format=data_format
-            )
-            block_cnt += 1
+            )(x)
+            input_filters = filters * width_multiplier
 
     x = nn.layers.Conv2D(
         filters = 1280,
