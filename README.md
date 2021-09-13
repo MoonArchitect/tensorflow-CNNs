@@ -50,7 +50,7 @@ Optmizer: SGD nesterov m=0.9
 
 <table>
   <tr>
-    <th colspan="3">⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀Model⠀⠀⠀⠀⠀⠀⠀</th>
+    <th colspan="3">⠀⠀⠀⠀⠀⠀⠀Model⠀⠀⠀⠀⠀⠀⠀</th>
     <th>Top1 Accuracy</th>
     <th>Param count</th>
     <th>Training</br>(imgs/sec)</th>
