@@ -15,6 +15,8 @@ def get_activation_layer(activation, **kwargs):
         activation = activation.lower()
         if activation == "relu":
             return nn.layers.ReLU(**kwargs)
+        elif activation == "relu6":
+            return nn.layers.ReLU(max_value=6.0, **kwargs)
         elif activation == "prelu":
             return nn.layers.PReLU(**kwargs)
         elif activation == "mish":

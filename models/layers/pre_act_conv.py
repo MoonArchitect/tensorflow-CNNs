@@ -21,7 +21,7 @@ class PreActConv(nn.layers.Layer):
         The number of groups in which the input is split along the channel axis. Each group is convolved separately with filters / groups filters
     activation: String, keras.Layer
         Activation function to use. If you don't specify anything, no activation is applied.
-    padding: str 
+    padding: str
         'valid' or 'same'
     use_bias: bool
         Whether the layer uses a bias vector.

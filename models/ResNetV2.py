@@ -62,38 +62,58 @@ class BasicUnit(nn.layers.Layer):
                  data_format='channels_last',
                  **kwargs):
         super(BasicUnit, self).__init__(**kwargs)
-        self.layer = nn.Sequential()
-        self.layer.add(
-            PreActConv(
-                filters=filters,
-                kernel_size=kernel_size,
-                strides=strides,
-                padding='same',
-                data_format=data_format,
-                groups=groups,
-                activation=activation,
-                use_bias=False,
-                kernel_regularizer=tf.keras.regularizers.l2(0.0001),
-                **kwargs
-            )
+
+        self.filters = filters
+        self.input_pool = None
+        self.pad = None
+
+        if strides != (1, 1):
+            self.input_pool = nn.layers.AvgPool2D(strides, data_format=data_format)
+
+        self.block1 = PreActConv(
+            filters=filters,
+            kernel_size=kernel_size,
+            strides=strides,
+            padding='same',
+            data_format=data_format,
+            groups=groups,
+            activation=activation,
+            use_bias=False,
+            kernel_regularizer=tf.keras.regularizers.l2(0.0001),
+            **kwargs
         )
-        self.layer.add(
-            PreActConv(
-                filters=filters,
-                kernel_size=kernel_size,
-                strides=(1, 1),
-                padding='same',
-                data_format=data_format,
-                groups=groups,
-                activation=activation,
-                use_bias=False,
-                kernel_regularizer=tf.keras.regularizers.l2(0.0001),
-                **kwargs
-            )
+        self.block2 = PreActConv(
+            filters=filters,
+            kernel_size=kernel_size,
+            strides=(1, 1),
+            padding='same',
+            data_format=data_format,
+            groups=groups,
+            activation=activation,
+            use_bias=False,
+            kernel_regularizer=tf.keras.regularizers.l2(0.0001),
+            **kwargs
         )
 
+
+    def build(self, input_shape):  # assumed data_format == 'channels_last'
+        if input_shape[3] != self.filters:
+            self.pad = [(self.filters - input_shape[3]) // 2] * 2
+
+        return super().build(input_shape)
+
+
     def call(self, inputs):
-        return self.layer(inputs)
+        x = self.block1(inputs)
+        outputs = self.block2(x)
+        
+        if self.input_pool:
+            inputs = self.input_pool(inputs)
+
+        if self.pad:
+            inputs = tf.pad(inputs, [[0, 0], [0, 0], [0, 0], self.pad])
+
+        return outputs + inputs
 
 
 class BottleneckUnit(nn.layers.Layer):
@@ -131,71 +151,88 @@ class BottleneckUnit(nn.layers.Layer):
                  data_format='channels_last',
                  **kwargs):
         super(BottleneckUnit, self).__init__(**kwargs)
+        assert data_format == 'channels_last'
+        assert len(strides) == 2 and strides[0] == strides[1]
         assert filters // expansion % groups == 0 and filters // expansion // groups > 0
         
-        self.layer = nn.Sequential()
-        self.layer.add(
-            PreActConv(
-                filters=filters // expansion,
-                kernel_size=(1, 1),
-                strides=(1, 1),
-                padding='same',
-                data_format=data_format,
-                groups=1,
-                activation=activation,
-                use_bias=False,
-                kernel_regularizer=nn.regularizers.l2(0.0001),
-                **kwargs
+        self.filters = filters
+        
+        self.input_pool = None
+        self.downsampler = None
+        self.pad = None
+
+        if strides != (1, 1):
+            self.input_pool = nn.layers.AvgPool2D(strides, data_format=data_format)
+            self.downsampler = AA_downsampling(
+                filters // expansion,
+                data_format=data_format
             )
+
+        self.block1 = PreActConv(
+            filters=filters // expansion,
+            kernel_size=(1, 1),
+            strides=(1, 1),
+            padding='same',
+            data_format=data_format,
+            groups=1,
+            activation=activation,
+            use_bias=False,
+            kernel_regularizer=nn.regularizers.l2(0.0001),
+            **kwargs
         )
-        if strides == (1, 1):
-            self.layer.add(
-                PreActConv(
-                    filters=filters // expansion,
-                    kernel_size=kernel_size,
-                    strides=strides,
-                    padding='same',
-                    data_format=data_format,
-                    groups=groups,
-                    activation=activation,
-                    use_bias=False,
-                    kernel_regularizer=nn.regularizers.l2(0.0001),
-                    **kwargs
-                )
-            )
-        else:
-            self.layer.add(AA_downsampling(filters // expansion, data_format=data_format))
-            self.layer.add(
-                PreActConv(
-                    filters=filters // expansion,
-                    kernel_size=kernel_size,
-                    strides=1,
-                    padding='same',
-                    data_format=data_format,
-                    groups=groups,
-                    activation=activation,
-                    use_bias=False,
-                    kernel_regularizer=nn.regularizers.l2(0.0001),
-                    **kwargs
-                )
-            )
-        self.layer.add(
-            PreActConv(
-                filters=filters,
-                kernel_size=(1, 1),
-                strides=(1, 1),
-                padding='same',
-                data_format=data_format,
-                groups=1,
-                activation=activation,
-                use_bias=False,
-                kernel_regularizer=nn.regularizers.l2(0.0001),
-                **kwargs
-            )
+
+        
+        self.block2 = PreActConv(
+            filters=filters // expansion,
+            kernel_size=kernel_size,
+            strides=(1, 1),
+            padding='same',
+            data_format=data_format,
+            groups=groups,
+            activation=activation,
+            use_bias=False,
+            kernel_regularizer=nn.regularizers.l2(0.0001),
+            **kwargs
         )
+        
+        
+        self.block3 = PreActConv(
+            filters=filters,
+            kernel_size=(1, 1),
+            strides=(1, 1),
+            padding='same',
+            data_format=data_format,
+            groups=1,
+            activation=activation,
+            use_bias=False,
+            kernel_regularizer=nn.regularizers.l2(0.0001),
+            **kwargs
+        )
+
+
+    def build(self, input_shape):  # assumed data_format == 'channels_last'
+        if input_shape[3] != self.filters:
+            self.pad = [(self.filters - input_shape[3]) // 2] * 2
+
+        return super().build(input_shape)
+
     
     def call(self, inputs):
-        return self.layer(inputs)
+        x = self.block1(inputs)
+        x = self.block2(x)
+
+        if self.downsampler:
+            x = self.downsampler(x)
+        
+        outputs = self.block3(x)
+        
+        if self.input_pool:
+            inputs = self.input_pool(inputs)
+        
+        if self.pad:
+            inputs = tf.pad(inputs, [[0, 0], [0, 0], [0, 0], self.pad])
+
+        return outputs + inputs
 
 
 def ResStage(layers,
@@ -225,31 +262,28 @@ def ResStage(layers,
         Whether to use bottleneck type unit
     """
 
-    Unit = BottleneckUnit if bottleneck else BasicUnit
+    model_unit = BottleneckUnit if bottleneck else BasicUnit
     
     def fwd(input):
-        sc = nn.layers.AvgPool2D(strides, data_format=data_format)(input) if strides != (1, 1) else input
-        if get_channels(input, data_format) != filters:
-            pad = [(filters - get_channels(input, data_format)) // 2] * 2
-            sc = tf.pad(sc, [[0, 0], [0, 0], [0, 0], pad] if data_format == 'channels_last' else [[0, 0], pad, [0, 0], [0, 0]])
-        
-        x = Unit(filters,
-                 kernel_size,
-                 strides=strides,
-                 activation=activation,
-                 data_format=data_format,
-                 **kwargs)(input)
-        input = nn.layers.Add()([x, sc])
+        x = model_unit(
+            filters,
+            kernel_size,
+            strides=strides,
+            activation=activation,
+            data_format=data_format,
+            **kwargs
+        )(input)
         
         for _ in range(layers - 1):
-            x = Unit(filters,
-                     kernel_size,
-                     activation=activation,
-                     data_format=data_format,
-                     **kwargs)(input)
-            input = nn.layers.Add()([x, input])
+            x = model_unit(
+                filters,
+                kernel_size,
+                activation=activation,
+                data_format=data_format,
+                **kwargs
+            )(x)
         
-        return input
+        return x
     
     return fwd
 
@@ -264,8 +298,8 @@ def ResNetV2(conv_per_stage,
              **kwargs):
     """
     Template for Bottleneck ResNet with 4 stages
-    Parameters:
     -----------
+    Parameters:
     conv_per_stage: list, tuple
         Number of residual blocks in each stage
     input_shape: list, tuple
