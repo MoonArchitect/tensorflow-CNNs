@@ -43,10 +43,30 @@ Implementation of various AI papers for image classification
 ## CIFAR10 Results
 GPU: **RTX3090** @1800MHz | **FP16** + **XLA** autoclastering  
 **Epochs: 150**  
-**Batch Size: 1024** (unless <sub>b=</sub>)  
+**Batch Size: 1024** (unless <sub>batch=</sub>)  
 Augmentation: random l/r flip -> 4px shift in x/y -> **Cutmix**  
 Cos lr schedule 0.5 -> 0.001, 10 epoch warmup  
 Optmizer: SGD nesterov m=0.9 
+
+<table>
+  <tr>
+    <th>Model \ Augmentation</th> 
+    <th>Basic</th> 
+    <th>Stochastic Depth</th>
+    <th>Mixup</th>
+    <th>Cutout</th>
+    <th>Cutmix</th>
+  </tr>
+  <tr>
+    <th>ResNet50</th> 
+    <th>93.46%</th> 
+    <th>94.08%</th>
+    <th>94.64%</th>
+    <th>94.70%</th>
+    <th>94.77%</th>
+  </tr>
+</table>
+
 
 <table>
   <tr>
@@ -146,16 +166,46 @@ Optmizer: SGD nesterov m=0.9
     <th></th>
   </tr>
   <tr>
-    <th rowspan="2"></th>
-    <th colspan="2">MobileNetV2 96px<sub>+HTD+Cutmix</sub></th>
-    <th>95.17%</th>
+    <th rowspan="6"></th>
+    <th colspan="2">MobileNetV2 96px</th>
+    <th>93.15%</th>
     <th>-</th>
     <th>-</th>
     <th>-</th>
   </tr>
   <tr>
-    <th colspan="2">MobileNetV2 192px<sub>+HTD+Cutmix</sub></th>
-    <th>96.23%</th>
+    <th colspan="2">MobileNetV2 128px</th>
+    <th>94.31%</th>
+    <th>-</th>
+    <th>-</th>
+    <th>-</th>
+  </tr>
+  <tr>
+    <th></th>
+    <th><sub>batch-size=512</sub></th>
+    <th>95.22%</th>
+    <th>-</th>
+    <th>-</th>
+    <th>-</th>
+  </tr>
+  <tr>
+    <th colspan="2">MobileNetV2 192px</th>
+    <th>94.43%</th>
+    <th>-</th>
+    <th>-</th>
+    <th>-</th>
+  </tr>
+  <tr>
+    <th></th>
+    <th><sub>batch-size=512</sub></th>
+    <th>95.53%</th>
+    <th>-</th>
+    <th>-</th>
+    <th>-</th>
+  </tr>
+  <tr>
+    <th colspan="2">MobileNetV2 224px <sub>batch=512</sub></th>
+    <th>95.67%</th>
     <th>-</th>
     <th>-</th>
     <th>-</th>
@@ -212,7 +262,7 @@ Optmizer: SGD nesterov m=0.9
     <th>23 211 <sub>-</sub></th>
   </tr>
   <tr>
-    <th colspan="2">ResNet170 +Mish</th>
+    <th colspan="2">ResNet170 <sub>+ mish</sub></th>
     <th>96.66%</th>
     <th>4 414 202</th>
     <th>-</th>
