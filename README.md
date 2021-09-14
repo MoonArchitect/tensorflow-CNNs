@@ -78,11 +78,7 @@ Optmizer: SGD nesterov m=0.9
   </tr>
   <!-- TResNet -->
   <tr>
-    <th colspan="3">TResNet</th>
-    <th></th>
-    <th></th>
-    <th></th>
-    <th></th>
+    <th colspan="7">TResNet</th>
   </tr>
   <tr>
     <th rowspan="4"></th>
@@ -115,11 +111,7 @@ Optmizer: SGD nesterov m=0.9
   </tr>
   <!-- MobileNetV3 -->
   <tr>
-    <th colspan="3">MobileNetV3</th>
-    <th></th>
-    <th></th>
-    <th></th>
-    <th></th>
+    <th colspan="7">MobileNetV3</th>
   </tr>
   <tr>
     <th rowspan="5"></th>
@@ -159,11 +151,7 @@ Optmizer: SGD nesterov m=0.9
   </tr>
   <!-- MobileNetV2 -->
   <tr>
-    <th colspan="3">MobileNetV2</th>
-    <th></th>
-    <th></th>
-    <th></th>
-    <th></th>
+    <th colspan="7">MobileNetV2</th>
   </tr>
   <tr>
     <th rowspan="6"></th>
@@ -212,11 +200,7 @@ Optmizer: SGD nesterov m=0.9
   </tr>
   <!-- ResNetV2 -->
   <tr>
-    <th colspan="3">ResNetV2</th>
-    <th></th>
-    <th></th>
-    <th></th>
-    <th></th>
+    <th colspan="7">ResNetV2</th>
   </tr>
   <tr>
     <th rowspan="8"></th>
@@ -277,11 +261,7 @@ Optmizer: SGD nesterov m=0.9
   </tr>
   <!-- ResNeXt -->
   <tr>
-    <th colspan="3">ResNeXt</th>
-    <th></th>
-    <th></th>
-    <th></th>
-    <th></th>
+    <th colspan="7">ResNeXt</th>
   </tr>
   <tr>
     <th rowspan="4"></th>
@@ -318,11 +298,7 @@ Optmizer: SGD nesterov m=0.9
   </tr>
   <!-- SeNet -->
   <tr>
-    <th colspan="3">SeNet</th>
-    <th></th>
-    <th></th>
-    <th></th>
-    <th></th>
+    <th colspan="7">SeNet</th>
   </tr>
   <tr> 
     <th rowspan="4"></th>
