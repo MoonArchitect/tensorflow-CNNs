@@ -203,61 +203,69 @@ Optmizer: SGD nesterov m=0.9
     <th colspan="7">ResNetV2</th>
   </tr>
   <tr>
-    <th rowspan="8"></th>
+    <th rowspan="9"></th>
     <th colspan="2">ResNet18 <sub>mish</sub></th>
     <th>92.81% <sub>93.53%</sub></th>
     <th>692 218</th>
-    <th>39 127 <sub>-</sub></th>
-    <th>99 028 <sub>-</sub></th>
+    <th>39 127 <sub>-4%</sub></th>
+    <th>99 028 <sub>-4%</sub></th>
   </tr>
   <tr>
     <th colspan="2">ResNet34 <sub>mish</sub></th>
     <th>93.69% <sub>94.26%</sub></th>
     <th>1 327 226</th>
-    <th>25 534 <sub>-</sub></th>
-    <th>75 071 <sub>-</sub></th>
+    <th>25 534 <sub>-4%</sub></th>
+    <th>75 071 <sub>-4%</sub></th>
   </tr>
   <tr>
     <th colspan="2">ResNet35 <sub>mish</sub></th>
     <th>94.09% <sub>94.42%</sub></th>
     <th>873 722</th>
-    <th>17 304 <sub>-</sub></th>
-    <th>58 520 <sub>-</sub></th>
+    <th>17 304 <sub>-5%</sub></th>
+    <th>58 520 <sub>-4%</sub></th>
   </tr>
   <tr>
     <th colspan="2">ResNet50 <sub>mish</sub></th>
     <th>94.57% <sub>95.05%</sub></th>
     <th>1 320 570</th>
-    <th>12 939 <sub>-</sub></th>
-    <th>45 775 <sub>-</sub></th>
+    <th>12 939 <sub>-5%</sub></th>
+    <th>45 775 <sub>-3%</sub></th>
   </tr>
   <tr>
     <th colspan="2">ResNet101 <sub>mish</sub></th>
     <th>95.15% <sub>95.57%</sub></th>
     <th>2 530 426</th>
-    <th>8 469 <sub>-</sub></th>
-    <th>31 813 <sub>-</sub></th>
+    <th>8 469 <sub>-6%</sub></th>
+    <th>31 813 <sub>-5%</sub></th>
   </tr>
   <tr>
     <th colspan="2">ResNet152 <sub>mish</sub></th>
     <th>95.62% <sub>95.99%</sub></th>
     <th>3 528 314</th>
-    <th>5 954 <sub>-</sub></th>
-    <th>23 211 <sub>-</sub></th>
+    <th>5 954 <sub>-7%</sub></th>
+    <th>23 211 <sub>-3%</sub></th>
   </tr>
   <tr>
-    <th colspan="2">ResNet170 <sub>+ mish</sub></th>
-    <th>96.66%</th>
-    <th>4 414 202</th>
-    <th>-</th>
-    <th>-</th>
+    <th colspan="2">ResNet170 <sub>mish</sub></th>
+    <th>95.68% <sub>96.18%</sub></th>
+    <th rowspan="2">4 190 330</th>
+    <th rowspan="2">5 113 <sub>-8%</sub></th>
+    <th rowspan="2">20 246 <sub>-5%</sub></th>
   </tr>
   <tr>
-    <th colspan="2">WideResNet18+Cutout+HTD</th>
-    <th>94.91%</th>
-    <th>11 205 578</th>
-    <th>-</th>
-    <th>-</th>
+    <th></th>
+    <th><sub>+mish +lr=.75</sub></th>
+    <th>96.44%</th>
+    <!-- <th>-</th> -->
+    <!-- <th>-</th> -->
+    <!-- <th>-</th> -->
+  </tr>
+  <tr>
+    <th colspan="2">WideResNet170-2 <sub>+mish</sub></th>
+    <th>97.18%</th>
+    <th>16 588 010</th>
+    <th>2 511</th>
+    <th>9 392</th>
   </tr>
   <!-- ResNeXt -->
   <tr>
