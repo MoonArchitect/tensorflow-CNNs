@@ -292,7 +292,7 @@ def ResNetV2(conv_per_stage,
              input_shape=(32, 32, 3),
              classes=10,
              bottleneck=False,
-             filters=16,
+             widening_factor=1,
              activation='relu',
              data_format='channels_last',
              **kwargs):
@@ -315,9 +315,11 @@ def ResNetV2(conv_per_stage,
     data_format: 'channels_last' or 'channels_first'
         The ordering of the dimensions in the inputs.
     """
-
+    assert widening_factor == int(widening_factor)
     strides = [(1, 1)] + [(2, 2)] * 3
     expansion = 4 if bottleneck else 1
+    filters = 16 * widening_factor
+
 
     input = tf.keras.layers.Input(shape=input_shape)
     
@@ -355,7 +357,7 @@ def ResNetV2(conv_per_stage,
 
     return tf.keras.models.Model(inputs=input,
                                  outputs=output,
-                                 name=f'{f"Wide{filters}" if filters != 256 else ""}ResNet{sum(conv_per_stage) * (3 if bottleneck else 2) + 2}')
+                                 name=f'{"Wide" if filters != 256 else ""}ResNet{sum(conv_per_stage) * (3 if bottleneck else 2) + 2}{f"-{filters // 256}" if filters != 256 else ""}')
 
 
 ############## Predefined Nets ##############
@@ -471,3 +473,23 @@ def ResNet152(activation='relu',
                     bottleneck=True,
                     activation=activation,
                     **kwargs)
+
+
+@register_model
+def ResNet170(activation='relu',
+              **kwargs):
+    """
+    ResNet152b model for CIFAR/SVHN
+    Parameters:
+    ----------
+    activation: string, keras.Layer
+        Main activation function of the network.
+    Returns:
+    ----------
+    keras.Model
+    """
+    return ResNetV2(conv_per_stage=[5, 9, 37, 5],  # alternative [3, 10, 40, 3]
+                    bottleneck=True,
+                    activation=activation,
+                    **kwargs)
+
