@@ -1,6 +1,6 @@
 import tensorflow as tf
 import tensorflow.keras as nn
-from .layers import get_activation_layer, get_channels
+from .layers import get_activation_layer, get_channels, _make_divisible
 # from utils.registry import register_model
 
 
@@ -104,17 +104,26 @@ class SEBlock(nn.layers.Layer):
         assert data_format in ['channels_last', 'channels_first']
         self.axis = [1, 2] if data_format == 'channels_last' else [2, 3]
         
-        self.conv1 = nn.layers.Conv2D(in_channels // reduction, 1, kernel_initializer=nn.initializers.he_normal(), data_format=data_format)
-        self.internal_act = get_activation_layer(internal_activation)
-        self.conv2 = nn.layers.Conv2D(in_channels, 1, kernel_initializer=nn.initializers.he_normal(), data_format=data_format)
-        self.final_act = get_activation_layer(final_activation)
+        self.pool = nn.layers.GlobalAvgPool2D(keepdims=True)
+        self.dense1 = nn.layers.Dense(_make_divisible(in_channels // reduction, 8))
+        self.relu = nn.layers.ReLU()
+        self.dense2 = nn.layers.Dense(in_channels, activation='sigmoid')
+
+        # self.conv1 = nn.layers.Conv2D(in_channels // reduction, 1, kernel_initializer=nn.initializers.he_normal(), data_format=data_format)
+        # self.internal_act = get_activation_layer(internal_activation)
+        # self.conv2 = nn.layers.Conv2D(in_channels, 1, kernel_initializer=nn.initializers.he_normal(), data_format=data_format)
+        # self.final_act = get_activation_layer(final_activation)
 
     def call(self, inputs):
-        x = tf.reduce_mean(inputs, self.axis, keepdims=True)
-        x = self.conv1(x)
-        x = self.internal_act(x)
-        x = self.conv2(x)
-        x = self.final_act(x)
+        x = self.pool(inputs)
+        x = self.dense1(x)
+        x = self.relu(x)
+        x = self.dense2(x)
+        # x = tf.reduce_mean(inputs, self.axis, keepdims=True)
+        # x = self.conv1(x)
+        # x = self.internal_act(x)
+        # x = self.conv2(x)
+        # x = self.final_act(x)
         return x * inputs
 
 

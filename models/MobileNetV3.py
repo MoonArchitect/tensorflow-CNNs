@@ -4,6 +4,7 @@ import tensorflow.keras as nn
 from .MobileNetV2 import InvertedResidualBlock
 from .layers import get_activation_layer
 from utils.registry import register_model
+from .layers.utils import _make_divisible
 
 """
     Implementation of MobileNetV3 for CIFAR/SVHN/32x32
@@ -14,36 +15,36 @@ from utils.registry import register_model
 
 # TODO this mobilenetv3 is not equivalent to one presented in paper for imagenet
 # Differences:
-#   -
-#   -
+#   - Image is upsampled, generally from 32px->224px
+#   - 
 
 
 def MobileNetV3_builder(config,
                         input_shape=(32, 32, 3),
-                        upsample_resolution=224,
-                        width_multiplier=1.0,
                         classes=10,
+                        upsample_resolution=224,
+                        width_factor=1.0,
                         data_format='channels_last',
-                        name="MobileNetV3_custom"):
+                        name="MobileNetV3_builder"):
 
     """
-    Template for
+    Builds MobileNetV3 from config
     Parameters:
     -----------
     config: list, shape=[layers,6]
-        Network configuration, layer format = [kernel size, expansion, out, use_SE, activation, stride]
+        Network configuration, layer format = [kernel size, expansion channels, output channels, SE used, activation, stride]
     input_shape: list, tuple
         Shape of an input image
     upsample_resolution: int
-        Resolution to which input image will be upsampled. (MobileNetV2 was designed for 224px image input)
-    width_multiplier: float
+        Resolution to which input image will be upsampled. (MobileNetV3 was designed for 224px image input)
+    width_factor: float
         Controls the width of the network.
     classes: int
         Number of classification classes.
     data_format: 'channels_last' or 'channels_first'
         The ordering of the dimensions in the inputs.
     """
-    assert width_multiplier > 0
+    assert width_factor > 0.2 and width_factor % 0.25 == 0
     channel_axis = -1 if data_format == 'channels_last' else 1
     
     input = tf.keras.layers.Input(shape=input_shape)
@@ -53,34 +54,43 @@ def MobileNetV3_builder(config,
         upsample = upsample_resolution // input_shape[1]
         x = nn.layers.UpSampling2D([upsample, upsample], data_format=data_format)(x)
 
-    x = nn.layers.Conv2D(filters=32, kernel_size=7, strides=2, padding='same', use_bias=False, data_format=data_format)(x)
+
+    x = nn.layers.Conv2D(filters=_make_divisible(16 * width_factor, 8),
+                         kernel_size=3,
+                         strides=2,
+                         #  padding='same',
+                         use_bias=False,
+                         data_format=data_format)(x)
     x = nn.layers.BatchNormalization(axis=channel_axis)(x)
     x = get_activation_layer('hswish')(x)
-    
+    emit_first_stage = True  # TODO code a better solution
+
     for kernel_size, expansion, filters, use_SE, activation, stride in config:
+        filters = _make_divisible(filters * width_factor, 8)
+        expansion = _make_divisible(expansion * width_factor, 8)
+
         x = InvertedResidualBlock(
-            out_channels=filters * width_multiplier,
+            out_channels=filters,
             kernel_size=kernel_size,
             expansion=expansion,
             stride=stride,
             use_SE=use_SE,
             activation=activation,
+            emit_first_stage=emit_first_stage,
             data_format=data_format
         )(x)
+        emit_first_stage = False
 
-    last_stage_filters = config[-1][1]
-    x = nn.layers.Conv2D(
-        filters = last_stage_filters,
-        kernel_size=1,
-        data_format=data_format,
-        use_bias=False,
-        name=f"Conv_{last_stage_filters}"
-    )(x)
-    x = nn.layers.BatchNormalization(axis=channel_axis,  name="Conv_960_BN")(x)
-    x = get_activation_layer('hswish', name="Conv_960_hswish")(x)
+
+    x = nn.layers.Conv2D(filters = expansion,
+                         kernel_size=1,
+                         data_format=data_format,
+                         use_bias=False)(x)
+
+    x = nn.layers.BatchNormalization(axis=channel_axis)(x)
+    x = get_activation_layer('hswish')(x)
     x = nn.layers.GlobalAveragePooling2D(data_format=data_format)(x)
 
-    x = nn.layers.Flatten(data_format=data_format)(x)
     output = nn.layers.Dense(classes)(x)
 
     return tf.keras.models.Model(inputs=input,
@@ -90,7 +100,7 @@ def MobileNetV3_builder(config,
 
 def MobileNetV3Large(input_shape=(32, 32, 3),
                      upsample_resolution=224,
-                     width_multiplier=1.0,
+                     width_factor=1.0,
                      classes=10,
                      data_format='channels_last'):
     """
@@ -117,15 +127,15 @@ def MobileNetV3Large(input_shape=(32, 32, 3),
     return MobileNetV3_builder(large_cfg,
                                input_shape=input_shape,
                                upsample_resolution=upsample_resolution,
-                               width_multiplier=width_multiplier,
+                               width_factor=width_factor,
                                classes=classes,
                                data_format=data_format,
-                               name=f'MobileNetV3L_{upsample_resolution}px_{width_multiplier}k')
+                               name=f'MobileNetV3L_{upsample_resolution}px_{width_factor}k')
 
 
 def MobileNetV3Small(input_shape=(32, 32, 3),
                      upsample_resolution=224,
-                     width_multiplier=1.0,
+                     width_factor=1.0,
                      classes=10,
                      data_format='channels_last'):
     """
@@ -148,131 +158,131 @@ def MobileNetV3Small(input_shape=(32, 32, 3),
     return MobileNetV3_builder(small_cfg,
                                input_shape=input_shape,
                                upsample_resolution=upsample_resolution,
-                               width_multiplier=width_multiplier,
+                               width_factor=width_factor,
                                classes=classes,
                                data_format=data_format,
-                               name=f'MobileNetV3S_{upsample_resolution}px_{width_multiplier}k')
+                               name=f'MobileNetV3S_{upsample_resolution}px_{width_factor}k')
 
 
 ############## Predefined Nets ##############
 @register_model
-def MobileNetV3L_224(width_multiplier=1):
+def MobileNetV3L_224(width_factor=1):
     """
     MobileNetV3 Large with 224px upsampled resolution
     
     Arguments:
     ----------
-    width_multiplier: float
+    width_factor: float
         Controls the width of the network.
     
     """
     return MobileNetV3Large(upsample_resolution=224,
-                            width_multiplier=width_multiplier)
+                            width_factor=width_factor)
 
 
 @register_model
-def MobileNetV3L_192(width_multiplier=1):
+def MobileNetV3L_192(width_factor=1):
     """
     MobileNetV3 Large with 192px upsampled resolution
     
     Arguments:
     ----------
-    width_multiplier: float
+    width_factor: float
         Controls the width of the network.
     
     """
     return MobileNetV3Large(upsample_resolution=192,
-                            width_multiplier=width_multiplier)
+                            width_factor=width_factor)
 
 
 @register_model
-def MobileNetV3L_160(width_multiplier=1):
+def MobileNetV3L_160(width_factor=1):
     """
     MobileNetV3 Large with 160px upsampled resolution
     
     Arguments:
     ----------
-    width_multiplier: float
+    width_factor: float
         Controls the width of the network.
     
     """
     return MobileNetV3Large(upsample_resolution=160,
-                            width_multiplier=width_multiplier)
+                            width_factor=width_factor)
 
 
 @register_model
-def MobileNetV3L_128(width_multiplier=1):
+def MobileNetV3L_128(width_factor=1):
     """
     MobileNetV3 Large with 128px upsampled resolution
     
     Arguments:
     ----------
-    width_multiplier: float
+    width_factor: float
         Controls the width of the network.
     
     """
     return MobileNetV3Large(upsample_resolution=128,
-                            width_multiplier=width_multiplier)
+                            width_factor=width_factor)
 
 
 @register_model
-def MobileNetV3S_224(width_multiplier=1):
+def MobileNetV3S_224(width_factor=1):
     """
     MobileNetV3 Small with 224px upsampled resolution
     
     Arguments:
     ----------
-    width_multiplier: float
+    width_factor: float
         Controls the width of the network.
     
     """
     return MobileNetV3Small(upsample_resolution=224,
-                            width_multiplier=width_multiplier)
+                            width_factor=width_factor)
 
 
 @register_model
-def MobileNetV3S_192(width_multiplier=1):
+def MobileNetV3S_192(width_factor=1):
     """
     MobileNetV3 Small with 192px upsampled resolution
     
     Arguments:
     ----------
-    width_multiplier: float
+    width_factor: float
         Controls the width of the network.
     
     """
     return MobileNetV3Small(upsample_resolution=192,
-                            width_multiplier=width_multiplier)
+                            width_factor=width_factor)
 
 
 @register_model
-def MobileNetV3S_160(width_multiplier=1):
+def MobileNetV3S_160(width_factor=1):
     """
     MobileNetV3 Small with 160px upsampled resolution
     
     Arguments:
     ----------
-    width_multiplier: float
+    width_factor: float
         Controls the width of the network.
     
     """
     return MobileNetV3Small(upsample_resolution=160,
-                            width_multiplier=width_multiplier)
+                            width_factor=width_factor)
 
 
 @register_model
-def MobileNetV3S_128(width_multiplier=1):
+def MobileNetV3S_128(width_factor=1):
     """
     MobileNetV3 Small with 128px upsampled resolution
     
     Arguments:
     ----------
-    width_multiplier: float
+    width_factor: float
         Controls the width of the network.
     
     """
     return MobileNetV3Small(upsample_resolution=128,
-                            width_multiplier=width_multiplier)
+                            width_factor=width_factor)
 
 
 

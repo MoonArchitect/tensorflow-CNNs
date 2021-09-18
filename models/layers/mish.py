@@ -1,5 +1,7 @@
 import tensorflow as tf
 
+__all__ = ['Mish']
+
 
 @tf.function
 @tf.custom_gradient
