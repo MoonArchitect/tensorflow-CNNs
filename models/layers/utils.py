@@ -3,7 +3,7 @@ import tensorflow.keras as nn
 
 from .mish import Mish
 
-__all__ = ['get_activation_layer', 'get_channels', 'linear_decay_fn', 'linear_decay']
+__all__ = ['get_activation_layer', 'get_channels', 'linear_decay_fn', 'linear_decay', '_make_divisible']
 
 
 def get_activation_layer(activation, **kwargs):
@@ -75,3 +75,17 @@ def linear_decay_fn(start_pos_val,
 
 def linear_decay(x, start_pos_val, end_pos_val):
     return linear_decay_fn(start_pos_val, end_pos_val)(x)
+
+
+def _make_divisible(value, divisor):
+    extra = value % divisor
+    value -= extra
+    if extra >= divisor / 2:
+        value += divisor
+
+    if isinstance(divisor, int):
+        value = int(value)
+
+    # if value == 0 log warning
+
+    return value
