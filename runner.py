@@ -18,6 +18,8 @@ def is_flag_valid(cfg, flag, overrides = False):
         "models": list,
         "model": str,
         "name": str,
+        "name-postfix": str,
+        "name-prefix": str,
         "data": str,
         "batch_size": int,
         "epochs": int,
