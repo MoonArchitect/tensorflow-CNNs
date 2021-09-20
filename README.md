@@ -76,39 +76,6 @@ Optmizer: SGD nesterov m=0.9
     <th>Training</br>(imgs/sec)</th>
     <th>Inference</br>(imgs/sec)</th>
   </tr>
-  <!-- TResNet -->
-  <tr>
-    <th colspan="7">TResNet</th>
-  </tr>
-  <tr>
-    <th rowspan="4"></th>
-    <th colspan="2">TResNetM-.5-32px<sub>+HTD+Cutmix</sub></th>
-    <th>95.05%</th>
-    <th>-</th>
-    <th>-</th>
-    <th>-</th>
-  </tr>
-  <tr>
-    <th colspan="2">TResNetM-.5-192px<sub>+HTD+Cutmix</sub></th>
-    <th>96.10%</th>
-    <th>-</th>
-    <th>-</th>
-    <th>-</th>
-  </tr>
-  <tr>
-    <th colspan="2">TResNetM-.75-160px<sub>+Cos+Cutmix</sub></th>
-    <th>96.92%</th>
-    <th>-</th>
-    <th>-</th>
-    <th>-</th>
-  </tr>
-  <tr>
-    <th colspan="2">TResNetM-128px<sub>+Cos+Cutmix</sub></th>
-    <th>96.51%</th>
-    <th>-</th>
-    <th>-</th>
-    <th>-</th>
-  </tr>
   <!-- MobileNetV3 -->
   <tr>
     <th colspan="7">MobileNetV3</th>
@@ -431,41 +398,6 @@ Optmizer: SGD nesterov m=0.9
   <tr>
     <th colspan="2">DenseNet160k12<sub> b=512</sub></th>
     <th>96.43%</th>
-    <th>-</th>
-    <th>-</th>
-    <th>-</th>
-  </tr>
-  <!-- SeNet -->
-  <tr>
-    <th colspan="7">SeNet</th>
-  </tr>
-  <tr> 
-    <th rowspan="4"></th>
-    <th colspan="2">SeNet50</th>
-    <th>93.40%</th>
-    <th>-</th>
-    <th>-</th>
-    <th>-</th>
-  </tr>
-  <tr>
-    <th></th>
-    <th>+SD</th>
-    <th>94.25%</th>
-    <th>-</th>
-    <th>-</th>
-    <th>-</th>
-  </tr>
-  <tr>
-    <th colspan="2">SeNet101</th>
-    <th>94.30%</br>94.79%*</th>
-    <th>-</th>
-    <th>-</th>
-    <th>-</th>
-  </tr>
-  <tr>
-    <th></th>
-    <th>+SD⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀</th>
-    <th>94.65%</th>
     <th>-</th>
     <th>-</th>
     <th>-</th>
