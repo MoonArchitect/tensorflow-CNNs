@@ -114,40 +114,125 @@ Optmizer: SGD nesterov m=0.9
     <th colspan="7">MobileNetV3</th>
   </tr>
   <tr>
-    <th rowspan="5"></th>
-    <th colspan="2">MNetV3S 160px 1.5<sub>+Cos+Cutmix</sub></th>
-    <th>94.25%</th>
-    <th>1 732 152</th>
-    <th>-</th>
-    <th>-</th>
+    <th rowspan="16"></th>
+    <th colspan="2">MobileNetV3S_128<sub></sub></th>
+    <th>93.72%</th>
+    <th></th>
+    <th></th>
+    <th></th>
   </tr>
   <tr>
-    <th colspan="2">MNetV3S 192px<sub>+Cos+Cutmix</sub></th>
-    <th>94.49%</th>
-    <th>1 533 896</th>
-    <th>-</th>
-    <th>-</th>
+    <th></th>
+    <th colspan="1"><sub> <abbr title="width_factor">w=2</abbr></sub></th>
+    <th>95.10%</th>
+    <th></th>
+    <th></th>
+    <th></th>
   </tr>
   <tr>
-    <th colspan="2">MNetV3S 192px 2<sub>+Cos+Cutmix</sub></th>
-    <th>95.63%</th>
-    <th>1 930 408</th>
-    <th>-</th>
-    <th>-</th>
+    <th></th>
+    <th colspan="1"><sub> b=512 <abbr title="width_factor">w=4</abbr></sub></th>
+    <th>95.99%</th>
+    <th></th>
+    <th></th>
+    <th></th>
   </tr>
   <tr>
-    <th colspan="2">MNetV3S 224px<sub>+Cos+Cutmix</sub></th>
-    <th>95.50%</th>
-    <th>1 533 896</th>
-    <th>-</th>
-    <th>-</th>
+    <th colspan="2">MobileNetV3S_160<sub></sub></th>
+    <th>94.41%</th>
+    <th></th>
+    <th></th>
+    <th></th>
   </tr>
   <tr>
-    <th colspan="2">MNetV3L<sub>+HTD+Cutmix</sub></th>
-    <th>96.37%</th>
-    <th>-</th>
-    <th>-</th>
-    <th>-</th>
+    <th></th>
+    <th colspan="1"><sub> <abbr title="width_factor">w=2</abbr></sub></th>
+    <th>95.56%</th>
+    <th></th>
+    <th></th>
+    <th></th>
+  </tr>
+  <tr>
+    <th colspan="2">MobileNetV3S_192<sub></sub></th>
+    <th>94.86%</th>
+    <th></th>
+    <th></th>
+    <th></th>
+  </tr>
+  <tr>
+    <th></th>
+    <th colspan="1"> <sub><abbr title="width_factor">w=2</abbr></sub></th>
+    <th>96.02%</th>
+    <th></th>
+    <th></th>
+    <th></th>
+  </tr>
+  <tr>
+    <th colspan="2">MobileNetV3S_224<sub></sub></th>
+    <th>95.53%</th>
+    <th></th>
+    <th></th>
+    <th></th>
+  </tr>
+  <tr>
+    <th></th>
+    <th colspan="1"><sub> <abbr title="width_factor">w=2</abbr></sub></th>
+    <th>96.22%</th>
+    <th></th>
+    <th></th>
+    <th></th>
+  </tr>
+  <tr>
+    <th></th>
+    <th colspan="1"><sub> b=512 <abbr title="width_factor">w=2</abbr></sub></th>
+    <th>96.30%</th>
+    <th></th>
+    <th></th>
+    <th></th>
+  </tr>
+  <tr>
+    <th colspan="2">MobileNetV3L_128<sub></sub></th>
+    <th>95.57%</th>
+    <th></th>
+    <th></th>
+    <th></th>
+  </tr>
+  <tr>
+    <th></th>
+    <th colspan="1"><sub> <abbr title="width_factor">w=2</abbr></sub></th>
+    <th>96.06%</th>
+    <th></th>
+    <th></th>
+    <th></th>
+  </tr>
+  <tr>
+    <th colspan="2">MobileNetV3L_160<sub></sub></th>
+    <th>96.07%</th>
+    <th></th>
+    <th></th>
+    <th></th>
+  </tr>
+  <tr>
+    <th colspan="2">MobileNetV3L_192<sub> b=512</sub></th>
+    <th>96.58%</th>
+    <th></th>
+    <th></th>
+    <th></th>
+  </tr>
+  <tr>
+    <th></th>
+    <th colspan="1"><sub> b=512 <abbr title="width_factor">w=2</abbr></sub></th>
+    <th>96.95%</th>
+    <th></th>
+    <th></th>
+    <th></th>
+  </tr>
+  <tr>
+    <th colspan="2">MobileNetV3L_224<sub> b=512</sub></th>
+    <th>96.52%</th>
+    <th></th>
+    <th></th>
+    <th></th>
   </tr>
   <!-- MobileNetV2 -->
   <tr>
@@ -156,44 +241,43 @@ Optmizer: SGD nesterov m=0.9
   <tr>
     <th rowspan="6"></th>
     <th colspan="2">MobileNetV2 96px</th>
-    <th>93.15%</th>
+    <th>-%</th>
     <th>-</th>
     <th>-</th>
     <th>-</th>
   </tr>
   <tr>
     <th colspan="2">MobileNetV2 128px</th>
-    <th>94.31%</th>
+    <th>95.10%</th>
     <th>-</th>
     <th>-</th>
     <th>-</th>
   </tr>
   <tr>
     <th></th>
-    <th><sub>batch-size=512</sub></th>
-    <th>95.22%</th>
+    <th><sub><abbr title="width_multiplier">w=2</abbr></sub></th>
+    <th>96.27%</th>
+    <th>-</th>
+    <th>-</th>
+    <th>-</th>
+  </tr>
+  <tr>
+    <th colspan="2">MobileNetV2 160px<sub></sub></th>
+    <th>95.52%</th>
     <th>-</th>
     <th>-</th>
     <th>-</th>
   </tr>
   <tr>
     <th colspan="2">MobileNetV2 192px</th>
-    <th>94.43%</th>
-    <th>-</th>
-    <th>-</th>
-    <th>-</th>
-  </tr>
-  <tr>
-    <th></th>
-    <th><sub>batch-size=512</sub></th>
-    <th>95.53%</th>
+    <th>95.78%</th>
     <th>-</th>
     <th>-</th>
     <th>-</th>
   </tr>
   <tr>
     <th colspan="2">MobileNetV2 224px <sub>batch=512</sub></th>
-    <th>95.67%</th>
+    <th>96.20%</th>
     <th>-</th>
     <th>-</th>
     <th>-</th>
@@ -272,37 +356,84 @@ Optmizer: SGD nesterov m=0.9
     <th colspan="7">ResNeXt</th>
   </tr>
   <tr>
+    <th rowspan="6"></th>
+    <th colspan="2">ResNeXt35_16x4d</th>
+    <th>95.87%</th>
+    <th>-</th>
+    <th>-</th>
+    <th>-</th>
+  </tr>
+  <tr>
+    <th></th>
+    <th colspan="1"><sub> +mish</sub></th>
+    <th>96.37%</th>
+    <th>-</th>
+    <th>-</th>
+    <th>-</th>
+  </tr>
+  <tr>
+    <th colspan="2">ResNeXt50_16x4d<sub></sub></th>
+    <th>96.26%</th>
+    <th>-</th>
+    <th>-</th>
+    <th>-</th>
+  </tr>
+  <tr>
+    <th></th>
+    <th colspan="1"><sub>+mish</sub></th>
+    <th>96.45%</th>
+    <th>-</th>
+    <th>-</th>
+    <th>-</th>
+  </tr>
+  <tr>
+    <th colspan="2">ResNeXt101_16x4d<sub></sub></th>
+    <th>96.39%</th>
+    <th>-</th>
+    <th>-</th>
+    <th>-</th>
+  </tr>
+  <tr>
+    <th></th>
+    <th><sub>+mish</sub></th>
+    <th>96.74%</th>
+    <th>-</th>
+    <th>-</th>
+    <th>-</th>
+  </tr>
+  </tr>
+  <!-- DenseNet -->
+  <tr>
+    <th colspan="7">DenseNet</th>
+  </tr>
+  <tr> 
     <th rowspan="4"></th>
-    <th colspan="2">ResNetXt50C32</th>
-    <th>94.07%</th>
+    <th colspan="2">DenseNet52k12</th>
+    <th>93.75%</th>
     <th>-</th>
     <th>-</th>
     <th>-</th>
   </tr>
   <tr>
-    <th></th>
-    <th>+SD</th>
-    <th>94.49%</th>
+    <th colspan="2">DenseNet100k12</th>
+    <th>95.4%</th>
     <th>-</th>
     <th>-</th>
     <th>-</th>
   </tr>
   <tr>
-    <th colspan="2">ResNetXt101C32</th>
-    <th>94.25%</th>
-    <th>-</th>
+    <th colspan="2">DenseNet100k16</th>
+    <th>95.87%</th>
+    <th>-</th> 
     <th>-</th>
     <th>-</th>
   </tr>
   <tr>
-    <th></th>
-    <th>+SD</th>
-    <th>94.88%</th>
+    <th colspan="2">DenseNet160k12<sub> b=512</sub></th>
+    <th>96.43%</th>
     <th>-</th>
     <th>-</th>
     <th>-</th>
-  </tr>
-  </th>
   </tr>
   <!-- SeNet -->
   <tr>
