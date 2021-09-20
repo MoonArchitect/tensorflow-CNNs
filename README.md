@@ -43,7 +43,7 @@ Implementation of various AI papers for image classification
 ## CIFAR10 Results
 GPU: **RTX3090** @1800MHz | **FP16** + **XLA** autoclastering  
 **Epochs: 150**  
-**Batch Size: 1024** (unless <sub>batch=</sub>)  
+**Batch Size: 1024** (or <sub>b=512</sub>)  
 Augmentation: random l/r flip -> 4px shift in x/y -> **Cutmix**  
 Cos lr schedule 0.5 -> 0.001, 10 epoch warmup  
 Optmizer: SGD nesterov m=0.9 
@@ -77,127 +77,119 @@ Optmizer: SGD nesterov m=0.9
     <th>Inference</br>(imgs/sec)</th>
   </tr>
   <!-- MobileNetV3 -->
-  <tr>
+  <tr> <!-- MobileNetV3S -->
     <th colspan="7">MobileNetV3</th>
   </tr>
   <tr>
-    <th rowspan="16"></th>
-    <th colspan="2">MobileNetV3S_128<sub></sub></th>
+    <th rowspan="18"></th>
+    <th colspan="6">MobileNetV3S<sub></sub></th>
+  </tr>
+  <tr>
+    <th rowspan="10"></th>
+    <th>128px<sub></sub></th>
     <th>93.72%</th>
-    <th></th>
-    <th></th>
-    <th></th>
+    <th rowspan="4">944 890</th>
+    <th>11 845</th>
+    <th>66 137</th>
   </tr>
   <tr>
-    <th></th>
-    <th colspan="1"><sub> <abbr title="width_factor">w=2</abbr></sub></th>
+    <th>160px<sub></sub></th>
+    <th>94.41%</th>
+    <th>9 177</th>
+    <th>55 245</th>
+  </tr>
+  <tr>
+    <th>192px<sub></sub></th>
+    <th>94.86%</th>
+    <th>10 675</th>
+    <th>43 226</th>
+  </tr>
+  <tr>
+    <th>224px<sub></sub></th>
+    <th>95.53%</th>
+    <th>8 040</th>
+    <th>35 209</th>
+  </tr>
+  <tr>
+    <th>128px<sub> <abbr title="width_factor">w=2</abbr></sub></th>
     <th>95.10%</th>
-    <th></th>
+    <th rowspan="6"></th>
     <th></th>
     <th></th>
   </tr>
   <tr>
-    <th></th>
-    <th colspan="1"><sub> b=512 <abbr title="width_factor">w=4</abbr></sub></th>
+    <th>128px<sub> <abbr title="width_factor">w=4</abbr> b=512 </sub></th>
     <th>95.99%</th>
     <th></th>
     <th></th>
-    <th></th>
   </tr>
   <tr>
-    <th colspan="2">MobileNetV3S_160<sub></sub></th>
-    <th>94.41%</th>
-    <th></th>
-    <th></th>
-    <th></th>
-  </tr>
-  <tr>
-    <th></th>
-    <th colspan="1"><sub> <abbr title="width_factor">w=2</abbr></sub></th>
+    <th>160px<sub> <abbr title="width_factor">w=2</abbr></sub></th>
     <th>95.56%</th>
     <th></th>
     <th></th>
-    <th></th>
   </tr>
   <tr>
-    <th colspan="2">MobileNetV3S_192<sub></sub></th>
-    <th>94.86%</th>
-    <th></th>
-    <th></th>
-    <th></th>
-  </tr>
-  <tr>
-    <th></th>
-    <th colspan="1"> <sub><abbr title="width_factor">w=2</abbr></sub></th>
+    <th>192px<sub> <abbr title="width_factor">w=2</abbr></sub></th>
     <th>96.02%</th>
     <th></th>
     <th></th>
-    <th></th>
   </tr>
   <tr>
-    <th colspan="2">MobileNetV3S_224<sub></sub></th>
-    <th>95.53%</th>
-    <th></th>
-    <th></th>
-    <th></th>
-  </tr>
-  <tr>
-    <th></th>
-    <th colspan="1"><sub> <abbr title="width_factor">w=2</abbr></sub></th>
+    <th>224px<sub> <abbr title="width_factor">w=2</abbr></sub></th>
     <th>96.22%</th>
     <th></th>
     <th></th>
-    <th></th>
   </tr>
   <tr>
-    <th></th>
-    <th colspan="1"><sub> b=512 <abbr title="width_factor">w=2</abbr></sub></th>
+    <th>224px<sub> <abbr title="width_factor">w=2</abbr> b=512</sub></th>
     <th>96.30%</th>
     <th></th>
     <th></th>
-    <th></th>
+  </tr>
+  <tr> <!-- MobileNetV3L -->
+    <th colspan="6">MobileNetV3L<sub></sub></th>
   </tr>
   <tr>
-    <th colspan="2">MobileNetV3L_128<sub></sub></th>
+    <th rowspan="6"></th>
+    <th>128px<sub> </sub></th>
     <th>95.57%</th>
-    <th></th>
-    <th></th>
-    <th></th>
+    <th rowspan="1">3 011 882</th>
+    <th>5 765</th>
+    <th>34 980</th>
   </tr>
+
   <tr>
-    <th></th>
-    <th colspan="1"><sub> <abbr title="width_factor">w=2</abbr></sub></th>
+    <th>128px<sub> <abbr title="width_factor">w=2</abbr></sub></th>
     <th>96.06%</th>
     <th></th>
     <th></th>
     <th></th>
   </tr>
   <tr>
-    <th colspan="2">MobileNetV3L_160<sub></sub></th>
+    <th>160px<sub></sub></th>
     <th>96.07%</th>
-    <th></th>
-    <th></th>
-    <th></th>
+    <th rowspan="2">3 011 882</th>
+    <th>4 303</th>
+    <th>25 000</th>
   </tr>
   <tr>
-    <th colspan="2">MobileNetV3L_192<sub> b=512</sub></th>
+    <th>192px<sub> b=512</sub></th>
     <th>96.58%</th>
     <th></th>
     <th></th>
-    <th></th>
   </tr>
   <tr>
-    <th></th>
-    <th colspan="1"><sub> b=512 <abbr title="width_factor">w=2</abbr></sub></th>
+    <th>192px<sub> b=512 <abbr title="width_factor">w=2</abbr></sub></th>
     <th>96.95%</th>
     <th></th>
     <th></th>
     <th></th>
   </tr>
   <tr>
-    <th colspan="2">MobileNetV3L_224<sub> b=512</sub></th>
+    <th>224px<sub> b=512</sub></th>
     <th>96.52%</th>
-    <th></th>
+    <th rowspan="1">3 011 882</th>
     <th></th>
     <th></th>
   </tr>
@@ -207,54 +199,49 @@ Optmizer: SGD nesterov m=0.9
   </tr>
   <tr>
     <th rowspan="6"></th>
-    <th colspan="2">MobileNetV2 96px</th>
-    <th>-%</th>
-    <th>-</th>
-    <th>-</th>
-    <th>-</th>
+    <th colspan="2">96px</th>
+    <th>94.45%</th>
+    <th rowspan="5">2,270,794</th>
+    <th>5 201</th>
+    <th>42 184</th>
   </tr>
   <tr>
-    <th colspan="2">MobileNetV2 128px</th>
+    <th colspan="2">128px</th>
     <th>95.10%</th>
-    <th>-</th>
-    <th>-</th>
-    <th>-</th>
+    <th>7 739</th>
+    <th>27 789</th>
   </tr>
   <tr>
-    <th></th>
-    <th><sub><abbr title="width_multiplier">w=2</abbr></sub></th>
-    <th>96.27%</th>
-    <th>-</th>
-    <th>-</th>
-    <th>-</th>
-  </tr>
-  <tr>
-    <th colspan="2">MobileNetV2 160px<sub></sub></th>
+    <th colspan="2">160px<sub></sub></th>
     <th>95.52%</th>
-    <th>-</th>
-    <th>-</th>
-    <th>-</th>
+    <th>5 377</th>
+    <th>19 118</th>
   </tr>
   <tr>
-    <th colspan="2">MobileNetV2 192px</th>
+    <th colspan="2">192px</th>
     <th>95.78%</th>
-    <th>-</th>
-    <th>-</th>
-    <th>-</th>
+    <th>4 057</th>
+    <th>15 478</th>
   </tr>
   <tr>
-    <th colspan="2">MobileNetV2 224px <sub>batch=512</sub></th>
+    <th colspan="2">224px <sub>batch=512</sub></th>
     <th>96.20%</th>
-    <th>-</th>
-    <th>-</th>
-    <th>-</th>
+    <th></th>
+    <th></th>
+  </tr>
+  <tr>
+    <th colspan="2">128px<sub> <abbr title="width_multiplier">w=2</abbr></sub></th>
+    <th>96.27%</th>
+    <th></th>
+    <th></th>
+    <th></th>
   </tr>
   <!-- ResNetV2 -->
   <tr>
     <th colspan="7">ResNetV2</th>
   </tr>
   <tr>
-    <th rowspan="9"></th>
+    <th rowspan="11"></th>
     <th colspan="2">ResNet18 <sub>mish</sub></th>
     <th>92.81% <sub>93.53%</sub></th>
     <th>692 218</th>
@@ -307,12 +294,24 @@ Optmizer: SGD nesterov m=0.9
     <th></th>
     <th><sub>+mish +lr=.75</sub></th>
     <th>96.44%</th>
-    <!-- <th>-</th> -->
-    <!-- <th>-</th> -->
-    <!-- <th>-</th> -->
   </tr>
   <tr>
-    <th colspan="2">WideResNet170-2 <sub>+mish</sub></th>
+    <th colspan="2">WideResNet34 <sub> <abbr title="width_factor">w=4</abbr> </sub></th>
+    <th>96.40%</th>
+    <th></th>
+    <th></th>
+    <th></th>
+  </tr>
+  <tr>
+    <th></th>
+    <th colspan="1"><sub> <abbr title="width_factor">w=8</abbr> </sub></th>
+    <th>96.91%</th>
+    <th></th>
+    <th></th>
+    <th></th>
+  </tr>
+  <tr>
+    <th colspan="2">WideResNet170 <sub>+mish <abbr title="width_factor">w=2</abbr> </sub></th>
     <th>97.18%</th>
     <th>16 588 010</th>
     <th>2 511</th>
@@ -326,47 +325,44 @@ Optmizer: SGD nesterov m=0.9
     <th rowspan="6"></th>
     <th colspan="2">ResNeXt35_16x4d</th>
     <th>95.87%</th>
-    <th>-</th>
-    <th>-</th>
-    <th>-</th>
+    <th rowspan="2">3 554 762</th>
+    <th>1 893</th>
+    <th>20 215</th>
   </tr>
   <tr>
     <th></th>
     <th colspan="1"><sub> +mish</sub></th>
     <th>96.37%</th>
-    <th>-</th>
-    <th>-</th>
-    <th>-</th>
+    <th></th>
+    <th></th>
   </tr>
   <tr>
     <th colspan="2">ResNeXt50_16x4d<sub></sub></th>
     <th>96.26%</th>
-    <th>-</th>
-    <th>-</th>
-    <th>-</th>
+    <th rowspan="2">5 461 706</th>
+    <th>1 436</th>
+    <th>15 064</th>
   </tr>
   <tr>
     <th></th>
     <th colspan="1"><sub>+mish</sub></th>
     <th>96.45%</th>
-    <th>-</th>
-    <th>-</th>
-    <th>-</th>
+    <th></th>
+    <th></th>
   </tr>
   <tr>
     <th colspan="2">ResNeXt101_16x4d<sub></sub></th>
     <th>96.39%</th>
-    <th>-</th>
-    <th>-</th>
-    <th>-</th>
+    <th rowspan="2">10 614 474</th>
+    <th>990</th>
+    <th>11 063</th>
   </tr>
   <tr>
     <th></th>
     <th><sub>+mish</sub></th>
     <th>96.74%</th>
-    <th>-</th>
-    <th>-</th>
-    <th>-</th>
+    <th></th>
+    <th></th>
   </tr>
   </tr>
   <!-- DenseNet -->
@@ -377,39 +373,34 @@ Optmizer: SGD nesterov m=0.9
     <th rowspan="4"></th>
     <th colspan="2">DenseNet52k12</th>
     <th>93.75%</th>
-    <th>-</th>
-    <th>-</th>
-    <th>-</th>
+    <th>272 398</th>
+    <th>7 209</th>
+    <th>31 956</th>
   </tr>
   <tr>
     <th colspan="2">DenseNet100k12</th>
     <th>95.4%</th>
-    <th>-</th>
-    <th>-</th>
-    <th>-</th>
+    <th>793 150</th>
+    <th>2 734</th>
+    <th>12 119</th>
   </tr>
   <tr>
     <th colspan="2">DenseNet100k16</th>
     <th>95.87%</th>
-    <th>-</th> 
-    <th>-</th>
-    <th>-</th>
+    <th>1 386 906</th> 
+    <th>2 394</th>
+    <th>11 114</th>
   </tr>
   <tr>
     <th colspan="2">DenseNet160k12<sub> b=512</sub></th>
     <th>96.43%</th>
-    <th>-</th>
-    <th>-</th>
-    <th>-</th>
+    <th>1 795 090</th>
+    <th>1 212</th>
+    <th>4 860</th>
   </tr>
 </table>
 
-* \* -> Reported values
 
-* SD = Stochastic Depth. </br>
-  From [Deep Networks with Stochastic Depth](https://arxiv.org/abs/1603.09382)
-* HTD = Hyperbolic-Tangent Learning Rate Decay schedule. </br>
-  From [Stochastic Gradient Descent with Hyperbolic-Tangent Decay on Classification](https://arxiv.org/abs/1806.01593)
 * Cos = Cosine Learning Rate Decay schedule. </br>
   From [Stochastic Gradient Descent with Warm Restarts](https://arxiv.org/abs/1608.03983)
 * Mish = Self regularized non-monotonic activation function, f(x) = x*tanh(softplus(x)). </br>
