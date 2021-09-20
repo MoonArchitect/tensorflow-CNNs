@@ -14,7 +14,6 @@ from utils.registry import register_model
 """
 
 
-
 class DenseNetUnit(nn.layers.Layer):
     """
     Basic DenseNet unit
@@ -32,7 +31,7 @@ class DenseNetUnit(nn.layers.Layer):
 
 class DenseNetBlock(nn.layers.Layer):
     """
-    Block consisting of 'n_units' basic units
+    Dense Block consisting of 'n_units' basic units
     """
     def __init__(self, n_units, filters, **kwargs):
         super().__init__(**kwargs)
@@ -97,6 +96,20 @@ def DenseNet(input_shape = (32, 32, 3),
 
 ############## Predefined Models ##############
 @register_model
+def DenseNet52k12(growth_rate = 12,
+                  reduction = 0.5):
+    """
+    Parameters:
+    ----------
+    Returns
+    -------
+    """
+    return DenseNet(reduction = reduction,
+                    growth_rate = growth_rate,
+                    layers=52)
+
+
+@register_model
 def DenseNet100k12(growth_rate = 12,
                    reduction = 0.5):
     """
@@ -136,9 +149,3 @@ def DenseNet160k12(growth_rate = 12,
     return DenseNet(reduction = reduction,
                     growth_rate = growth_rate,
                     layers=160)
-
-
-
-
-
-
