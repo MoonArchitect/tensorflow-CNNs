@@ -77,7 +77,13 @@ def linear_decay(x, start_pos_val, end_pos_val):
     return linear_decay_fn(start_pos_val, end_pos_val)(x)
 
 
-def _make_divisible(value, divisor):
+def _make_divisible(value, divisor, msg_on_change = None):
+    """
+    Makes 'value' divisible by divisor
+    If given, logs 'msg_on_change' if value is changed
+    """
+    initial = value
+
     extra = value % divisor
     value -= extra
     if extra >= divisor / 2:
@@ -86,6 +92,17 @@ def _make_divisible(value, divisor):
     if isinstance(divisor, int):
         value = int(value)
 
-    # if value == 0 log warning
+    # TODO if value == 0 -> log warning
+    
+    if msg_on_change and initial != value:
+        values_to_log = {}
+
+        if "{initial}" in msg_on_change:
+            values_to_log["initial"] = initial
+        
+        if "{final}" in msg_on_change:
+            values_to_log["final"] = value
+        
+        print("\tWARNING (_make_divisible): " + msg_on_change.format(**values_to_log))
 
     return value
