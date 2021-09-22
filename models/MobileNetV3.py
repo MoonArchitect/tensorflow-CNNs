@@ -1,9 +1,9 @@
 import tensorflow as tf
 import tensorflow.keras as nn
 
+from utils.registry import register_model
 from .MobileNetV2 import InvertedResidualBlock
 from .layers import get_activation_layer
-from utils.registry import register_model
 from .layers.utils import _make_divisible
 
 """
@@ -15,8 +15,9 @@ from .layers.utils import _make_divisible
 
 # TODO this mobilenetv3 is not equivalent to one presented in paper for imagenet
 # Differences:
-#   - Image is upsampled, generally from 32px->224px
-#   - 
+#   - Image is upsampled, from 'input_shape' -> to specified 'upsample_resolution' (ie. 224, 192, etc.)
+#   - Pre-last 1x1 conv with activation is omitted
+#   - Last layer is a Dense not 1x1 Conv
 
 
 def MobileNetV3_builder(config,
@@ -38,15 +39,17 @@ def MobileNetV3_builder(config,
     upsample_resolution: int
         Resolution to which input image will be upsampled. (MobileNetV3 was designed for 224px image input)
     width_factor: float
-        Controls the width of the network.
+        Width coefficient of the network's layers
     classes: int
         Number of classification classes.
     data_format: 'channels_last' or 'channels_first'
-        The ordering of the dimensions in the inputs.
+        The ordering of the dimensions in the inputs
     """
-    assert width_factor > 0.2 and width_factor % 0.25 == 0
+    assert width_factor > 0.2 and width_factor % 0.25 == 0, "'width_factor' should be divisible by 0.25"
+   
     channel_axis = -1 if data_format == 'channels_last' else 1
     
+
     input = tf.keras.layers.Input(shape=input_shape)
     x = input
     
@@ -86,9 +89,9 @@ def MobileNetV3_builder(config,
                          kernel_size=1,
                          data_format=data_format,
                          use_bias=False)(x)
-
     x = nn.layers.BatchNormalization(axis=channel_axis)(x)
     x = get_activation_layer('hswish')(x)
+
     x = nn.layers.GlobalAveragePooling2D(data_format=data_format)(x)
 
     output = nn.layers.Dense(classes)(x)
@@ -173,7 +176,7 @@ def MobileNetV3L_224(width_factor=1):
     Arguments:
     ----------
     width_factor: float
-        Controls the width of the network.
+        Width coefficient of the network's layers
     
     """
     return MobileNetV3Large(upsample_resolution=224,
@@ -188,7 +191,7 @@ def MobileNetV3L_192(width_factor=1):
     Arguments:
     ----------
     width_factor: float
-        Controls the width of the network.
+        Width coefficient of the network's layers
     
     """
     return MobileNetV3Large(upsample_resolution=192,
@@ -203,7 +206,7 @@ def MobileNetV3L_160(width_factor=1):
     Arguments:
     ----------
     width_factor: float
-        Controls the width of the network.
+        Width coefficient of the network's layers
     
     """
     return MobileNetV3Large(upsample_resolution=160,
@@ -218,7 +221,7 @@ def MobileNetV3L_128(width_factor=1):
     Arguments:
     ----------
     width_factor: float
-        Controls the width of the network.
+        Width coefficient of the network's layers
     
     """
     return MobileNetV3Large(upsample_resolution=128,
@@ -233,7 +236,7 @@ def MobileNetV3S_224(width_factor=1):
     Arguments:
     ----------
     width_factor: float
-        Controls the width of the network.
+        Width coefficient of the network's layers
     
     """
     return MobileNetV3Small(upsample_resolution=224,
@@ -248,7 +251,7 @@ def MobileNetV3S_192(width_factor=1):
     Arguments:
     ----------
     width_factor: float
-        Controls the width of the network.
+        Width coefficient of the network's layers
     
     """
     return MobileNetV3Small(upsample_resolution=192,
@@ -263,7 +266,7 @@ def MobileNetV3S_160(width_factor=1):
     Arguments:
     ----------
     width_factor: float
-        Controls the width of the network.
+        Width coefficient of the network's layers
     
     """
     return MobileNetV3Small(upsample_resolution=160,
@@ -278,7 +281,7 @@ def MobileNetV3S_128(width_factor=1):
     Arguments:
     ----------
     width_factor: float
-        Controls the width of the network.
+        Width coefficient of the network's layers
     
     """
     return MobileNetV3Small(upsample_resolution=128,

@@ -1,8 +1,9 @@
 import tensorflow as tf
 import tensorflow.keras as nn
-from .ResNetV2 import AA_downsampling
-from .layers import get_activation_layer, get_channels, linear_decay_fn, PreActConv
+
 from utils.registry import register_model
+from .ResNetV2 import AA_downsampling
+from .layers import get_activation_layer, linear_decay_fn, _make_divisible, PreActConv
 
 """
     Implementation of ResNet with Stochastic Depth for CIFAR/SVHN/32x32
@@ -169,19 +170,19 @@ def StochasticDepthStage(layers,
     layers: int
         Number of residual Units in that stage
     filters: int
-        The dimensionality of the output space (i.e. the number of output filters in the convolution).
+        The dimensionality of the output space (i.e. the number of output filters in the convolution)
     survival_fn: function
         Function to calculate survival rate for each layer given its idx
-    stage_position: tuple/list of 2 integers
-        -
+    stage_start_pos: int
+        Starting index in the network
     kernel_size: int, tuple/list of 2 integers
         Central 2D convolution window's Height and Width
     strides: int, tuple/list of 2 integers
         Specifying the strides of the central convolution along the height and width
     data_format: 'channels_last' or 'channels_first'
-        The ordering of the dimensions in the inputs.
+        The ordering of the dimensions in the inputs
     activation: String or keras.Layer
-        Activation function to use after each convolution.
+        Activation function to use after each convolution
     """
     def fwd(input):
         x = StochasticBottleneckUnit(
@@ -212,11 +213,11 @@ def StochasticDepthStage(layers,
 
 def ResNetSD(conv_per_stage,
              min_survival_p,
-             input_shape=(32, 32, 3),
-             classes=10,
-             filters=16,
+             width_factor=1,
              activation='relu',
              data_format='channels_last',
+             input_shape=(32, 32, 3),
+             classes=10,
              **kwargs):
     """
     ResNet with Stochastic Depth
@@ -224,23 +225,26 @@ def ResNetSD(conv_per_stage,
     Parameters:
     conv_per_stage: list, tuple
         Number of residual blocks in each stage
+    min_survival_p: float
+        Survival probability of the last convolutional layer
+    width_factor: float
+        Width coefficient of the network's layers
+    activation: string, keras.Layer
+        Activation function to use after each convolution
+    data_format: 'channels_last' or 'channels_first'
+        The ordering of the dimensions in the inputs
     input_shape: list, tuple
         Shape of an input image
     classes: int
-        Number of classification classes.
-    filters: int
-        Number of filters in stem layer
-    activation: string, keras.Layer
-        Activation function to use after each convolution.
-    data_format: 'channels_last' or 'channels_first'
-        The ordering of the dimensions in the inputs.
+        Number of classification classes
     """
 
     strides = [(1, 1)] + [(2, 2)] * 3
     expansion = 4
-    
+    filters = _make_divisible(16 * width_factor, 8)
+
     survival_fn = linear_decay_fn((0, 1), (sum(conv_per_stage), min_survival_p))
-    layer_cnt = 1  # ...
+    layer_cnt = 1
     
 
     input = tf.keras.layers.Input(shape=input_shape)
@@ -249,7 +253,7 @@ def ResNetSD(conv_per_stage,
     # if data_format == 'channels_last':
     #     x = tf.transpose(input, [0, 3, 1, 2])
     #     data_format = 'channels_first'
-        
+    
     # Initial Convolution
     x = tf.keras.layers.Conv2D(filters=filters,
                                kernel_size=(3, 3),
@@ -280,12 +284,13 @@ def ResNetSD(conv_per_stage,
 
     return tf.keras.models.Model(inputs=input,
                                  outputs=output,
-                                 name=f'{f"Wide{filters}" if filters != 256 else ""}ResNet{sum(conv_per_stage) * 3 + 2}SD_p{min_survival_p}')
+                                 name=f'{ "Wide" if width_factor != 1 else "" }ResNetSD{ sum(conv_per_stage) * 3 + 2 }_{ width_factor }k_p{ min_survival_p }')
 
 
 ############## Predefined Nets ##############
 @register_model
 def ResNet50SD(min_survival_p=0.7,
+               width_factor=1,
                activation='relu',
                **kwargs):
     """
@@ -293,21 +298,25 @@ def ResNet50SD(min_survival_p=0.7,
     Parameters:
     ----------
     min_survival_p: float
-        last layer's survival probability
+        Survival probability of the last convolutional layer
+    width_factor: float
+        Width coefficient of the network's layers
     activation: string, keras.Layer
-        Main activation function of the network.
+        Main activation function of the network
     Returns:
     ----------
     keras.Model
     """
     return ResNetSD(conv_per_stage=[3, 4, 6, 3],
                     min_survival_p=min_survival_p,
+                    width_factor=width_factor,
                     activation=activation,
                     **kwargs)
 
 
 @register_model
 def ResNet101SD(min_survival_p=0.45,
+                width_factor=1,
                 activation='relu',
                 **kwargs):
     """
@@ -315,21 +324,25 @@ def ResNet101SD(min_survival_p=0.45,
     Parameters:
     ----------
     min_survival_p: float
-        last layer's survival probability
+        Survival probability of the last convolutional layer
+    width_factor: float
+        Width coefficient of the network's layers
     activation: string, keras.Layer
-        Main activation function of the network.
+        Main activation function of the network
     Returns:
     ----------
     keras.Model
     """
     return ResNetSD(conv_per_stage=[3, 4, 23, 3],
                     min_survival_p=min_survival_p,
+                    width_factor=width_factor,
                     activation=activation,
                     **kwargs)
 
 
 @register_model
 def ResNet152SD(min_survival_p=0.35,
+                width_factor=1,
                 activation='relu',
                 **kwargs):
     """
@@ -337,21 +350,25 @@ def ResNet152SD(min_survival_p=0.35,
     Parameters:
     ----------
     min_survival_p: float
-        last layer's survival probability
+        Survival probability of the last convolutional layer
+    width_factor: float
+        Width coefficient of the network's layers
     activation: string, keras.Layer
-        Main activation function of the network.
+        Main activation function of the network
     Returns:
     ----------
     keras.Model
     """
     return ResNetSD(conv_per_stage=[3, 8, 36, 3],
                     min_survival_p=min_survival_p,
+                    width_factor=width_factor,
                     activation=activation,
                     **kwargs)
 
 
 @register_model
 def ResNet170SD(min_survival_p=0.35,
+                width_factor=1,
                 activation='relu',
                 **kwargs):
     """
@@ -359,14 +376,17 @@ def ResNet170SD(min_survival_p=0.35,
     Parameters:
     ----------
     min_survival_p: float
-        last layer's survival probability
+        Survival probability of the last convolutional layer
+    width_factor: float
+        Width coefficient of the network's layers
     activation: string, keras.Layer
-        Main activation function of the network.
+        Main activation function of the network
     Returns:
     ----------
     keras.Model
     """
     return ResNetSD(conv_per_stage=[4, 10, 36, 6],
                     min_survival_p=min_survival_p,
+                    width_factor=width_factor,
                     activation=activation,
                     **kwargs)

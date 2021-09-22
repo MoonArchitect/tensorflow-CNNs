@@ -1,9 +1,9 @@
 import tensorflow as tf
 import tensorflow.keras as nn
 
+from utils.registry import register_model
 from .SeNet import SEBlock
 from .layers import get_activation_layer
-from utils.registry import register_model
 
 
 """
@@ -24,13 +24,13 @@ class InvertedResidualBlock(nn.layers.Layer):
     expansion: int
         Value of internal channel expansion
     stride: int
-        -
-    width_multiplier: float
-        Controls the width of the network.
+        Stride for the DepthwiseConv2D
+    width_factor: float
+        Width coefficient of the network's layers
     block_id: int
         Id of current block in the network
     data_format: 'channels_last' or 'channels_first'
-        The ordering of the dimensions in the inputs.
+        The ordering of the dimensions in the inputs
     """
     def __init__(self,
                  out_channels,
@@ -130,7 +130,7 @@ class InvertedResidualBlock(nn.layers.Layer):
 
 def MobileNetV2(input_shape=(32, 32, 3),
                 upsample_resolution=224,
-                width_multiplier=1.0,
+                width_factor=1.0,
                 classes=10,
                 data_format='channels_last'):
 
@@ -142,14 +142,15 @@ def MobileNetV2(input_shape=(32, 32, 3),
         Shape of an input image
     upsample_resolution: int
         Resolution to which input image will be upsampled. (MobileNetV2 was designed for 224px image input)
-    width_multiplier: float
-        Controls the width of the network.
+    width_factor: float
+        Width coefficient of the network's layers
     classes: int
-        Number of classification classes.
+        Number of classification classes
     data_format: 'channels_last' or 'channels_first'
-        The ordering of the dimensions in the inputs.
+        The ordering of the dimensions in the inputs
     """
-    assert width_multiplier in [0.5, 0.75, 1.0, 1.25, 1.5, 2.0], "'width_multiplier' has to be one of [0.5, 0.75, 1.0, 1.25, 1.5, 2.0]"
+    assert width_factor in [0.5, 0.75, 1.0, 1.25, 1.5, 2.0], "'width_factor' has to be one of [0.5, 0.75, 1.0, 1.25, 1.5, 2.0]"
+    
     channel_axis = -1 if data_format == 'channels_last' else 1
     config = [
         # t,  c, n, s
@@ -162,6 +163,7 @@ def MobileNetV2(input_shape=(32, 32, 3),
         (6, 320, 1, 1),
     ]
 
+
     input = tf.keras.layers.Input(shape=input_shape)
     
     x = input
@@ -169,14 +171,14 @@ def MobileNetV2(input_shape=(32, 32, 3),
         upsample = upsample_resolution // input_shape[1]
         x = nn.layers.UpSampling2D([upsample, upsample], data_format=data_format)(x)
 
-    x = nn.layers.Conv2D(filters=32 * width_multiplier, kernel_size=3, strides=2, padding='same', use_bias = False, data_format = data_format)(x)
+    x = nn.layers.Conv2D(filters=32 * width_factor, kernel_size=3, strides=2, padding='same', use_bias = False, data_format = data_format)(x)
     x = nn.layers.BatchNormalization(axis=channel_axis)(x)
     x = nn.layers.ReLU(6)(x)
 
     expansion, filters, n, first_stride = config[0]
     x = InvertedResidualBlock(
-        out_channels=filters * width_multiplier,
-        expansion=32 * expansion * width_multiplier,
+        out_channels=filters * width_factor,
+        expansion=32 * expansion * width_factor,
         stride=first_stride,
         emit_first_stage=True,
         data_format=data_format
@@ -186,8 +188,8 @@ def MobileNetV2(input_shape=(32, 32, 3),
     for expansion, filters, n, first_stride in config[1:]:
         for stride in [first_stride] + [1] * (n - 1):
             x = InvertedResidualBlock(
-                out_channels=filters * width_multiplier,
-                expansion=input_filters * expansion * width_multiplier,
+                out_channels=filters * width_factor,
+                expansion=input_filters * expansion * width_factor,
                 stride=stride,
                 data_format=data_format
             )(x)
@@ -208,97 +210,97 @@ def MobileNetV2(input_shape=(32, 32, 3),
 
     return tf.keras.models.Model(inputs=input,
                                  outputs=output,
-                                 name=f'MobileNetV2_{upsample_resolution}px_{width_multiplier}k')
+                                 name=f'MobileNetV2_{upsample_resolution}px_{width_factor}k')
 
 
 ############## Predefined Nets ##############
 
 @register_model
-def MobileNetV2_320(width_multiplier=1):
+def MobileNetV2_320(width_factor=1):
     """
     MobileNetV2 with 320px upsampled resolution
     
     Arguments:
     ----------
-    width_multiplier: float
-        Controls the width of the network.
+    width_factor: float
+        Width coefficient of the network's layers
     
     """
     return MobileNetV2(upsample_resolution=320,
-                       width_multiplier=width_multiplier)
+                       width_factor=width_factor)
 
 
 @register_model
-def MobileNetV2_224(width_multiplier=1):
+def MobileNetV2_224(width_factor=1):
     """
     MobileNetV2 with 224px upsampled resolution
     
     Arguments:
     ----------
-    width_multiplier: float
-        Controls the width of the network.
+    width_factor: float
+        Width coefficient of the network's layers
     
     """
     return MobileNetV2(upsample_resolution=224,
-                       width_multiplier=width_multiplier)
+                       width_factor=width_factor)
 
 
 @register_model
-def MobileNetV2_192(width_multiplier=1):
+def MobileNetV2_192(width_factor=1):
     """
     MobileNetV2 with 192px upsampled resolution
     
     Arguments:
     ----------
-    width_multiplier: float
-        Controls the width of the network.
+    width_factor: float
+        Width coefficient of the network's layers
     
     """
     return MobileNetV2(upsample_resolution=192,
-                       width_multiplier=width_multiplier)
+                       width_factor=width_factor)
 
 
 @register_model
-def MobileNetV2_160(width_multiplier=1):
+def MobileNetV2_160(width_factor=1):
     """
     MobileNetV2 with 160px upsampled resolution
     
     Arguments:
     ----------
-    width_multiplier: float
-        Controls the width of the network.
+    width_factor: float
+        Width coefficient of the network's layers
     
     """
     return MobileNetV2(upsample_resolution=160,
-                       width_multiplier=width_multiplier)
+                       width_factor=width_factor)
 
 
 @register_model
-def MobileNetV2_128(width_multiplier=1):
+def MobileNetV2_128(width_factor=1):
     """
     MobileNetV2 with 128px upsampled resolution
     
     Arguments:
     ----------
-    width_multiplier: float
-        Controls the width of the network.
+    width_factor: float
+        Width coefficient of the network's layers
     
     """
     return MobileNetV2(upsample_resolution=128,
-                       width_multiplier=width_multiplier)
+                       width_factor=width_factor)
 
 
 @register_model
-def MobileNetV2_96(width_multiplier=1):
+def MobileNetV2_96(width_factor=1):
     """
     MobileNetV2 with 96px upsampled resolution
     
     Arguments:
     ----------
-    width_multiplier: float
-        Controls the width of the network.
+    width_factor: float
+        Width coefficient of the network's layers
     
     """
     return MobileNetV2(upsample_resolution=96,
-                       width_multiplier=width_multiplier)
+                       width_factor=width_factor)
 
