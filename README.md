@@ -113,39 +113,41 @@ Optmizer: SGD nesterov m=0.9
   <tr>
     <th>128px<sub> <abbr title="width_factor">w=2</abbr></sub></th>
     <th>95.10%</th>
-    <th rowspan="6"></th>
-    <th></th>
-    <th></th>
+    <th>3 575 242</th>
+    <th>7 254</th>
+    <th>44 722</th>
   </tr>
   <tr>
     <th>128px<sub> <abbr title="width_factor">w=4</abbr> b=512 </sub></th>
     <th>95.99%</th>
-    <th></th>
-    <th></th>
+    <th>13 925 762</th>
+    <th>2 608</th>
+    <th>23 516</th>
   </tr>
   <tr>
     <th>160px<sub> <abbr title="width_factor">w=2</abbr></sub></th>
     <th>95.56%</th>
-    <th></th>
-    <th></th>
+    <th rowspan="4">3 575 242</th>
+    <th>5 512</th>
+    <th>31 467</th>
   </tr>
   <tr>
     <th>192px<sub> <abbr title="width_factor">w=2</abbr></sub></th>
     <th>96.02%</th>
-    <th></th>
-    <th></th>
+    <th>7 652</th>
+    <th>26 653</th>
   </tr>
   <tr>
     <th>224px<sub> <abbr title="width_factor">w=2</abbr></sub></th>
     <th>96.22%</th>
-    <th></th>
-    <th></th>
+    <th>5 711</th>
+    <th>20 760</th>
   </tr>
   <tr>
     <th>224px<sub> <abbr title="width_factor">w=2</abbr> b=512</sub></th>
     <th>96.30%</th>
-    <th></th>
-    <th></th>
+    <th>5 379</th>
+    <th>19 635</th>
   </tr>
   <tr> <!-- MobileNetV3L -->
     <th colspan="6">MobileNetV3L<sub></sub></th>
@@ -154,44 +156,40 @@ Optmizer: SGD nesterov m=0.9
     <th rowspan="6"></th>
     <th>128px<sub> </sub></th>
     <th>95.57%</th>
-    <th rowspan="1">3 011 882</th>
+    <th rowspan="4">3 011 882</th>
     <th>5 765</th>
     <th>34 980</th>
-  </tr>
-
-  <tr>
-    <th>128px<sub> <abbr title="width_factor">w=2</abbr></sub></th>
-    <th>96.06%</th>
-    <th></th>
-    <th></th>
-    <th></th>
   </tr>
   <tr>
     <th>160px<sub></sub></th>
     <th>96.07%</th>
-    <th rowspan="2">3 011 882</th>
     <th>4 303</th>
     <th>25 000</th>
   </tr>
   <tr>
     <th>192px<sub> b=512</sub></th>
     <th>96.58%</th>
-    <th></th>
-    <th></th>
-  </tr>
-  <tr>
-    <th>192px<sub> b=512 <abbr title="width_factor">w=2</abbr></sub></th>
-    <th>96.95%</th>
-    <th></th>
-    <th></th>
-    <th></th>
+    <th>4 531</th>
+    <th>17 142</th>
   </tr>
   <tr>
     <th>224px<sub> b=512</sub></th>
     <th>96.52%</th>
-    <th rowspan="1">3 011 882</th>
-    <th></th>
-    <th></th>
+    <th>3 494</th>
+    <th>13 591</th>
+  </tr>
+  <tr>
+    <th>128px<sub> <abbr title="width_factor">w=2</abbr></sub></th>
+    <th>96.06%</th>
+    <th rowspan="2">11 737 426</th>
+    <th>3 286</th>
+    <th>20 087</th>
+  </tr>
+  <tr>
+    <th>192px<sub> <abbr title="width_factor">w=2</abbr>  b=512 </sub></th>
+    <th>96.95%</th>
+    <th>2 509</th>
+    <th>9 733</th>
   </tr>
   <!-- MobileNetV2 -->
   <tr>
@@ -226,15 +224,15 @@ Optmizer: SGD nesterov m=0.9
   <tr>
     <th colspan="2">224px <sub>batch=512</sub></th>
     <th>96.20%</th>
-    <th></th>
-    <th></th>
+    <th>2 963</th>
+    <th>11 179</th>
   </tr>
   <tr>
     <th colspan="2">128px<sub> <abbr title="width_multiplier">w=2</abbr></sub></th>
     <th>96.27%</th>
-    <th></th>
-    <th></th>
-    <th></th>
+    <th>7 953 802</th>
+    <th>4 510</th>
+    <th>16 414</th>
   </tr>
   <!-- ResNetV2 -->
   <tr>
@@ -298,17 +296,17 @@ Optmizer: SGD nesterov m=0.9
   <tr>
     <th colspan="2">WideResNet34 <sub> <abbr title="width_factor">w=4</abbr> </sub></th>
     <th>96.40%</th>
-    <th></th>
-    <th></th>
-    <th></th>
+    <th>21 123 530</th>
+    <th>5 605</th>
+    <th>20 382</th>
   </tr>
   <tr>
     <th></th>
     <th colspan="1"><sub> <abbr title="width_factor">w=8</abbr> </sub></th>
     <th>96.91%</th>
-    <th></th>
-    <th></th>
-    <th></th>
+    <th>84 419 466</th>
+    <th>1 773</th>
+    <th>6 539</th>
   </tr>
   <tr>
     <th colspan="2">WideResNet170 <sub>+mish <abbr title="width_factor">w=2</abbr> </sub></th>
@@ -322,47 +320,26 @@ Optmizer: SGD nesterov m=0.9
     <th colspan="7">ResNeXt</th>
   </tr>
   <tr>
-    <th rowspan="6"></th>
-    <th colspan="2">ResNeXt35_16x4d</th>
-    <th>95.87%</th>
-    <th rowspan="2">3 554 762</th>
-    <th>1 893</th>
-    <th>20 215</th>
+    <th rowspan="3"></th>
+    <th colspan="2">ResNeXt35_16x4d <sub>mish</sub></th>
+    <th>95.87% <sub>96.37%</sub></th>
+    <th>3 554 762</th>
+    <th>1 893 <sub>-1%</sub></th>
+    <th>20 215 <sub>-1%</sub></th>
   </tr>
   <tr>
-    <th></th>
-    <th colspan="1"><sub> +mish</sub></th>
-    <th>96.37%</th>
-    <th></th>
-    <th></th>
+    <th colspan="2">ResNeXt50_16x4d <sub>mish</sub></th>
+    <th>96.26% <sub>96.45%</sub></th>
+    <th>5 461 706</th>
+    <th>1 436 <sub>-1%</sub></th>
+    <th>15 064 <sub>-1%</sub></th>
   </tr>
   <tr>
-    <th colspan="2">ResNeXt50_16x4d<sub></sub></th>
-    <th>96.26%</th>
-    <th rowspan="2">5 461 706</th>
-    <th>1 436</th>
-    <th>15 064</th>
-  </tr>
-  <tr>
-    <th></th>
-    <th colspan="1"><sub>+mish</sub></th>
-    <th>96.45%</th>
-    <th></th>
-    <th></th>
-  </tr>
-  <tr>
-    <th colspan="2">ResNeXt101_16x4d<sub></sub></th>
-    <th>96.39%</th>
-    <th rowspan="2">10 614 474</th>
-    <th>990</th>
-    <th>11 063</th>
-  </tr>
-  <tr>
-    <th></th>
-    <th><sub>+mish</sub></th>
-    <th>96.74%</th>
-    <th></th>
-    <th></th>
+    <th colspan="2">ResNeXt101_16x4d <sub>mish</sub></th>
+    <th>96.39% <sub>96.74%</sub></th>
+    <th>10 614 474</th>
+    <th>990 <sub>-1%</sub></th>
+    <th>11 063 <sub>-2%</sub></th> 
   </tr>
   </tr>
   <!-- DenseNet -->
