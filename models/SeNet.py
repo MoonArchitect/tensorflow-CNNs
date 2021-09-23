@@ -351,33 +351,10 @@ def SeNet(conv_per_stage,
 
     return tf.keras.models.Model(inputs=input,
                                  outputs=output,
-                                 name=f'{f"Wide{filters}" if filters != 256 else ""}SeNet{sum(conv_per_stage) * 3 + 2}')
+                                 name=f'{"Wide" if filters != 256 else ""}SeNet{sum(conv_per_stage) * 3 + 2}_{width_factor}k')
+
 
 ############## Predefined Nets ##############
-
-
-@register_model
-def SeNet26(width_factor=1,
-            activation='relu',
-            **kwargs):
-    """
-    SeNet18 model for CIFAR/SVHN
-    Parameters:
-    ----------
-    width_factor: float
-        Width coefficient of the network's layers
-    activation: string, keras.Layer
-        Main activation function of the network
-    Returns:
-    ----------
-    keras.Model
-    """
-    return SeNet(conv_per_stage=[2, 2, 2, 2],
-                 width_factor=width_factor,
-                 activation=activation,
-                 **kwargs)
-
-
 @register_model
 def SeNet35(width_factor=1,
             activation='relu',
@@ -443,3 +420,46 @@ def SeNet101(width_factor=1,
                  activation=activation,
                  **kwargs)
 
+
+@register_model
+def SeNet152(width_factor=1,
+             activation='relu',
+             **kwargs):
+    """
+    SeNet152 model for CIFAR/SVHN
+    Parameters:
+    ----------
+    width_factor: float
+        Width coefficient of the network's layers
+    activation: string, keras.Layer
+        Main activation function of the network
+    Returns:
+    ----------
+    keras.Model
+    """
+    return SeNet(conv_per_stage=[3, 8, 36, 3],
+                 width_factor=width_factor,
+                 activation=activation,
+                 **kwargs)
+
+
+@register_model
+def SeNet170(width_factor=1,
+             activation='relu',
+             **kwargs):
+    """
+    SeNet170 model for CIFAR/SVHN
+    Parameters:
+    ----------
+    width_factor: float
+        Width coefficient of the network's layers
+    activation: string, keras.Layer
+        Main activation function of the network
+    Returns:
+    ----------
+    keras.Model
+    """
+    return SeNet(conv_per_stage=[5, 9, 37, 5],
+                 width_factor=width_factor,
+                 activation=activation,
+                 **kwargs)
