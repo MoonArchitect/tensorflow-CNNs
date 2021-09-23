@@ -31,10 +31,7 @@ def parse_args():
     parser.add_argument("--checkpoint", type=str, )
 
     parser.add_argument("--xla", dest="xla", action="store_true")
-    # parser.add_argument("--no-xla", dest="xla", action="store_false")
-
     parser.add_argument("--fp16", dest="fp16", action="store_true")
-    # parser.add_argument("--no-fp16", dest="fp16", action="store_false")
 
     parser.add_argument("--augment", choices=["cutmix", "cutout", "mixup"], default=False)
     

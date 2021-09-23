@@ -28,8 +28,8 @@ class PreActConv(nn.layers.Layer):
     kernel_regularizer: tf.keras.regularizers.Regularizer
         Kernel Regularizer for Convolutional Layer
     data_format: 'channels_last' (default) or 'channels_first'
-        The ordering of the dimensions in the inputs.
-        'channels_last' = (batch_size, height, width, channels)
+        The ordering of the dimensions in the inputs. \\
+        'channels_last' = (batch_size, height, width, channels) \\
         'channels_first' = (batch_size, channels, height, width).
     """
 

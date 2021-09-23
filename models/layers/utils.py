@@ -47,23 +47,22 @@ def linear_decay_fn(start_pos_val,
                     name="Linear Decay"):
     """
     Returns function to generate values with linear decay corresponding to (start/end)_pos_val
-    Arguments:
+    
     ----------
+    Arguments:
     start_pos_val: tuple/list of 2 integers
         -
     end_pos_val: tuple/list of 2 integers
         -
-    Returns:
+    
     --------
+    Returns:
     Python function
         -> fn(x), takes 1 argument, position:float
         -> Returns value:float
     """
     # Swap for convenience if
-    if start_pos_val[0] > end_pos_val[0]:
-        temp = end_pos_val
-        end_pos_val = start_pos_val
-        start_pos_val = temp
+    assert start_pos_val[0] < end_pos_val[0], ""
 
     def fn(x):
         if not start_pos_val[0] <= x <= end_pos_val[0]:
