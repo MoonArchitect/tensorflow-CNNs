@@ -52,7 +52,7 @@ Optmizer: SGD nesterov m=0.9
   <tr>
     <th>Model \ Augmentation</th> 
     <th>Basic</th> 
-    <th>Stochastic Depth</th>
+    <!-- <th>Stochastic Depth</th> -->
     <th>Mixup</th>
     <th>Cutout</th>
     <th>Cutmix</th>
@@ -60,10 +60,18 @@ Optmizer: SGD nesterov m=0.9
   <tr>
     <th>ResNet50</th> 
     <th>93.46%</th> 
-    <th>94.08%</th>
+    <!-- <th>94.08%</th> -->
     <th>94.64%</th>
     <th>94.70%</th>
     <th>94.77%</th>
+  </tr>
+  <tr>
+    <th>MobileNetV3S 192px <sub>w=2</sub></th> 
+    <th>94.35%</th> 
+    <!-- <th>-</th> -->
+    <th>95.14%</th>
+    <th>95.44%</th>
+    <th>95.85%</th>
   </tr>
 </table>
 
