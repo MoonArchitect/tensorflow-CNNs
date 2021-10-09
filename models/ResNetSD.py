@@ -2,8 +2,7 @@ import tensorflow as tf
 import tensorflow.keras as nn
 
 from utils.registry import register_model
-from .ResNetV2 import AA_downsampling
-from .layers import get_activation_layer, linear_decay_fn, _make_divisible, PreActConv
+from .layers import get_activation_layer, linear_decay_fn, _make_divisible, PreActConv, AntiAliasDownsampling
 
 """
     Implementation of ResNet with Stochastic Depth for CIFAR/SVHN/32x32
@@ -68,7 +67,7 @@ class StochasticBottleneckUnit(nn.layers.Layer):
 
         if strides != (1, 1):
             self.input_pool = nn.layers.AvgPool2D(strides, data_format=data_format)
-            self.downsampler = AA_downsampling(
+            self.downsampler = AntiAliasDownsampling(
                 filters // expansion,
                 data_format=data_format
             )

@@ -2,7 +2,7 @@ import tensorflow as tf
 import tensorflow.keras as nn
 
 from utils.registry import register_model
-from .layers import PreActConv, get_activation_layer, _make_divisible
+from .layers import PreActConv, AntiAliasDownsampling, get_activation_layer, _make_divisible
 
 """
     Implementation of ResNet V2 for CIFAR/SVHN/32x32
@@ -10,23 +10,6 @@ from .layers import PreActConv, get_activation_layer, _make_divisible
     From: Identity Mappings in Deep Residual Networks, https://arxiv.org/abs/1603.05027.
     By: Kaiming He, Xiangyu Zhang, Shaoqing Ren, Jian Sun
 """
-
-
-class AA_downsampling(nn.layers.Layer):
-    """
-    """
-    def __init__(self, in_channels, data_format, **kwargs):
-        super().__init__(**kwargs)
-        self.data_format = 'NHWC' if data_format == 'channels_last' else 'NCHW'
-        
-        a = tf.constant([1., 2., 1.], dtype=self._compute_dtype)
-        filter = (a[:, None] * a[None, :])
-        filter = filter / tf.reduce_sum(filter)
-        self.filter = tf.repeat(filter[:, :, None, None], [in_channels], axis=2)
-        self.strides = [1, 2, 2, 1] if data_format == 'channels_last' else [1, 1, 2, 2]
-
-    def call(self, inputs):
-        return tf.nn.depthwise_conv2d(inputs, self.filter, self.strides, "SAME", data_format=self.data_format)
 
 
 ############## Building Blocks ##############
@@ -163,7 +146,7 @@ class BottleneckUnit(nn.layers.Layer):
 
         if strides != (1, 1):
             self.input_pool = nn.layers.AvgPool2D(strides, data_format=data_format)
-            self.downsampler = AA_downsampling(
+            self.downsampler = AntiAliasDownsampling(
                 filters // expansion,
                 data_format=data_format
             )

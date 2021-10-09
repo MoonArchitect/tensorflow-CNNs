@@ -1,10 +1,9 @@
 import tensorflow as tf
 import tensorflow.keras as nn
 
-from models.ResNetV2 import AA_downsampling
 from models.layers.pre_act_conv import PreActConv
 from utils.registry import register_model
-from .layers import get_activation_layer, get_channels, _make_divisible
+from .layers import AntiAliasDownsampling, get_activation_layer, _make_divisible
 
 
 """
@@ -58,7 +57,7 @@ class BottleneckUnit(nn.layers.Layer):
         self.downsampler = None
 
         if strides != (1, 1):
-            self.downsampler = AA_downsampling(
+            self.downsampler = AntiAliasDownsampling(
                 filters // expansion,
                 data_format=data_format
             )
@@ -159,6 +158,8 @@ class SEBlock(nn.layers.Layer):
         x = self.dense1(x)
         x = self.relu(x)
         x = self.dense2(x)
+        if self.axis == [2, 3]:
+            x = tf.transpose(x, perm=[0, 3, 1, 2])
         # x = tf.reduce_mean(inputs, self.axis, keepdims=True)
         # x = self.conv1(x)
         # x = self.internal_act(x)
