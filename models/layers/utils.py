@@ -38,7 +38,11 @@ def get_activation_layer(activation, **kwargs):
 
 
 def get_channels(x, data_format='channels_last'):
+    if isinstance(x, tf.TensorShape):
+        return x[3] if data_format == 'channels_last' else x[1]
+    
     return x.shape[3] if data_format == 'channels_last' else x.shape[1]
+
 
 
 
@@ -91,7 +95,8 @@ def _make_divisible(value, divisor, msg_on_change = None):
     if isinstance(divisor, int):
         value = int(value)
 
-    # TODO if value == 0 -> log warning
+    if value == 0:
+        print(f"\tWARNING (_make_divisible): value is rounded to 0, given {initial} w/ divisor {divisor}")
     
     if msg_on_change and initial != value:
         values_to_log = {}
