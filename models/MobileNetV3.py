@@ -21,10 +21,10 @@ from .layers.utils import _make_divisible
 
 
 def MobileNetV3_builder(config,
-                        input_shape=(32, 32, 3),
-                        classes=10,
                         upsample_resolution=224,
                         width_factor=1.0,
+                        input_shape=(32, 32, 3),
+                        classes=10,
                         data_format='channels_last',
                         name="MobileNetV3_builder"):
 
@@ -34,14 +34,14 @@ def MobileNetV3_builder(config,
     -----------
     config: list, shape=[layers,6]
         Network configuration, layer format = [kernel size, expansion channels, output channels, SE used, activation, stride]
-    input_shape: list, tuple
-        Shape of an input image
     upsample_resolution: int
         Resolution to which input image will be upsampled. (MobileNetV3 was designed for 224px image input)
     width_factor: float
         Width coefficient of the network's layers
+    input_shape: list, tuple
+        Shape of an input image
     classes: int
-        Number of classification classes.
+        Number of classification classes
     data_format: 'channels_last' or 'channels_first'
         The ordering of the dimensions in the inputs
     """
@@ -225,6 +225,21 @@ def MobileNetV3L_128(width_factor=1):
     
     """
     return MobileNetV3Large(upsample_resolution=128,
+                            width_factor=width_factor)
+
+
+@register_model
+def MobileNetV3S_320(width_factor=1):
+    """
+    MobileNetV3 Small with 320px upsampled resolution
+    
+    Arguments:
+    ----------
+    width_factor: float
+        Width coefficient of the network's layers
+    
+    """
+    return MobileNetV3Small(upsample_resolution=320,
                             width_factor=width_factor)
 
 
