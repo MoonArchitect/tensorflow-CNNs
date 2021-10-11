@@ -97,7 +97,7 @@ Optmizer: SGD nesterov m=0.9
     <th></th>
     <th>64px</th>
     <th>92.51%</th>
-    <th rowspan="5">3 156 786</th>
+    <th rowspan="5">3.2 M</th>
     <th>17 540</th>
     <th>44 435</th>
   </tr>
@@ -151,7 +151,7 @@ Optmizer: SGD nesterov m=0.9
     <th rowspan="10"></th>
     <th>128px<sub></sub></th>
     <th>93.72%</th>
-    <th rowspan="4">944 890</th>
+    <th rowspan="4">0.95 M</th>
     <th>11 845</th>
     <th>66 137</th>
   </tr>
@@ -176,21 +176,21 @@ Optmizer: SGD nesterov m=0.9
   <tr>
     <th>128px<sub> <abbr title="width_factor">w=2</abbr></sub></th>
     <th>95.10%</th>
-    <th>3 575 242</th>
+    <th>3.6 M</th>
     <th>7 254</th>
     <th>44 722</th>
   </tr>
   <tr>
     <th>128px<sub> <abbr title="width_factor">w=4</abbr> b=512 </sub></th>
     <th>95.99%</th>
-    <th>13 925 762</th>
+    <th>13.9 M</th>
     <th>2 608</th>
     <th>23 516</th>
   </tr>
   <tr>
     <th>160px<sub> <abbr title="width_factor">w=2</abbr></sub></th>
     <th>95.56%</th>
-    <th rowspan="4">3 575 242</th>
+    <th rowspan="4">3.6 M</th>
     <th>5 512</th>
     <th>31 467</th>
   </tr>
@@ -219,7 +219,7 @@ Optmizer: SGD nesterov m=0.9
     <th rowspan="6"></th>
     <th>128px<sub> </sub></th>
     <th>95.57%</th>
-    <th rowspan="4">3 011 882</th>
+    <th rowspan="4">3.0 M</th>
     <th>5 765</th>
     <th>34 980</th>
   </tr>
@@ -244,7 +244,7 @@ Optmizer: SGD nesterov m=0.9
   <tr>
     <th>128px<sub> <abbr title="width_factor">w=2</abbr></sub></th>
     <th>96.06%</th>
-    <th rowspan="2">11 737 426</th>
+    <th rowspan="2">11.7 M</th>
     <th>3 286</th>
     <th>20 087</th>
   </tr>
@@ -262,7 +262,7 @@ Optmizer: SGD nesterov m=0.9
     <th rowspan="6"></th>
     <th colspan="2">96px</th>
     <th>94.45%</th>
-    <th rowspan="5">2,270,794</th>
+    <th rowspan="5">2.3 M</th>
     <th>5 201</th>
     <th>42 184</th>
   </tr>
@@ -293,7 +293,7 @@ Optmizer: SGD nesterov m=0.9
   <tr>
     <th colspan="2">128px<sub> <abbr title="width_factor">w=2</abbr></sub></th>
     <th>96.27%</th>
-    <th>7 953 802</th>
+    <th>7.95 M</th>
     <th>4 510</th>
     <th>16 414</th>
   </tr>
@@ -305,49 +305,49 @@ Optmizer: SGD nesterov m=0.9
     <th rowspan="11"></th>
     <th colspan="2">ResNet18 <sub>mish</sub></th>
     <th>92.81% <sub>93.53%</sub></th>
-    <th>692 218</th>
+    <th>0.69 M</th>
     <th>39 127 <sub>-4%</sub></th>
     <th>99 028 <sub>-4%</sub></th>
   </tr>
   <tr>
     <th colspan="2">ResNet34 <sub>mish</sub></th>
     <th>93.69% <sub>94.26%</sub></th>
-    <th>1 327 226</th>
+    <th>1.3 M</th>
     <th>25 534 <sub>-4%</sub></th>
     <th>75 071 <sub>-4%</sub></th>
   </tr>
   <tr>
     <th colspan="2">ResNet35 <sub>mish</sub></th>
     <th>94.09% <sub>94.42%</sub></th>
-    <th>873 722</th>
+    <th>0.87 M</th>
     <th>17 304 <sub>-5%</sub></th>
     <th>58 520 <sub>-4%</sub></th>
   </tr>
   <tr>
     <th colspan="2">ResNet50 <sub>mish</sub></th>
     <th>94.57% <sub>95.05%</sub></th>
-    <th>1 320 570</th>
+    <th>1.3 M</th>
     <th>12 939 <sub>-5%</sub></th>
     <th>45 775 <sub>-3%</sub></th>
   </tr>
   <tr>
     <th colspan="2">ResNet101 <sub>mish</sub></th>
     <th>95.15% <sub>95.57%</sub></th>
-    <th>2 530 426</th>
+    <th>2.5 M</th>
     <th>8 469 <sub>-6%</sub></th>
     <th>31 813 <sub>-5%</sub></th>
   </tr>
   <tr>
     <th colspan="2">ResNet152 <sub>mish</sub></th>
     <th>95.62% <sub>95.99%</sub></th>
-    <th>3 528 314</th>
+    <th>3.5 M</th>
     <th>5 954 <sub>-7%</sub></th>
     <th>23 211 <sub>-3%</sub></th>
   </tr>
   <tr>
     <th colspan="2">ResNet170 <sub>mish</sub></th>
     <th>95.68% <sub>96.18%</sub></th>
-    <th rowspan="2">4 190 330</th>
+    <th rowspan="2">4.2 M</th>
     <th rowspan="2">5 113 <sub>-8%</sub></th>
     <th rowspan="2">20 246 <sub>-5%</sub></th>
   </tr>
@@ -359,7 +359,7 @@ Optmizer: SGD nesterov m=0.9
   <tr>
     <th colspan="2">WideResNet34 <sub> <abbr title="width_factor">w=4</abbr> </sub></th>
     <th>96.40%</th>
-    <th>21 123 530</th>
+    <th>21.1 M</th>
     <th>5 605</th>
     <th>20 382</th>
   </tr>
@@ -367,14 +367,14 @@ Optmizer: SGD nesterov m=0.9
     <th></th>
     <th colspan="1"><sub> <abbr title="width_factor">w=8</abbr> </sub></th>
     <th>96.91%</th>
-    <th>84 419 466</th>
+    <th>84.5 M</th>
     <th>1 773</th>
     <th>6 539</th>
   </tr>
   <tr>
     <th colspan="2">WideResNet170 <sub>+mish <abbr title="width_factor">w=2</abbr> </sub></th>
     <th>97.18%</th>
-    <th>16 588 010</th>
+    <th>16.6 M</th>
     <th>2 511</th>
     <th>9 392</th>
   </tr>
@@ -386,21 +386,21 @@ Optmizer: SGD nesterov m=0.9
     <th rowspan="6"></th>
     <th colspan="2">SeNet35 <sub>mish</sub></th>
     <th>94.33% <sub>94.7%</sub></th>
-    <th>982 946</th>
+    <th>0.98 M</th>
     <th>15 162<sub>-8%</sub></th>
     <th>52 390<sub>-9%</sub></th>
   </tr>
   <tr>
     <th colspan="2">SeNet50 <sub>mish</sub></th>
     <th>94.76% <sub>95.17%</sub></th>
-    <th>1 483 314</th>
+    <th>1.5 M</th>
     <th>11 277<sub>-8%</sub></th>
     <th>39 142<sub>-5%</sub></th>
   </tr>
   <tr>
     <th colspan="2">SeNet101 <sub>mish</sub></th>
     <th>95.43% <sub>96.03%</sub></th>
-    <th>2 837 058</th>
+    <th>2.8 M</th>
     <th>7 223<sub>-9%</sub></th>
     <th>25 303<sub>-3%</sub></th> 
   </tr>
@@ -408,21 +408,21 @@ Optmizer: SGD nesterov m=0.9
     <th></th>
     <th><sub>+mish <abbr title="width_factor">w=2</abbr></sub></th>
     <th>96.69%</th>
-    <th>11 215 970</th>
+    <th>11.2 M</th>
     <th>3 985</th>
     <th>13 820</th> 
   </tr>
   <tr>
     <th colspan="2">SeNet152 <sub>mish</sub></th>
     <th>95.78% <sub>96.49%</sub></th>
-    <th>3 953 714</th>
+    <th>3.95 M</th>
     <th>4 976<sub>-8%</sub></th>
     <th>18 747<sub>-6%</sub></th> 
   </tr>
   <tr>
     <th colspan="2">SeNet170 <sub>+mish w=2 b=768</sub></th>
     <th>97.07%</th>
-    <th>18 568 450</th>
+    <th>18.6 M</th>
     <th>2 253</th>
     <th>8 258</th> 
   </tr>
@@ -434,21 +434,21 @@ Optmizer: SGD nesterov m=0.9
     <th rowspan="3"></th>
     <th colspan="2">ResNeXt35_16x4d <sub>mish</sub></th>
     <th>95.87% <sub>96.37%</sub></th>
-    <th>3 554 762</th>
+    <th>3.6 M</th>
     <th>1 893 <sub>-1%</sub></th>
     <th>20 215 <sub>-1%</sub></th>
   </tr>
   <tr>
     <th colspan="2">ResNeXt50_16x4d <sub>mish</sub></th>
     <th>96.26% <sub>96.45%</sub></th>
-    <th>5 461 706</th>
+    <th>5.5 M</th>
     <th>1 436 <sub>-1%</sub></th>
     <th>15 064 <sub>-1%</sub></th>
   </tr>
   <tr>
     <th colspan="2">ResNeXt101_16x4d <sub>mish</sub></th>
     <th>96.39% <sub>96.74%</sub></th>
-    <th>10 614 474</th>
+    <th>10.6 M</th>
     <th>990 <sub>-1%</sub></th>
     <th>11 063 <sub>-2%</sub></th> 
   </tr>
@@ -460,28 +460,28 @@ Optmizer: SGD nesterov m=0.9
     <th rowspan="4"></th>
     <th colspan="2">DenseNet52k12</th>
     <th>93.75%</th>
-    <th>272 398</th>
+    <th>0.27 M</th>
     <th>7 209</th>
     <th>31 956</th>
   </tr>
   <tr>
     <th colspan="2">DenseNet100k12</th>
     <th>95.4%</th>
-    <th>793 150</th>
+    <th>0.79 M</th>
     <th>2 734</th>
     <th>12 119</th>
   </tr>
   <tr>
     <th colspan="2">DenseNet100k16</th>
     <th>95.87%</th>
-    <th>1 386 906</th> 
+    <th>1.4 M</th> 
     <th>2 394</th>
     <th>11 114</th>
   </tr>
   <tr>
     <th colspan="2">DenseNet160k12<sub> b=512</sub></th>
     <th>96.43%</th>
-    <th>1 795 090</th>
+    <th>1.8 M</th>
     <th>1 212</th>
     <th>4 860</th>
   </tr>
