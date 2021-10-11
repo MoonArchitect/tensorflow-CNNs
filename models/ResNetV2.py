@@ -1,8 +1,8 @@
 import tensorflow as tf
 import tensorflow.keras as nn
-from .layers import PreActConv, get_activation_layer, get_channels
-from utils.registry import register_model
 
+from utils.registry import register_model
+from .layers import PreActConv, AntiAliasDownsampling, get_activation_layer, _make_divisible
 
 """
     Implementation of ResNet V2 for CIFAR/SVHN/32x32
@@ -10,23 +10,6 @@ from utils.registry import register_model
     From: Identity Mappings in Deep Residual Networks, https://arxiv.org/abs/1603.05027.
     By: Kaiming He, Xiangyu Zhang, Shaoqing Ren, Jian Sun
 """
-
-
-class AA_downsampling(nn.layers.Layer):
-    """
-    """
-    def __init__(self, in_channels, data_format, **kwargs):
-        super().__init__(**kwargs)
-        self.data_format = 'NHWC' if data_format == 'channels_last' else 'NCHW'
-        
-        a = tf.constant([1., 2., 1.], dtype=self._compute_dtype)
-        filter = (a[:, None] * a[None, :])
-        filter = filter / tf.reduce_sum(filter)
-        self.filter = tf.repeat(filter[:, :, None, None], [in_channels], axis=2)
-        self.strides = [1, 2, 2, 1] if data_format == 'channels_last' else [1, 1, 2, 2]
-
-    def call(self, inputs):
-        return tf.nn.depthwise_conv2d(inputs, self.filter, self.strides, "SAME", data_format=self.data_format)
 
 
 ############## Building Blocks ##############
@@ -100,7 +83,7 @@ class BasicUnit(nn.layers.Layer):
         if input_shape[3] != self.filters:
             self.pad = [(self.filters - input_shape[3]) // 2] * 2
 
-        return super().build(input_shape)
+        super().build(input_shape)
 
 
     def call(self, inputs):
@@ -163,7 +146,7 @@ class BottleneckUnit(nn.layers.Layer):
 
         if strides != (1, 1):
             self.input_pool = nn.layers.AvgPool2D(strides, data_format=data_format)
-            self.downsampler = AA_downsampling(
+            self.downsampler = AntiAliasDownsampling(
                 filters // expansion,
                 data_format=data_format
             )
@@ -214,7 +197,7 @@ class BottleneckUnit(nn.layers.Layer):
         if input_shape[3] != self.filters:
             self.pad = [(self.filters - input_shape[3]) // 2] * 2
 
-        return super().build(input_shape)
+        super().build(input_shape)
 
     
     def call(self, inputs):
@@ -289,12 +272,12 @@ def ResStage(layers,
 
 
 def ResNetV2(conv_per_stage,
-             input_shape=(32, 32, 3),
-             classes=10,
+             width_factor=1,
              bottleneck=False,
-             filters=16,
              activation='relu',
              data_format='channels_last',
+             input_shape=(32, 32, 3),
+             classes=10,
              **kwargs):
     """
     Template for Bottleneck ResNet with 4 stages
@@ -302,22 +285,24 @@ def ResNetV2(conv_per_stage,
     Parameters:
     conv_per_stage: list, tuple
         Number of residual blocks in each stage
+    width_factor: float
+        Width coefficient of the network's layers
+    bottleneck: bool
+        Whether to use Bottleneck Residual units
+    activation: string, keras.Layer
+        Activation function to use after each convolution
+    data_format: 'channels_last' or 'channels_first'
+        The ordering of the dimensions in the inputs
     input_shape: list, tuple
         Shape of an input image
     classes: int
-        Number of classification classes.
-    bottleneck: bool
-        Whether to use Bottleneck Residual unit
-    filters: int
-        Number of filters in stem layer
-    activation: string, keras.Layer
-        Activation function to use after each convolution.
-    data_format: 'channels_last' or 'channels_first'
-        The ordering of the dimensions in the inputs.
+        Number of classification classes
     """
-
+    
     strides = [(1, 1)] + [(2, 2)] * 3
     expansion = 4 if bottleneck else 1
+    filters = _make_divisible(16 * width_factor, 8)
+
 
     input = tf.keras.layers.Input(shape=input_shape)
     
@@ -355,119 +340,174 @@ def ResNetV2(conv_per_stage,
 
     return tf.keras.models.Model(inputs=input,
                                  outputs=output,
-                                 name=f'{f"Wide{filters}" if filters != 256 else ""}ResNet{sum(conv_per_stage) * (3 if bottleneck else 2) + 2}')
+                                 name=f'{"Wide" if filters != 256 else ""}ResNet{sum(conv_per_stage) * (3 if bottleneck else 2) + 2}{f"-{filters // 256}" if filters != 256 else ""}')
 
 
 ############## Predefined Nets ##############
 @register_model
-def ResNet18(activation='relu',
+def ResNet18(width_factor=1,
+             activation='relu',
              **kwargs):
     """
     ResNet18 model for CIFAR/SVHN
+    ----------
     Parameters:
-    ----------
+    width_factor: float
+        Width coefficient of the network's layers
     activation: string, keras.Layer
-        Main activation function of the network.
-    Returns:
+        Main activation function of the network
+
     ----------
+    Returns:
     keras.Model
     """
     return ResNetV2(conv_per_stage=[2, 2, 2, 2],
+                    width_factor=width_factor,
                     bottleneck=False,
                     activation=activation,
                     **kwargs)
 
 
 @register_model
-def ResNet34(activation='relu',
+def ResNet34(width_factor=1,
+             activation='relu',
              **kwargs):
     """
     ResNet34 model for CIFAR/SVHN
+    ----------
     Parameters:
-    ----------
+    width_factor: float
+        Width coefficient of the network's layers
     activation: string, keras.Layer
-        Main activation function of the network.
-    Returns:
+        Main activation function of the network
+
     ----------
+    Returns:
     keras.Model
     """
     return ResNetV2(conv_per_stage=[3, 4, 6, 3],
+                    width_factor=width_factor,
                     bottleneck=False,
                     activation=activation,
                     **kwargs)
 
 
 @register_model
-def ResNet35(activation='relu',
+def ResNet35(width_factor=1,
+             activation='relu',
              **kwargs):
     """
     ResNet35b model for CIFAR/SVHN
+    ----------
     Parameters:
-    ----------
+    width_factor: float
+        Width coefficient of the network's layers
     activation: string, keras.Layer
-        Main activation function of the network.
-    Returns:
+        Main activation function of the network
+
     ----------
+    Returns:
     keras.Model
     """
     return ResNetV2(conv_per_stage=[2, 3, 4, 2],
+                    width_factor=width_factor,
                     bottleneck=True,
                     activation=activation,
                     **kwargs)
 
 
 @register_model
-def ResNet50(activation='relu',
+def ResNet50(width_factor=1,
+             activation='relu',
              **kwargs):
     """
     ResNet50b model for CIFAR/SVHN
+    ----------
     Parameters:
-    ----------
+    width_factor: float
+        Width coefficient of the network's layers
     activation: string, keras.Layer
-        Main activation function of the network.
-    Returns:
+        Main activation function of the network
+
     ----------
+    Returns:
     keras.Model
     """
     return ResNetV2(conv_per_stage=[3, 4, 6, 3],
+                    width_factor=width_factor,
                     bottleneck=True,
                     activation=activation,
                     **kwargs)
 
 
 @register_model
-def ResNet101(activation='relu',
+def ResNet101(width_factor=1,
+              activation='relu',
               **kwargs):
     """
     ResNet101 model for CIFAR/SVHN
+    ----------
     Parameters:
-    ----------
+    width_factor: float
+        Width coefficient of the network's layers
     activation: string, keras.Layer
-        Main activation function of the network.
-    Returns:
+        Main activation function of the network
+
     ----------
+    Returns:
     keras.Model
     """
     return ResNetV2(conv_per_stage=[3, 4, 23, 3],
+                    width_factor=width_factor,
                     bottleneck=True,
                     activation=activation,
                     **kwargs)
 
 
 @register_model
-def ResNet152(activation='relu',
+def ResNet152(width_factor=1,
+              activation='relu',
               **kwargs):
     """
     ResNet152b model for CIFAR/SVHN
+    ----------
     Parameters:
-    ----------
+    width_factor: float
+        Width coefficient of the network's layers
     activation: string, keras.Layer
-        Main activation function of the network.
-    Returns:
+        Main activation function of the network
+    
     ----------
+    Returns:
     keras.Model
     """
     return ResNetV2(conv_per_stage=[3, 8, 36, 3],
+                    width_factor=width_factor,
                     bottleneck=True,
                     activation=activation,
                     **kwargs)
+
+
+@register_model
+def ResNet170(width_factor=1,
+              activation='relu',
+              **kwargs):
+    """
+    ResNet170b model for CIFAR/SVHN
+    ----------
+    Parameters:
+    width_factor: float
+        Width coefficient of the network's layers
+    activation: string, keras.Layer
+        Main activation function of the network
+
+    ----------
+    Returns:
+    keras.Model
+    """
+    return ResNetV2(conv_per_stage=[5, 9, 37, 5],  # alternative [3, 10, 40, 3]
+                    width_factor=width_factor,
+                    bottleneck=True,
+                    activation=activation,
+                    **kwargs)
+

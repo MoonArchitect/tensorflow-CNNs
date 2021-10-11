@@ -3,7 +3,7 @@ import tensorflow.keras as nn
 
 from .mish import Mish
 
-__all__ = ['get_activation_layer', 'get_channels', 'linear_decay_fn', 'linear_decay']
+__all__ = ['get_activation_layer', 'get_channels', 'linear_decay_fn', 'linear_decay', '_make_divisible']
 
 
 def get_activation_layer(activation, **kwargs):
@@ -38,7 +38,11 @@ def get_activation_layer(activation, **kwargs):
 
 
 def get_channels(x, data_format='channels_last'):
+    if isinstance(x, tf.TensorShape):
+        return x[3] if data_format == 'channels_last' else x[1]
+    
     return x.shape[3] if data_format == 'channels_last' else x.shape[1]
+
 
 
 
@@ -47,23 +51,22 @@ def linear_decay_fn(start_pos_val,
                     name="Linear Decay"):
     """
     Returns function to generate values with linear decay corresponding to (start/end)_pos_val
-    Arguments:
+    
     ----------
+    Arguments:
     start_pos_val: tuple/list of 2 integers
         -
     end_pos_val: tuple/list of 2 integers
         -
-    Returns:
+    
     --------
+    Returns:
     Python function
         -> fn(x), takes 1 argument, position:float
         -> Returns value:float
     """
     # Swap for convenience if
-    if start_pos_val[0] > end_pos_val[0]:
-        temp = end_pos_val
-        end_pos_val = start_pos_val
-        start_pos_val = temp
+    assert start_pos_val[0] < end_pos_val[0], ""
 
     def fn(x):
         if not start_pos_val[0] <= x <= end_pos_val[0]:
@@ -75,3 +78,35 @@ def linear_decay_fn(start_pos_val,
 
 def linear_decay(x, start_pos_val, end_pos_val):
     return linear_decay_fn(start_pos_val, end_pos_val)(x)
+
+
+def _make_divisible(value, divisor, msg_on_change = None):
+    """
+    Makes 'value' divisible by divisor
+    If given, logs 'msg_on_change' if value is changed
+    """
+    initial = value
+
+    extra = value % divisor
+    value -= extra
+    if extra >= divisor / 2:
+        value += divisor
+
+    if isinstance(divisor, int):
+        value = int(value)
+
+    if value == 0:
+        print(f"\tWARNING (_make_divisible): value is rounded to 0, given {initial} w/ divisor {divisor}")
+    
+    if msg_on_change and initial != value:
+        values_to_log = {}
+
+        if "{initial}" in msg_on_change:
+            values_to_log["initial"] = initial
+        
+        if "{final}" in msg_on_change:
+            values_to_log["final"] = value
+        
+        print("\tWARNING (_make_divisible): " + msg_on_change.format(**values_to_log))
+
+    return value

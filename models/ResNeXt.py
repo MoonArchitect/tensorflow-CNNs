@@ -1,8 +1,10 @@
 import tensorflow as tf
 import tensorflow.keras as nn
-from .ResNetV2 import BasicUnit, BottleneckUnit
-from .layers import get_activation_layer, get_channels
+
 from utils.registry import register_model
+from models.layers.utils import _make_divisible
+from .ResNetV2 import BottleneckUnit
+from .layers import get_activation_layer
 
 """
     Implementation of ResNetXt for CIFAR/SVHN/32x32
@@ -72,12 +74,12 @@ def ResNeXtStage(layers,
 
 
 def ResNeXt(conv_per_stage,
-            input_shape=(32, 32, 3),
-            classes=10,
+            width_factor=1,
             cardinality=16,
-            filters=64,
             activation='relu',
             data_format='channels_last',
+            input_shape=(32, 32, 3),
+            classes=10,
             **kwargs):
     """
     Template for Bottleneck ResNet with 4 stages
@@ -85,33 +87,34 @@ def ResNeXt(conv_per_stage,
     -----------
     conv_per_stage: list, tuple
         Number of residual blocks in each stage
+    width_factor: float
+        Width coefficient of the network's layers
+    cardinality: int
+        number of groups in convolutional layers
+    activation: string, keras.Layer
+        Activation function to use after each convolution
+    data_format: 'channels_last' or 'channels_first'
+        The ordering of the dimensions in the inputs
     input_shape: list, tuple
         Shape of an input image
     classes: int
-        Number of classification classes.
-    filters: int
-        Number of filters in stem layer
-    cardinality: int
-        -
-    activation: string, keras.Layer
-        Activation function to use after each convolution.
-    data_format: 'channels_last' or 'channels_first'
-        The ordering of the dimensions in the inputs.
+        Number of classification classes
     """
-    assert filters % cardinality == 0, f"Number of filters ({filters}) has to be divisible by cardinality ({cardinality})"
+
+    filters = _make_divisible(64 * width_factor, cardinality, "n Filters has to be divisible by cardinality, got {initial}  ->  changed to {final}")
 
     strides = [(1, 1)] + [(2, 2)] * 3
     expansion = 2
 
-    input = tf.keras.layers.Input(shape=input_shape)
+    input = nn.layers.Input(shape=input_shape)
     # Initial Convolution
-    x = tf.keras.layers.Conv2D(filters=filters,
-                               kernel_size=(3, 3),
-                               strides=(1, 1),
-                               padding='same',
-                               data_format=data_format,
-                               use_bias=False,
-                               kernel_regularizer=tf.keras.regularizers.l2(0.0001))(input)
+    x = nn.layers.Conv2D(filters=filters,
+                         kernel_size=(3, 3),
+                         strides=(1, 1),
+                         padding='same',
+                         data_format=data_format,
+                         use_bias=False,
+                         kernel_regularizer=nn.regularizers.l2(0.0001))(input)
     # Residual Stages
     for layers, strides in zip(conv_per_stage, strides):
         x = ResNeXtStage(layers=layers,
@@ -125,25 +128,28 @@ def ResNeXt(conv_per_stage,
                          **kwargs)(x)
         filters *= 2
 
-    x = tf.keras.layers.BatchNormalization(-1 if data_format == 'channels_last' else 1)(x)
+    x = nn.layers.BatchNormalization(-1 if data_format == 'channels_last' else 1)(x)
     x = get_activation_layer(activation)(x)
 
-    x = tf.keras.layers.GlobalAveragePooling2D(data_format=data_format)(x)
-    output = tf.keras.layers.Dense(classes)(x)
+    x = nn.layers.GlobalAveragePooling2D(data_format=data_format)(x)
+    output = nn.layers.Dense(classes)(x)
 
-    return tf.keras.models.Model(inputs=input,
-                                 outputs=output,
-                                 name=f'ResNeXt{sum(conv_per_stage) * 3 + 2}_{cardinality}x{filters // 16 // cardinality}d')
+    return nn.models.Model(inputs=input,
+                           outputs=output,
+                           name=f'ResNeXt{sum(conv_per_stage) * 3 + 2}_{cardinality}x{filters // 16 // cardinality}d')
 
 
 ############## Predefined Nets ##############
 @register_model
-def ResNeXt35(activation='relu',
+def ResNeXt35(width_factor=1,
+              activation='relu',
               **kwargs):
     """
     ResNeXt35 model for CIFAR/SVHN
     Parameters:
     ----------
+    width_factor: float
+        Width coefficient of the network's layers
     activation: string, keras.Layer
         Main activation function of the network.
     Returns:
@@ -151,60 +157,73 @@ def ResNeXt35(activation='relu',
     keras.Model
     """
     return ResNeXt(conv_per_stage=[2, 3, 4, 2],
+                   width_factor=width_factor,
                    activation=activation,
                    **kwargs)
 
 
 @register_model
-def ResNeXt50(activation='relu',
+def ResNeXt50(width_factor=1,
+              activation='relu',
               **kwargs):
     """
     ResNeXt50 model for CIFAR/SVHN
     Parameters:
     ----------
+    width_factor: float
+        Width coefficient of the network's layers
     activation: string, keras.Layer
-        Main activation function of the network.
+        Main activation function of the network
     Returns:
     ----------
     keras.Model
     """
     return ResNeXt(conv_per_stage=[3, 4, 6, 3],
+                   width_factor=width_factor,
                    activation=activation,
                    **kwargs)
 
 
 @register_model
-def ResNeXt101(activation='relu',
+def ResNeXt101(width_factor=1,
+               activation='relu',
                **kwargs):
     """
     ResNeXt101 model for CIFAR/SVHN
     Parameters:
     ----------
+    width_factor: float
+        Width coefficient of the network's layers
     activation: string, keras.Layer
-        Main activation function of the network.
+        Main activation function of the network
     Returns:
     ----------
     keras.Model
     """
     return ResNeXt(conv_per_stage=[3, 4, 23, 3],
+                   width_factor=width_factor,
                    activation=activation,
                    **kwargs)
 
 
 @register_model
-def ResNeXt152(activation='relu',
+def ResNeXt152(width_factor=1,
+               activation='relu',
                **kwargs):
     """
     ResNeXt152 model for CIFAR/SVHN
     Parameters:
     ----------
+    width_factor: float
+        Width coefficient of the network's layers
     activation: string, keras.Layer
-        Main activation function of the network.
+        Main activation function of the network
     Returns:
     ----------
     keras.Model
     """
     return ResNeXt(conv_per_stage=[3, 8, 36, 3],
+                   width_factor=width_factor,
                    activation=activation,
                    **kwargs)
 

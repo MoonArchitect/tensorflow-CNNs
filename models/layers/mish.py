@@ -1,11 +1,11 @@
 import tensorflow as tf
 
+__all__ = ['Mish']
+
 
 @tf.function
 @tf.custom_gradient
 def Mish_fn(x):
-    """
-    """
     sx = tf.sigmoid(x)
     th = tf.tanh(tf.math.softplus(x))
     k = (th + x * sx * (1 - th * th))  # TODO write proper kernel

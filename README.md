@@ -7,17 +7,17 @@ Implementation of various AI papers for image classification
 <details>
   <summary> Model Architectures </summary>
   
+- TResNet
+- MobileNetV2
+- MobileNetV3
 - ResNetV2
 - ResNetV2 + Stochastic Depth
 - ResNeXt
 - SeNet
-- MobileNetV2
-- MobileNetV3
 - DenseNet
 <!-- - [ ] ResNeSt
 - [ ] EfficientNet
 - [ ] NAT
-- [ ] TResNet
 - [ ] PyramidNet
 - [ ] Xception
 - [ ] IBN-Net -->
@@ -34,6 +34,7 @@ Implementation of various AI papers for image classification
 - Mixup
 - Cutmix
 - Mish
+- AntiAliasDownsampling
 <!-- - [ ] Hard and Soft PatchUp -->
 <!-- - [ ] Swish
 - [ ] EvoNorm -->
@@ -43,10 +44,38 @@ Implementation of various AI papers for image classification
 ## CIFAR10 Results
 GPU: **RTX3090** @1800MHz | **FP16** + **XLA** autoclastering  
 **Epochs: 150**  
-**Batch Size: 1024** (unless <sub>b=</sub>)  
+**Batch Size: 1024** (or <sub>b=512</sub>)  
 Augmentation: random l/r flip -> 4px shift in x/y -> **Cutmix**  
 Cos lr schedule 0.5 -> 0.001, 10 epoch warmup  
 Optmizer: SGD nesterov m=0.9 
+
+<table>
+  <tr>
+    <th>Model \ Augmentation</th> 
+    <th>Basic</th> 
+    <!-- <th>Stochastic Depth</th> -->
+    <th>Mixup</th>
+    <th>Cutout</th>
+    <th>Cutmix</th>
+  </tr>
+  <tr>
+    <th>ResNet50</th> 
+    <th>93.46%</th> 
+    <!-- <th>94.08%</th> -->
+    <th>94.64%</th>
+    <th>94.70%</th>
+    <th>94.77%</th>
+  </tr>
+  <tr>
+    <th>MobileNetV3S 192px <sub>w=2</sub></th> 
+    <th>94.35%</th> 
+    <!-- <th>-</th> -->
+    <th>95.14%</th>
+    <th>95.44%</th>
+    <th>95.85%</th>
+  </tr>
+</table>
+
 
 <table>
   <tr>
@@ -58,261 +87,407 @@ Optmizer: SGD nesterov m=0.9
   </tr>
   <!-- TResNet -->
   <tr>
-    <th colspan="3">TResNet</th>
-    <th></th>
-    <th></th>
-    <th></th>
-    <th></th>
+    <th colspan="7">TResNet</th>
+  </tr>
+  <tr> <!-- TResNet M -->
+    <th rowspan="6"></th>
+    <th colspan="6">TResNet M<sub></sub></th>
   </tr>
   <tr>
-    <th rowspan="4"></th>
-    <th colspan="2">TResNetM-.5-32px<sub>+HTD+Cutmix</sub></th>
-    <th>95.05%</th>
-    <th>-</th>
-    <th>-</th>
-    <th>-</th>
+    <th></th>
+    <th>64px</th>
+    <th>92.51%</th>
+    <th rowspan="5">3.2 M</th>
+    <th>17 540</th>
+    <th>44 435</th>
   </tr>
   <tr>
-    <th colspan="2">TResNetM-.5-192px<sub>+HTD+Cutmix</sub></th>
-    <th>96.10%</th>
-    <th>-</th>
-    <th>-</th>
-    <th>-</th>
+    <th></th>
+    <th>96x</th>
+    <th>95.03%</th>
+    <th>9 969</th>
+    <th>26 356</th>
   </tr>
   <tr>
-    <th colspan="2">TResNetM-.75-160px<sub>+Cos+Cutmix</sub></th>
-    <th>96.92%</th>
-    <th>-</th>
-    <th>-</th>
-    <th>-</th>
+    <th></th>
+    <th>128px</th>
+    <th>95.84%</th>
+    <th>5 882</th>
+    <th>16 937</th>
   </tr>
   <tr>
-    <th colspan="2">TResNetM-128px<sub>+Cos+Cutmix</sub></th>
-    <th>96.51%</th>
-    <th>-</th>
-    <th>-</th>
-    <th>-</th>
+    <th></th>
+    <th>160px</th>
+    <th>95.84%</th>
+    <th>4 161</th>
+    <th>12 046</th>
   </tr>
+  <tr>
+    <th></th>
+    <th>192px</th>
+    <th>95.89%</th>
+    <th>3 087</th>
+    <th>8 645</th>
+  </tr>
+  <tr> <!-- TResNet L -->
+    <th rowspan="1"></th>
+    <th colspan="2">TResNet L</th>
+    <th colspan="4" rowspan="2">Overfit, no improvments over TResNet M</th>
+  </tr>
+  <tr> <!-- TResNet XL -->
+    <th rowspan="1"></th>
+    <th colspan="2">TResNet XL</th>
+  </tr>
+
   <!-- MobileNetV3 -->
   <tr>
-    <th colspan="3">MobileNetV3</th>
-    <th></th>
-    <th></th>
-    <th></th>
-    <th></th>
+    <th colspan="7">MobileNetV3</th>
+  </tr>
+  <tr> <!-- MobileNetV3S -->
+    <th rowspan="18"></th>
+    <th colspan="6">MobileNetV3S<sub></sub></th>
   </tr>
   <tr>
-    <th rowspan="5"></th>
-    <th colspan="2">MNetV3S 160px 1.5<sub>+Cos+Cutmix</sub></th>
-    <th>94.25%</th>
-    <th>1 732 152</th>
-    <th>-</th>
-    <th>-</th>
+    <th rowspan="10"></th>
+    <th>128px<sub></sub></th>
+    <th>93.72%</th>
+    <th rowspan="4">0.95 M</th>
+    <th>11 845</th>
+    <th>66 137</th>
   </tr>
   <tr>
-    <th colspan="2">MNetV3S 192px<sub>+Cos+Cutmix</sub></th>
-    <th>94.49%</th>
-    <th>1 533 896</th>
-    <th>-</th>
-    <th>-</th>
+    <th>160px<sub></sub></th>
+    <th>94.41%</th>
+    <th>9 177</th>
+    <th>55 245</th>
   </tr>
   <tr>
-    <th colspan="2">MNetV3S 192px 2<sub>+Cos+Cutmix</sub></th>
-    <th>95.63%</th>
-    <th>1 930 408</th>
-    <th>-</th>
-    <th>-</th>
+    <th>192px<sub></sub></th>
+    <th>94.86%</th>
+    <th>10 675</th>
+    <th>43 226</th>
   </tr>
   <tr>
-    <th colspan="2">MNetV3S 224px<sub>+Cos+Cutmix</sub></th>
-    <th>95.50%</th>
-    <th>1 533 896</th>
-    <th>-</th>
-    <th>-</th>
+    <th>224px<sub></sub></th>
+    <th>95.53%</th>
+    <th>8 040</th>
+    <th>35 209</th>
   </tr>
   <tr>
-    <th colspan="2">MNetV3L<sub>+HTD+Cutmix</sub></th>
-    <th>96.37%</th>
-    <th>-</th>
-    <th>-</th>
-    <th>-</th>
+    <th>128px<sub> <abbr title="width_factor">w=2</abbr></sub></th>
+    <th>95.10%</th>
+    <th>3.6 M</th>
+    <th>7 254</th>
+    <th>44 722</th>
+  </tr>
+  <tr>
+    <th>128px<sub> <abbr title="width_factor">w=4</abbr> b=512 </sub></th>
+    <th>95.99%</th>
+    <th>13.9 M</th>
+    <th>2 608</th>
+    <th>23 516</th>
+  </tr>
+  <tr>
+    <th>160px<sub> <abbr title="width_factor">w=2</abbr></sub></th>
+    <th>95.56%</th>
+    <th rowspan="4">3.6 M</th>
+    <th>5 512</th>
+    <th>31 467</th>
+  </tr>
+  <tr>
+    <th>192px<sub> <abbr title="width_factor">w=2</abbr></sub></th>
+    <th>96.02%</th>
+    <th>7 652</th>
+    <th>26 653</th>
+  </tr>
+  <tr>
+    <th>224px<sub> <abbr title="width_factor">w=2</abbr></sub></th>
+    <th>96.22%</th>
+    <th>5 711</th>
+    <th>20 760</th>
+  </tr>
+  <tr>
+    <th>224px<sub> <abbr title="width_factor">w=2</abbr> b=512</sub></th>
+    <th>96.30%</th>
+    <th>5 379</th>
+    <th>19 635</th>
+  </tr>
+  <tr> <!-- MobileNetV3L -->
+    <th colspan="6">MobileNetV3L<sub></sub></th>
+  </tr>
+  <tr>
+    <th rowspan="6"></th>
+    <th>128px<sub> </sub></th>
+    <th>95.57%</th>
+    <th rowspan="4">3.0 M</th>
+    <th>5 765</th>
+    <th>34 980</th>
+  </tr>
+  <tr>
+    <th>160px<sub></sub></th>
+    <th>96.07%</th>
+    <th>4 303</th>
+    <th>25 000</th>
+  </tr>
+  <tr>
+    <th>192px<sub> b=512</sub></th>
+    <th>96.58%</th>
+    <th>4 531</th>
+    <th>17 142</th>
+  </tr>
+  <tr>
+    <th>224px<sub> b=512</sub></th>
+    <th>96.52%</th>
+    <th>3 494</th>
+    <th>13 591</th>
+  </tr>
+  <tr>
+    <th>128px<sub> <abbr title="width_factor">w=2</abbr></sub></th>
+    <th>96.06%</th>
+    <th rowspan="2">11.7 M</th>
+    <th>3 286</th>
+    <th>20 087</th>
+  </tr>
+  <tr>
+    <th>192px<sub> <abbr title="width_factor">w=2</abbr>  b=512 </sub></th>
+    <th>96.95%</th>
+    <th>2 509</th>
+    <th>9 733</th>
   </tr>
   <!-- MobileNetV2 -->
   <tr>
-    <th colspan="3">MobileNetV2</th>
-    <th></th>
-    <th></th>
-    <th></th>
-    <th></th>
+    <th colspan="7">MobileNetV2</th>
   </tr>
   <tr>
-    <th rowspan="2"></th>
-    <th colspan="2">MobileNetV2 96px<sub>+HTD+Cutmix</sub></th>
-    <th>95.17%</th>
-    <th>-</th>
-    <th>-</th>
-    <th>-</th>
+    <th rowspan="6"></th>
+    <th colspan="2">96px</th>
+    <th>94.45%</th>
+    <th rowspan="5">2.3 M</th>
+    <th>5 201</th>
+    <th>42 184</th>
   </tr>
   <tr>
-    <th colspan="2">MobileNetV2 192px<sub>+HTD+Cutmix</sub></th>
-    <th>96.23%</th>
-    <th>-</th>
-    <th>-</th>
-    <th>-</th>
+    <th colspan="2">128px</th>
+    <th>95.10%</th>
+    <th>7 739</th>
+    <th>27 789</th>
+  </tr>
+  <tr>
+    <th colspan="2">160px<sub></sub></th>
+    <th>95.52%</th>
+    <th>5 377</th>
+    <th>19 118</th>
+  </tr>
+  <tr>
+    <th colspan="2">192px</th>
+    <th>95.78%</th>
+    <th>4 057</th>
+    <th>15 478</th>
+  </tr>
+  <tr>
+    <th colspan="2">224px <sub>batch=512</sub></th>
+    <th>96.20%</th>
+    <th>2 963</th>
+    <th>11 179</th>
+  </tr>
+  <tr>
+    <th colspan="2">128px<sub> <abbr title="width_factor">w=2</abbr></sub></th>
+    <th>96.27%</th>
+    <th>7.95 M</th>
+    <th>4 510</th>
+    <th>16 414</th>
   </tr>
   <!-- ResNetV2 -->
   <tr>
-    <th colspan="3">ResNetV2</th>
-    <th></th>
-    <th></th>
-    <th></th>
-    <th></th>
+    <th colspan="7">ResNetV2</th>
   </tr>
   <tr>
-    <th rowspan="8"></th>
+    <th rowspan="11"></th>
     <th colspan="2">ResNet18 <sub>mish</sub></th>
     <th>92.81% <sub>93.53%</sub></th>
-    <th>692 218</th>
-    <th>39 127 <sub>-</sub></th>
-    <th>99 028 <sub>-</sub></th>
+    <th>0.69 M</th>
+    <th>39 127 <sub>-4%</sub></th>
+    <th>99 028 <sub>-4%</sub></th>
   </tr>
   <tr>
     <th colspan="2">ResNet34 <sub>mish</sub></th>
     <th>93.69% <sub>94.26%</sub></th>
-    <th>1 327 226</th>
-    <th>25 534 <sub>-</sub></th>
-    <th>75 071 <sub>-</sub></th>
+    <th>1.3 M</th>
+    <th>25 534 <sub>-4%</sub></th>
+    <th>75 071 <sub>-4%</sub></th>
   </tr>
   <tr>
     <th colspan="2">ResNet35 <sub>mish</sub></th>
     <th>94.09% <sub>94.42%</sub></th>
-    <th>873 722</th>
-    <th>17 304 <sub>-</sub></th>
-    <th>58 520 <sub>-</sub></th>
+    <th>0.87 M</th>
+    <th>17 304 <sub>-5%</sub></th>
+    <th>58 520 <sub>-4%</sub></th>
   </tr>
   <tr>
     <th colspan="2">ResNet50 <sub>mish</sub></th>
     <th>94.57% <sub>95.05%</sub></th>
-    <th>1 320 570</th>
-    <th>12 939 <sub>-</sub></th>
-    <th>45 775 <sub>-</sub></th>
+    <th>1.3 M</th>
+    <th>12 939 <sub>-5%</sub></th>
+    <th>45 775 <sub>-3%</sub></th>
   </tr>
   <tr>
     <th colspan="2">ResNet101 <sub>mish</sub></th>
     <th>95.15% <sub>95.57%</sub></th>
-    <th>2 530 426</th>
-    <th>8 469 <sub>-</sub></th>
-    <th>31 813 <sub>-</sub></th>
+    <th>2.5 M</th>
+    <th>8 469 <sub>-6%</sub></th>
+    <th>31 813 <sub>-5%</sub></th>
   </tr>
   <tr>
     <th colspan="2">ResNet152 <sub>mish</sub></th>
     <th>95.62% <sub>95.99%</sub></th>
-    <th>3 528 314</th>
-    <th>5 954 <sub>-</sub></th>
-    <th>23 211 <sub>-</sub></th>
+    <th>3.5 M</th>
+    <th>5 954 <sub>-7%</sub></th>
+    <th>23 211 <sub>-3%</sub></th>
   </tr>
   <tr>
-    <th colspan="2">ResNet170 +Mish</th>
-    <th>96.66%</th>
-    <th>4 414 202</th>
-    <th>-</th>
-    <th>-</th>
-  </tr>
-  <tr>
-    <th colspan="2">WideResNet18+Cutout+HTD</th>
-    <th>94.91%</th>
-    <th>11 205 578</th>
-    <th>-</th>
-    <th>-</th>
-  </tr>
-  <!-- ResNeXt -->
-  <tr>
-    <th colspan="3">ResNeXt</th>
-    <th></th>
-    <th></th>
-    <th></th>
-    <th></th>
-  </tr>
-  <tr>
-    <th rowspan="4"></th>
-    <th colspan="2">ResNetXt50C32</th>
-    <th>94.07%</th>
-    <th>-</th>
-    <th>-</th>
-    <th>-</th>
+    <th colspan="2">ResNet170 <sub>mish</sub></th>
+    <th>95.68% <sub>96.18%</sub></th>
+    <th rowspan="2">4.2 M</th>
+    <th rowspan="2">5 113 <sub>-8%</sub></th>
+    <th rowspan="2">20 246 <sub>-5%</sub></th>
   </tr>
   <tr>
     <th></th>
-    <th>+SD</th>
-    <th>94.49%</th>
-    <th>-</th>
-    <th>-</th>
-    <th>-</th>
+    <th><sub>+mish +lr=.75</sub></th>
+    <th>96.44%</th>
   </tr>
   <tr>
-    <th colspan="2">ResNetXt101C32</th>
-    <th>94.25%</th>
-    <th>-</th>
-    <th>-</th>
-    <th>-</th>
+    <th colspan="2">WideResNet34 <sub> <abbr title="width_factor">w=4</abbr> </sub></th>
+    <th>96.40%</th>
+    <th>21.1 M</th>
+    <th>5 605</th>
+    <th>20 382</th>
   </tr>
   <tr>
     <th></th>
-    <th>+SD</th>
-    <th>94.88%</th>
-    <th>-</th>
-    <th>-</th>
-    <th>-</th>
+    <th colspan="1"><sub> <abbr title="width_factor">w=8</abbr> </sub></th>
+    <th>96.91%</th>
+    <th>84.5 M</th>
+    <th>1 773</th>
+    <th>6 539</th>
   </tr>
-  </th>
+  <tr>
+    <th colspan="2">WideResNet170 <sub>+mish <abbr title="width_factor">w=2</abbr> </sub></th>
+    <th>97.18%</th>
+    <th>16.6 M</th>
+    <th>2 511</th>
+    <th>9 392</th>
   </tr>
   <!-- SeNet -->
   <tr>
-    <th colspan="3">SeNet</th>
+    <th colspan="7">SeNet</th>
+  </tr>
+  <tr>
+    <th rowspan="6"></th>
+    <th colspan="2">SeNet35 <sub>mish</sub></th>
+    <th>94.33% <sub>94.7%</sub></th>
+    <th>0.98 M</th>
+    <th>15 162<sub>-8%</sub></th>
+    <th>52 390<sub>-9%</sub></th>
+  </tr>
+  <tr>
+    <th colspan="2">SeNet50 <sub>mish</sub></th>
+    <th>94.76% <sub>95.17%</sub></th>
+    <th>1.5 M</th>
+    <th>11 277<sub>-8%</sub></th>
+    <th>39 142<sub>-5%</sub></th>
+  </tr>
+  <tr>
+    <th colspan="2">SeNet101 <sub>mish</sub></th>
+    <th>95.43% <sub>96.03%</sub></th>
+    <th>2.8 M</th>
+    <th>7 223<sub>-9%</sub></th>
+    <th>25 303<sub>-3%</sub></th> 
+  </tr>
+  <tr>
     <th></th>
-    <th></th>
-    <th></th>
-    <th></th>
+    <th><sub>+mish <abbr title="width_factor">w=2</abbr></sub></th>
+    <th>96.69%</th>
+    <th>11.2 M</th>
+    <th>3 985</th>
+    <th>13 820</th> 
+  </tr>
+  <tr>
+    <th colspan="2">SeNet152 <sub>mish</sub></th>
+    <th>95.78% <sub>96.49%</sub></th>
+    <th>3.95 M</th>
+    <th>4 976<sub>-8%</sub></th>
+    <th>18 747<sub>-6%</sub></th> 
+  </tr>
+  <tr>
+    <th colspan="2">SeNet170 <sub>+mish w=2 b=768</sub></th>
+    <th>97.07%</th>
+    <th>18.6 M</th>
+    <th>2 253</th>
+    <th>8 258</th> 
+  </tr>
+  <!-- ResNeXt -->
+  <tr>
+    <th colspan="7">ResNeXt</th>
+  </tr>
+  <tr>
+    <th rowspan="3"></th>
+    <th colspan="2">ResNeXt35_16x4d <sub>mish</sub></th>
+    <th>95.87% <sub>96.37%</sub></th>
+    <th>3.6 M</th>
+    <th>1 893 <sub>-1%</sub></th>
+    <th>20 215 <sub>-1%</sub></th>
+  </tr>
+  <tr>
+    <th colspan="2">ResNeXt50_16x4d <sub>mish</sub></th>
+    <th>96.26% <sub>96.45%</sub></th>
+    <th>5.5 M</th>
+    <th>1 436 <sub>-1%</sub></th>
+    <th>15 064 <sub>-1%</sub></th>
+  </tr>
+  <tr>
+    <th colspan="2">ResNeXt101_16x4d <sub>mish</sub></th>
+    <th>96.39% <sub>96.74%</sub></th>
+    <th>10.6 M</th>
+    <th>990 <sub>-1%</sub></th>
+    <th>11 063 <sub>-2%</sub></th> 
+  </tr>
+  <!-- DenseNet -->
+  <tr>
+    <th colspan="7">DenseNet</th>
   </tr>
   <tr> 
     <th rowspan="4"></th>
-    <th colspan="2">SeNet50</th>
-    <th>93.40%</th>
-    <th>-</th>
-    <th>-</th>
-    <th>-</th>
+    <th colspan="2">DenseNet52k12</th>
+    <th>93.75%</th>
+    <th>0.27 M</th>
+    <th>7 209</th>
+    <th>31 956</th>
   </tr>
   <tr>
-    <th></th>
-    <th>+SD</th>
-    <th>94.25%</th>
-    <th>-</th>
-    <th>-</th>
-    <th>-</th>
+    <th colspan="2">DenseNet100k12</th>
+    <th>95.4%</th>
+    <th>0.79 M</th>
+    <th>2 734</th>
+    <th>12 119</th>
   </tr>
   <tr>
-    <th colspan="2">SeNet101</th>
-    <th>94.30%</br>94.79%*</th>
-    <th>-</th>
-    <th>-</th>
-    <th>-</th>
+    <th colspan="2">DenseNet100k16</th>
+    <th>95.87%</th>
+    <th>1.4 M</th> 
+    <th>2 394</th>
+    <th>11 114</th>
   </tr>
   <tr>
-    <th></th>
-    <th>+SD⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀</th>
-    <th>94.65%</th>
-    <th>-</th>
-    <th>-</th>
-    <th>-</th>
+    <th colspan="2">DenseNet160k12<sub> b=512</sub></th>
+    <th>96.43%</th>
+    <th>1.8 M</th>
+    <th>1 212</th>
+    <th>4 860</th>
   </tr>
 </table>
 
-* \* -> Reported values
 
-* SD = Stochastic Depth. </br>
-  From [Deep Networks with Stochastic Depth](https://arxiv.org/abs/1603.09382)
-* HTD = Hyperbolic-Tangent Learning Rate Decay schedule. </br>
-  From [Stochastic Gradient Descent with Hyperbolic-Tangent Decay on Classification](https://arxiv.org/abs/1806.01593)
 * Cos = Cosine Learning Rate Decay schedule. </br>
   From [Stochastic Gradient Descent with Warm Restarts](https://arxiv.org/abs/1608.03983)
 * Mish = Self regularized non-monotonic activation function, f(x) = x*tanh(softplus(x)). </br>

@@ -32,6 +32,8 @@ def initialize_and_run_all_models():
     tf.keras.backend.clear_session()
 
 
+# Measure Performance
+
 class PerformanceMeasurer(nn.callbacks.Callback):
     """
     """
@@ -113,6 +115,24 @@ class PerformanceMeasurer(nn.callbacks.Callback):
         self.log_params_count()
 
 
+def parse_code(code):
+    try:
+        if "(" in code:
+            name, params = code.split("(", 1)
+            name = name.split(".")[-1]
+            kwargs = eval("dict(" + params)
+        else:
+            name = code.split(".")[-1]
+            kwargs = {}
+
+    except Exception as e:
+        print(f"\nERROR     -     {e.__class__} exception occured during an attempt to parse {code}")
+        print("Expected syntax: \n")
+        raise e
+
+    return name, kwargs
+
+
 def performance_benachmark(models=None,
                            batch_size = 256,
                            fp16 = False,
@@ -144,7 +164,9 @@ def performance_benachmark(models=None,
     if verbose:
         print(f"Verbose: {verbose}")
         os.environ['TF_CPP_MIN_LOG_LEVEL'] = verbose
-
+    
+    print(f"Batch-size: {batch_size}")
+    
     if xla:
         print("XLA: ON")
         os.environ['TF_XLA_FLAGS'] = "--tf_xla_auto_jit=3"
@@ -155,13 +177,12 @@ def performance_benachmark(models=None,
 
     def reshape_data(x):
         x = tf.random.uniform((32, 32, 3), 0., 1., tf.float32, 42)
-        y = tf.one_hot(
-            tf.random.uniform(( ), 0, 10, tf.int32, 42),
-            depth=10,
-            on_value=1,
-            off_value=0,
-            dtype=tf.int32
-        )
+        y = tf.one_hot(indices=tf.random.uniform(( ), 0, 10, tf.int32, 42),
+                       depth=10,
+                       on_value=1,
+                       off_value=0,
+                       dtype=tf.int32)
+
         return (x, y)
 
     print("Building dataset . . .\n")
@@ -172,12 +193,12 @@ def performance_benachmark(models=None,
 
     for model_name in models:
         print(f" - {model_name}:")
-        model: nn.Model
-        model = create_model(model_name)
-        model.compile(
-            optimizer=nn.optimizers.SGD(),
-            loss=nn.losses.CategoricalCrossentropy(from_logits=True)
-        )
+        
+        model_name, model_kwargs = parse_code(model_name)
+        model = create_model(model_name, **model_kwargs)
+        
+        model.compile(optimizer=nn.optimizers.SGD(),
+                      loss=nn.losses.CategoricalCrossentropy(from_logits=True))
 
         try:
             print("\t1/3 Warming up the model . . .")

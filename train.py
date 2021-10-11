@@ -24,15 +24,14 @@ def parse_args():
     parser.add_argument("--data", type=str, required=True, )
 
     parser.add_argument("--name", type=str, default=None, help="" )
+    parser.add_argument("--name-postfix", type=str, default=None, help="" )
+    parser.add_argument("--name-prefix", type=str, default=None, help="" )
     parser.add_argument("--id", type=str, default=None, help="" )
 
     parser.add_argument("--checkpoint", type=str, )
 
     parser.add_argument("--xla", dest="xla", action="store_true")
-    # parser.add_argument("--no-xla", dest="xla", action="store_false")
-
     parser.add_argument("--fp16", dest="fp16", action="store_true")
-    # parser.add_argument("--no-fp16", dest="fp16", action="store_false")
 
     parser.add_argument("--augment", choices=["cutmix", "cutout", "mixup"], default=False)
     
@@ -151,7 +150,15 @@ def main():  # TODO allow args and kwargs
     lr_schedule = utils.creator.create_lr_schedule(lr_schedule_name, **lr_schedule_kwargs)
 
     if args.name is None:
-        args.name = model.name + datetime.now().strftime("@%m%d%H%M")
+        args.name = ""
+        if args.name_prefix:
+            args.name += args.name_prefix
+        
+        args.name += model.name
+
+        if args.name_postfix:
+            args.name += args.name_postfix
+        args.name += datetime.now().strftime("@%m%d%H%M")
     
     if args.id is None:
         args.id = hashlib.md5(" ".join(sys.argv).encode()).hexdigest()
