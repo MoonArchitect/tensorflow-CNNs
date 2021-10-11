@@ -7,17 +7,17 @@ Implementation of various AI papers for image classification
 <details>
   <summary> Model Architectures </summary>
   
+- TResNet
+- MobileNetV2
+- MobileNetV3
 - ResNetV2
 - ResNetV2 + Stochastic Depth
 - ResNeXt
 - SeNet
-- MobileNetV2
-- MobileNetV3
 - DenseNet
 <!-- - [ ] ResNeSt
 - [ ] EfficientNet
 - [ ] NAT
-- [ ] TResNet
 - [ ] PyramidNet
 - [ ] Xception
 - [ ] IBN-Net -->
@@ -34,6 +34,7 @@ Implementation of various AI papers for image classification
 - Mixup
 - Cutmix
 - Mish
+- AntiAliasDownsampling
 <!-- - [ ] Hard and Soft PatchUp -->
 <!-- - [ ] Swish
 - [ ] EvoNorm -->
@@ -84,11 +85,65 @@ Optmizer: SGD nesterov m=0.9
     <th>Training</br>(imgs/sec)</th>
     <th>Inference</br>(imgs/sec)</th>
   </tr>
-  <!-- MobileNetV3 -->
-  <tr> <!-- MobileNetV3S -->
-    <th colspan="7">MobileNetV3</th>
+  <!-- TResNet -->
+  <tr>
+    <th colspan="7">TResNet</th>
+  </tr>
+  <tr> <!-- TResNet M -->
+    <th rowspan="6"></th>
+    <th colspan="6">TResNet M<sub></sub></th>
   </tr>
   <tr>
+    <th></th>
+    <th>64px</th>
+    <th>92.51%</th>
+    <th rowspan="5">3 156 786</th>
+    <th>17 540</th>
+    <th>44 435</th>
+  </tr>
+  <tr>
+    <th></th>
+    <th>96x</th>
+    <th>95.03%</th>
+    <th>9 969</th>
+    <th>26 356</th>
+  </tr>
+  <tr>
+    <th></th>
+    <th>128px</th>
+    <th>95.84%</th>
+    <th>5 882</th>
+    <th>16 937</th>
+  </tr>
+  <tr>
+    <th></th>
+    <th>160px</th>
+    <th>95.84%</th>
+    <th>4 161</th>
+    <th>12 046</th>
+  </tr>
+  <tr>
+    <th></th>
+    <th>192px</th>
+    <th>95.89%</th>
+    <th>3 087</th>
+    <th>8 645</th>
+  </tr>
+  <tr> <!-- TResNet L -->
+    <th rowspan="1"></th>
+    <th colspan="2">TResNet L</th>
+    <th colspan="4" rowspan="2">Overfit, no improvments over TResNet M</th>
+  </tr>
+  <tr> <!-- TResNet XL -->
+    <th rowspan="1"></th>
+    <th colspan="2">TResNet XL</th>
+  </tr>
+
+  <!-- MobileNetV3 -->
+  <tr>
+    <th colspan="7">MobileNetV3</th>
+  </tr>
+  <tr> <!-- MobileNetV3S -->
     <th rowspan="18"></th>
     <th colspan="6">MobileNetV3S<sub></sub></th>
   </tr>
@@ -329,25 +384,25 @@ Optmizer: SGD nesterov m=0.9
   </tr>
   <tr>
     <th rowspan="6"></th>
-    <th colspan="2">senet35 <sub>mish</sub></th>
+    <th colspan="2">SeNet35 <sub>mish</sub></th>
     <th>94.33% <sub>94.7%</sub></th>
     <th>982 946</th>
-    <th>15162<sub>-8%</sub></th>
-    <th>52390<sub>-9%</sub></th>
+    <th>15 162<sub>-8%</sub></th>
+    <th>52 390<sub>-9%</sub></th>
   </tr>
   <tr>
-    <th colspan="2">SeNet50<sub>mish</sub></th>
+    <th colspan="2">SeNet50 <sub>mish</sub></th>
     <th>94.76% <sub>95.17%</sub></th>
     <th>1 483 314</th>
-    <th>11277<sub>-8%</sub></th>
-    <th>39142<sub>-5%</sub></th>
+    <th>11 277<sub>-8%</sub></th>
+    <th>39 142<sub>-5%</sub></th>
   </tr>
   <tr>
     <th colspan="2">SeNet101 <sub>mish</sub></th>
     <th>95.43% <sub>96.03%</sub></th>
     <th>2 837 058</th>
-    <th>7223<sub>-9%</sub></th>
-    <th>25303<sub>-3%</sub></th> 
+    <th>7 223<sub>-9%</sub></th>
+    <th>25 303<sub>-3%</sub></th> 
   </tr>
   <tr>
     <th></th>
