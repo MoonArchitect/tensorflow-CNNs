@@ -8,8 +8,8 @@ from .layers import get_channels, AntiAliasDownsampling, _make_divisible
 """
     Implementation of TResNet for CIFAR/SVHN/32x32
     
-    From: MobileNetV2: Inverted Residuals and Linear Bottlenecks, https://arxiv.org/abs/1801.04381
-    By: Mark Sandler, Andrew Howard, Menglong Zhu, Andrey Zhmoginov, Liang-Chieh Chen
+    From: TResNet: High Performance GPU-Dedicated Architecture, https://arxiv.org/abs/2003.13630
+    By: Tal Ridnik, Hussam Lawen, Asaf Noy, Emanuel Ben Baruch, Gilad Sharir, Itamar Friedman
 """
 
 # TODO this implementation is not equivalent to one presented in the paper
